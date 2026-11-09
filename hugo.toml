@@ -1,0 +1,43 @@
+# The defaults of the theme. A site's own hugo.toml wins over each value here.
+
+[params]
+  # The site's own params (README): description, repo, version, tagline, repoPublic, branch.
+  branch = "main"
+  repoPublic = false
+  # The width at and below which the sidebar becomes a drawer (Sass and nav.js read it).
+  narrow = "50rem"
+
+# CSS classes for the code blocks of other languages; agentica blocks are colored by highlight/highlight.mjs.
+[markup.highlight]
+  noClasses = false
+
+# The in-page table of contents lists the h2 headings.
+[markup.tableOfContents]
+  startLevel = 2
+  endLevel = 2
+
+[outputs]
+  home = ["html", "markdown", "search", "llms", "llmsfull"]
+  section = ["html", "markdown"]
+  page = ["html", "markdown"]
+
+[outputFormats.search]
+  mediaType = "application/json"
+  baseName = "search"
+  isPlainText = true
+  notAlternative = true
+
+[outputFormats.llms]
+  baseName = "llms"
+  mediaType = "text/plain"
+  isPlainText = true
+  notAlternative = true
+
+[outputFormats.llmsfull]
+  baseName = "llms-full"
+  mediaType = "text/plain"
+  isPlainText = true
+  notAlternative = true
+
+[minify]
+  minifyOutput = true

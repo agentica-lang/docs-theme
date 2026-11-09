@@ -1,0 +1,18 @@
+# {{ site.Title }} documentation
+
+> {{ site.Params.description }}
+{{- with partial "llms-version.html" . }}
+
+{{ . }}
+{{- end }}
+{{- range partial "llms-groups.html" . }}
+{{- range .pages }}
+{{- $md := partial "page-markdown.html" . }}
+
+# {{ $md.title }}
+
+Source: {{ (.OutputFormats.Get "markdown").Permalink }}
+
+{{ $md.body }}
+{{- end }}
+{{- end }}

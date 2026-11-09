@@ -1,0 +1,9 @@
+{{- /* The version line of llms.txt and llms-full.txt, or "" without params.version. */ -}}
+{{- $line := "" -}}
+{{- with partial "version.html" -}}
+  {{- $line = printf "Version %s" . -}}
+  {{- with partial "release-url.html" }}{{ $line = printf "%s: [Release %s](%s)" $line (partial "version.html") . }}{{ end -}}
+  {{- $line = printf "%s." $line -}}
+  {{- with site.Params.repo }}{{ $line = printf "%s All releases: %s/releases" $line . }}{{ end -}}
+{{- end -}}
+{{- return $line -}}

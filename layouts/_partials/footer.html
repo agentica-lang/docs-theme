@@ -1,0 +1,17 @@
+<footer class="site-footer">
+  {{- $version := partial "version.html" . }}
+  {{- if or $version site.Params.repo }}
+  <p class="release-links">
+  {{- with $version }}{{ site.Title }} {{ . }}{{ with partial "release-url.html" $ }} · <a href="{{ . }}">Release {{ $version }}</a>{{ end }}{{ end }}
+  {{- with site.Params.repo }}{{ if $version }} · {{ end }}<a href="{{ . }}/releases">All releases</a>{{ end -}}
+  </p>
+  {{- end }}
+  {{- if site.Params.repoPublic }}
+  {{- with partial "source-path.html" . }}
+  <a href="{{ site.Params.repo }}/blob/{{ site.Params.branch }}/{{ . }}">Page source</a> ·
+  {{- end }}
+  <a href="{{ site.Params.repo }}">{{ site.Title }} on GitHub</a>
+  {{- else }}
+  {{ site.Title }}{{ with site.Params.tagline }}: {{ . }}{{ end }}
+  {{- end }}
+</footer>

@@ -1,0 +1,3 @@
+{{- /* params.version as a string (a TOML number works too), or "" when the site has none: the version links and lines are left out then. */ -}}
+{{- $version := string (site.Params.version | default "") -}}
+{{- return $version -}}

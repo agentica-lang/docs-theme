@@ -1,0 +1,12 @@
+{{- /* A self-test of markdown-links.html, run by home.llms.txt: links are rewritten outside code only. It links to the first page of the sidebar order, so it needs no fixed page. */ -}}
+{{- range first 1 (partialCached "nav-order.html" site.Home) -}}
+{{- $dest := .Path -}}
+{{- $target := (.OutputFormats.Get "markdown").Permalink -}}
+{{- $self := (site.Home.OutputFormats.Get "markdown").Permalink -}}
+{{- $code := printf "```agentica\nputs(\"[a](%s)\")\n```\n\n`[b](%s)` " $dest $dest -}}
+{{- $input := printf "%s[c](%s) ![d](d.png) [e](#e) [f](https://example.com/)" $code $dest -}}
+{{- $want := printf "%s[c](%s) ![d](d.png) [e](%s#e) [f](https://example.com/)" $code $target $self -}}
+{{- $got := partial "markdown-links.html" (dict "page" site.Home "body" $input) -}}
+{{- if ne $got $want }}{{ errorf "markdown-links.html: got %q, want %q" $got $want }}{{ end -}}
+{{- end -}}
+{{- return "" -}}

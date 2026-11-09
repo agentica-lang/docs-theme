@@ -1,0 +1,5 @@
+# Added to hugo.toml by make example: a site with no version and no repo.
+[params]
+  version = ""
+  repo = ""
+  repoPublic = false

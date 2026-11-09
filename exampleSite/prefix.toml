@@ -1,0 +1,3 @@
+# Added to hugo.toml by make example: a repo that tags its releases v1.2.0.
+[params]
+  tagPrefix = "v"
