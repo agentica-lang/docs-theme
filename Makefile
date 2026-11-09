@@ -1,0 +1,21 @@
+# Builds the example site with the theme, as CI does: Hugo (a warning fails), then the highlighter.
+
+.PHONY: example example-serve clean
+
+DART_SASS ?= $(HOME)/.local/opt/dart-sass
+export PATH := $(DART_SASS):$(PATH)
+
+highlight/node_modules: highlight/package.json highlight/package-lock.json
+	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
+	touch $@
+
+example: highlight/node_modules
+	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
+	hugo --cleanDestinationDir --source exampleSite --panicOnWarning
+	node highlight/highlight.mjs --strict exampleSite/public
+
+example-serve:
+	hugo server --source exampleSite
+
+clean:
+	rm -rf exampleSite/public exampleSite/resources highlight/node_modules

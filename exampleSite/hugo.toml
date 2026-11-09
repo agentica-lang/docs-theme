@@ -1,0 +1,14 @@
+_merge = "deep"
+baseURL = "https://agentica-lang.github.io/docs-theme/"
+locale = "en"
+title = "Example"
+theme = "docs-theme"
+themesDir = "../.."
+disableKinds = ["taxonomy", "term", "rss"]
+
+[params]
+  description = "An example site of the agentica-lang docs theme."
+  tagline = "the docs theme"
+  repo = "https://github.com/agentica-lang/docs-theme"
+  repoPublic = true
+  version = "0.1.0"
