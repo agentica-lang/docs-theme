@@ -22,7 +22,8 @@ The design rules are in [DESIGN.md](DESIGN.md).
 
 ## Use it in a repo
 
-You need Hugo extended 0.167.0 or newer, Dart Sass (CI uses 1.105.1) and Node.
+You need Hugo 0.167.0 or newer (the standard build is enough: the styles run
+on Dart Sass), Dart Sass (CI uses 1.105.1) and Node.
 The site lives in `site/`, one folder below the repo root: the page source
 links depend on it.
 
@@ -45,7 +46,6 @@ links depend on it.
    disableKinds = ["taxonomy", "term", "rss"]
 
    [module.hugoVersion]
-     extended = true
      min = "0.167.0"
 
    [params]
