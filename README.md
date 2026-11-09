@@ -22,10 +22,12 @@ The design rules are in [DESIGN.md](DESIGN.md).
 
 ## Use it in a repo
 
-The site lives in `site/` of the repo. You need Hugo (extended), Dart Sass and
-Node.
+You need Hugo extended 0.167.0 or newer, Dart Sass (CI uses 1.105.1) and Node.
+The site lives in `site/`, one folder below the repo root: the page source
+links depend on it.
 
-1. Add the theme as a submodule:
+1. Add the theme as a submodule. Clone the repo with `--recurse-submodules`
+   from then on, or run `git submodule update --init`.
 
    ```sh
    git submodule add https://github.com/agentica-lang/docs-theme.git site/themes/docs-theme
@@ -42,6 +44,10 @@ Node.
    theme = "docs-theme"
    disableKinds = ["taxonomy", "term", "rss"]
 
+   [module.hugoVersion]
+     extended = true
+     min = "0.167.0"
+
    [params]
      description = "One sentence about the project."
      repo = "https://github.com/agentica-lang/my-repo"
@@ -56,23 +62,32 @@ Node.
    node site/themes/docs-theme/highlight/highlight.mjs site/public
    ```
 
-   With `--strict`, the highlighter also fails when the site has no agentica
-   block, no signature block, or a color class that no token matched. Use it
-   when the site has all of them.
+   Add `--strict` when the site has agentica blocks and signature blocks: it
+   then also fails when a color class matches no token, which catches a
+   grammar change.
 
-4. In CI, check out the submodules (`actions/checkout` with
-   `submodules: true`).
+4. Ignore the build output: `site/public/`, `site/resources/` and
+   `site/.hugo_build.lock`.
 
-The sidebar and the pager follow the `weight` of each page in its front matter.
+5. In CI, check out the submodule (`actions/checkout` with `submodules: true`,
+   or `git submodule update --init site/themes/docs-theme`) and point the npm
+   cache of `actions/setup-node` at
+   `site/themes/docs-theme/highlight/package-lock.json`.
+
+Each folder of the content is a section with an `_index.md`. The sidebar and
+the pager follow the `weight` in the front matter of each page.
 
 ## Params
+
+All are optional.
 
 | Param | Default | What it does |
 |---|---|---|
 | `description` | none | The meta description, and the summary in `llms.txt` |
-| `version` | none, required | The version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too |
-| `repo` | none | The GitHub repo URL; release links are `<repo>/releases/tag/<version>` |
-| `tagline` | none | Added to the home page title and the footer: "Title: tagline" |
+| `version` | none | The version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
+| `repo` | none | The GitHub repo URL. With `version`, the version links to its release |
+| `tagPrefix` | `""` | Put before the version in the release tag: `v` for a tag `v1.2.0` |
+| `tagline` | none | Added to the `<title>` of the home page, "Title: tagline", and to the footer when `repoPublic` is false |
 | `repoPublic` | `false` | Shows the GitHub link and the page source links |
 | `branch` | `main` | The branch of the page source links |
 | `narrow` | `50rem` | The width at and below which the sidebar becomes a drawer |
@@ -81,9 +96,10 @@ The sidebar and the pager follow the `weight` of each page in its front matter.
 
 A file of the site wins over the file of the theme with the same path. To
 change one part, copy it from the theme to the same path under `site/layouts/`
-(or `site/assets/`) and edit the copy. For example, the agentica site keeps
-its own `layouts/reference/list.html`. Keep copies few: a copy no longer gets
-the theme's fixes.
+(or `site/assets/`) and edit the copy. For example, a site can use its own icon
+with `site/layouts/_partials/favicon.html`, and the agentica site keeps its
+own `layouts/reference/list.html`. Keep copies few: a copy no longer gets the
+theme's fixes.
 
 ## Update the theme
 
@@ -98,16 +114,20 @@ git commit -m "Update docs-theme"
 
 ## Work on the theme
 
-`make example` builds the site in `exampleSite/` the way CI does: Hugo fails
-on a warning, then the highlighter runs with `--strict`. `make example-serve`
-serves it. Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
-
-To update the grammar, copy `syntaxes/agentica.tmLanguage.json` from
-agc-tmlanguage to `highlight/`, set the `grammar` field of
-`highlight/package.json` to its commit, and run `make example`.
+- `make example` builds the site in `exampleSite/` as CI does: Hugo fails on a
+  warning, the highlighter runs with `--strict`, and the outputs must be there.
+  `make example-serve` serves it.
+- Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
+- `exampleSite/hugo.toml` finds the theme with `themesDir = "../.."`, so the
+  clone folder must be named `docs-theme`.
+- The grammar is `highlight/agentica.tmLanguage.json`, a copy of the
+  agc-tmlanguage commit in the `grammar` field of `highlight/package.json`.
+  The `grammarChanges` field says what differs from that commit. To update it,
+  copy `syntaxes/agentica.tmLanguage.json` from agc-tmlanguage, set `grammar`
+  to its commit, update or remove `grammarChanges`, and run `make example`.
 
 ## License
 
-MIT, see [LICENSE](LICENSE). `highlight/agentica.tmLanguage.json` is a copy
-from agc-tmlanguage (Apache-2.0), and the icons in `assets/icons/lucide/` are
-Lucide's (ISC, see their LICENSE).
+MIT, see [LICENSE](LICENSE). `highlight/agentica.tmLanguage.json` comes from
+agc-tmlanguage (Apache-2.0, `highlight/LICENSE`), and the icons in
+`assets/icons/lucide/` are Lucide's (ISC, see their LICENSE).

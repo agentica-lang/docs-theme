@@ -13,6 +13,10 @@ example: highlight/node_modules
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
 	hugo --cleanDestinationDir --source exampleSite --panicOnWarning
 	node highlight/highlight.mjs --strict exampleSite/public
+	@# The outputs come from the theme's hugo.toml: a site without `_merge = "deep"` has none of them.
+	@for f in search.json llms.txt llms-full.txt index.md guide/code/index.md; do \
+	  test -s exampleSite/public/$$f || { echo "exampleSite/public/$$f is missing" >&2; exit 1; }; \
+	done
 
 example-serve:
 	hugo server --source exampleSite
