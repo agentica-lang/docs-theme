@@ -77,7 +77,9 @@ links depend on it.
    `site/themes/docs-theme/highlight/package-lock.json`.
 
 Each folder of the content is a section with an `_index.md`. The sidebar and
-the pager follow the `weight` in the front matter of each page.
+the pager follow the `weight` in the front matter of each page. When the text of
+a page or of the home page starts with a `#` heading (a README mounted as
+`content/_index.md`), that heading is the title shown on the page.
 
 ## Params
 
@@ -96,13 +98,13 @@ All are optional.
 
 ## Change a template
 
-A file of the site wins over the file of the theme with the same path. To
-change one part, copy it from the theme to the same path under `site/layouts/`
-(or `site/assets/`) and edit the copy. For example, a site can use its own icon
-with `site/layouts/_partials/favicon.html`, add to the home page with
-`site/layouts/_partials/home-extra.html` (empty in the theme), and the
-agentica site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no longer gets the
-theme's fixes.
+A file of the site wins over the file of the theme with the same path. To change
+one part, copy it from the theme to the same path under `site/layouts/` (or
+`site/assets/`) and edit the copy. For example, a site can use its own icon with
+`site/layouts/_partials/favicon.html`, add to the home page with
+`site/layouts/_partials/home-extra.html` (empty in the theme), and the agentica
+site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no
+longer gets the theme's fixes.
 
 ## Update the theme
 
