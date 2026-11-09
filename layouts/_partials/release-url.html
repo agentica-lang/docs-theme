@@ -1,1 +1,6 @@
-{{- return printf "%s/releases/tag/%s" site.Params.repo (partial "version.html") -}}
+{{- /* The release page of params.version (its tag is params.tagPrefix and the version), or "" without a repo or a version. */ -}}
+{{- $url := "" -}}
+{{- with partial "version.html" -}}
+  {{- if site.Params.repo }}{{ $url = printf "%s/releases/tag/%s%s" site.Params.repo site.Params.tagPrefix . }}{{ end -}}
+{{- end -}}
+{{- return $url -}}

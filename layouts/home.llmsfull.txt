@@ -1,8 +1,10 @@
 # {{ site.Title }} documentation
 
 > {{ site.Params.description }}
+{{- with partial "llms-version.html" . }}
 
-Version {{ partial "version.html" . }}: [Release {{ partial "version.html" . }}]({{ partial "release-url.html" . }}). All releases: {{ site.Params.repo }}/releases
+{{ . }}
+{{- end }}
 {{- range partial "llms-groups.html" . }}
 {{- range .pages }}
 {{- $md := partial "page-markdown.html" . }}

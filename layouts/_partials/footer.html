@@ -1,5 +1,7 @@
 <footer class="site-footer">
-  <p class="release-links">{{ site.Title }} {{ partial "version.html" . }} · <a href="{{ partial "release-url.html" . }}">Release {{ partial "version.html" . }}</a> · <a href="{{ site.Params.repo }}/releases">All releases</a></p>
+  {{- with partial "version.html" . }}
+  <p class="release-links">{{ site.Title }} {{ . }}{{ with partial "release-url.html" $ }} · <a href="{{ . }}">Release {{ partial "version.html" $ }}</a>{{ end }}{{ with site.Params.repo }} · <a href="{{ . }}/releases">All releases</a>{{ end }}</p>
+  {{- end }}
   {{- if site.Params.repoPublic }}
   {{- with partial "source-path.html" . }}
   <a href="{{ site.Params.repo }}/blob/{{ site.Params.branch }}/{{ . }}">Page source</a> ·

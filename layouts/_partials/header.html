@@ -7,7 +7,13 @@
     <span class="icon icon-close" aria-hidden="true">{{ (resources.Get "icons/lucide/x.svg").Content | safeHTML }}</span>
   </button>
   <a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
-  <a class="version" href="{{ partial "release-url.html" . }}" title="Release {{ partial "version.html" . }}">{{ partial "version.html" . }}</a>
+  {{- with partial "version.html" . }}
+  {{- with partial "release-url.html" $ }}
+  <a class="version" href="{{ . }}" title="Release {{ partial "version.html" $ }}">{{ partial "version.html" $ }}</a>
+  {{- else }}
+  <span class="version">{{ . }}</span>
+  {{- end }}
+  {{- end }}
   {{- partial "search.html" . }}
   {{- partial "theme-toggle.html" . }}
   {{- if site.Params.repoPublic }}

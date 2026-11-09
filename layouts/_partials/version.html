@@ -1,5 +1,3 @@
-{{- with site.Params.version -}}
-  {{- return . -}}
-{{- else -}}
-  {{- errorf "site.Params.version is not set: set params.version in hugo.toml or HUGO_PARAMS_VERSION in the environment" -}}
-{{- end -}}
+{{- /* params.version, or "" when the site has none: the version links and lines are left out then. */ -}}
+{{- $version := site.Params.version | default "" -}}
+{{- return $version -}}
