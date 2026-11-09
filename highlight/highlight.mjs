@@ -159,13 +159,23 @@ async function loadGrammar() {
   return registry.loadGrammar("source.agentica");
 }
 
-// --strict also fails when the site has no agentica block, no signature block, or a class of CLASSES that no
-// token matched: a site that shows every kind (the example site, the agentica docs) catches a renamed scope this way.
+// A site with no agentica block, or whose blocks no class colored, fails: the template or the grammar broke.
+// --strict also fails without a signature block, or when a class of CLASSES matched no token, so a site that shows
+// every kind (the example site, the agentica docs) catches a renamed scope; --allow-unused-classes skips that last
+// check, for a site whose code does not use every kind of token.
+const FLAGS = ["--strict", "--allow-unused-classes"];
 const args = process.argv.slice(2);
-const strict = args[0] === "--strict";
-const site = strict ? args[1] : args[0];
-if (!site || args.length !== (strict ? 2 : 1)) {
-  console.error("usage: node highlight.mjs [--strict] SITE_DIR");
+const flags = new Set(args.filter((arg) => arg.startsWith("--")));
+const sites = args.filter((arg) => !arg.startsWith("--"));
+const site = sites[0];
+if (sites.length !== 1 || [...flags].some((flag) => !FLAGS.includes(flag)) || flags.size !== args.length - 1) {
+  console.error("usage: node highlight.mjs [--strict [--allow-unused-classes]] SITE_DIR");
+  process.exit(2);
+}
+const strict = flags.has("--strict");
+const allowUnused = flags.has("--allow-unused-classes");
+if (allowUnused && !strict) {
+  console.error("highlight: --allow-unused-classes only changes --strict");
   process.exit(2);
 }
 const grammar = await loadGrammar();
@@ -212,10 +222,11 @@ for (const file of htmlFiles(site)) {
   if (/class="?agc-code"?/.test(signed)) fail(`${file}: an agentica block has an unexpected shape`);
   if (signed !== html) writeFileSync(file, signed);
 }
+if (blocks === 0) fail(`no agentica code blocks found in ${site}`);
+if (used.size === 0) fail("no token matched a class: check the scope names in CLASSES");
 if (strict) {
-  if (blocks === 0) fail(`no agentica code blocks found in ${site}`);
-  const unused = CLASSES.filter(([prefix]) => !used.has(prefix)).map(([prefix]) => prefix);
-  if (unused.length > 0) fail(`no token matched ${unused.join(", ")}: check the scope names in CLASSES`);
   if (signatures === 0) fail(`no signature blocks found in ${site}`);
+  const unused = CLASSES.filter(([prefix]) => !used.has(prefix)).map(([prefix]) => prefix);
+  if (unused.length > 0 && !allowUnused) fail(`no token matched ${unused.join(", ")}: check the scope names in CLASSES`);
 }
 console.log(`highlight: ${blocks} agentica code blocks, ${signatures} signature blocks`);

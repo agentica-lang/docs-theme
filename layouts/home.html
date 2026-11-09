@@ -2,5 +2,6 @@
 <article class="content">
   <div class="page-head"><h1>{{ site.Title }}</h1>{{ partial "page-actions.html" . }}</div>
   {{ .Content }}
+  {{- partial "home-extra.html" . }}
 </article>
 {{ end }}
