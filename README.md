@@ -62,9 +62,11 @@ links depend on it.
    node site/themes/docs-theme/highlight/highlight.mjs site/public
    ```
 
-   Add `--strict` when the site has agentica blocks and signature blocks: it
-   then also fails when a color class matches no token, which catches a
-   grammar change.
+   The highlighter fails when the site has no agentica block, or when no
+   token got a color. Add `--strict` when the site also has signature blocks:
+   it then fails without one, and when a color class matches no token, which
+   catches a grammar change. Add `--allow-unused-classes` after `--strict`
+   when the site's code does not use every kind of token.
 
 4. Ignore the build output: `site/public/`, `site/resources/` and
    `site/.hugo_build.lock`.
@@ -97,8 +99,9 @@ All are optional.
 A file of the site wins over the file of the theme with the same path. To
 change one part, copy it from the theme to the same path under `site/layouts/`
 (or `site/assets/`) and edit the copy. For example, a site can use its own icon
-with `site/layouts/_partials/favicon.html`, and the agentica site keeps its
-own `layouts/reference/list.html`. Keep copies few: a copy no longer gets the
+with `site/layouts/_partials/favicon.html`, add to the home page with
+`site/layouts/_partials/home-extra.html` (empty in the theme), and the
+agentica site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no longer gets the
 theme's fixes.
 
 ## Update the theme
