@@ -84,11 +84,11 @@ All are optional.
 | Param | Default | What it does |
 |---|---|---|
 | `description` | none | The meta description, and the summary in `llms.txt` |
-| `version` | none | The version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
-| `repo` | none | The GitHub repo URL. With `version`, the version links to its release |
+| `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
+| `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
 | `tagPrefix` | `""` | Put before the version in the release tag: `v` for a tag `v1.2.0` |
 | `tagline` | none | Added to the `<title>` of the home page, "Title: tagline", and to the footer when `repoPublic` is false |
-| `repoPublic` | `false` | Shows the GitHub link and the page source links |
+| `repoPublic` | `false` | Shows the GitHub link and the page source links; needs `repo` |
 | `branch` | `main` | The branch of the page source links |
 | `narrow` | `50rem` | The width at and below which the sidebar becomes a drawer |
 
@@ -114,9 +114,11 @@ git commit -m "Update docs-theme"
 
 ## Work on the theme
 
-- `make example` builds the site in `exampleSite/` as CI does: Hugo fails on a
-  warning, the highlighter runs with `--strict`, and the outputs must be there.
-  `make example-serve` serves it.
+- `make example` builds the site in `exampleSite/` as CI does, three times:
+  with all the params, with no version and no repo (`bare.toml`), and with a
+  tag prefix (`prefix.toml`). Hugo fails on a warning, the highlighter runs
+  with `--strict`, the outputs must be there, and a template must not print a
+  format error. `make example-serve` serves the first one.
 - Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
 - `exampleSite/hugo.toml` finds the theme with `themesDir = "../.."`, so the
   clone folder must be named `docs-theme`.

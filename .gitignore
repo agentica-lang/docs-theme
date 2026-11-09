@@ -1,4 +1,6 @@
 exampleSite/public/
+exampleSite/public-bare/
+exampleSite/public-prefix/
 exampleSite/resources/
 exampleSite/.hugo_build.lock
 highlight/node_modules/
