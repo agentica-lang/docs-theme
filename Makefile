@@ -17,6 +17,8 @@ example: highlight/node_modules
 	@for f in search.json llms.txt llms-full.txt index.md guide/code/index.md; do \
 	  test -s exampleSite/public/$$f || { echo "exampleSite/public/$$f is missing" >&2; exit 1; }; \
 	done
+	@# A Go format error in a template (printf of a missing param) prints %!s(<nil>) and no warning.
+	@! grep -rl '%!' exampleSite/public || { echo "a template printed a format error" >&2; exit 1; }
 
 example-serve:
 	hugo server --source exampleSite
