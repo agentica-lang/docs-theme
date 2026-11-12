@@ -22,7 +22,6 @@ const CLASSES = [
   ["storage.type", "k"],
   ["entity.name.function", "nf"],
   ["entity.name", "nc"],
-  ["support.type", "nc"],
   ["variable.other.constant", "no"],
   ["variable.other.enummember", "no"],
 ];

@@ -4,7 +4,7 @@
   "description": "Highlights the agentica and signature code blocks of a built site with the TextMate grammar of agentica-lang/agc-tmlanguage",
   "type": "module",
   "grammar": "https://github.com/agentica-lang/agc-tmlanguage/blob/3c26b0d08a3752456a60eaa074644561cb8836d4/syntaxes/agentica.tmLanguage.json",
-  "grammarChanges": "repository.builtin-types.match is the RESERVED_TYPE_NAMES list of Agentica 0.27.0, which agc-tmlanguage has not taken yet",
+  "grammarChanges": "no repository.builtin-types and no include of it, the change of agc-tmlanguage#16 (da313b3), which the pinned commit predates",
   "dependencies": {
     "vscode-oniguruma": "2.0.1",
     "vscode-textmate": "9.3.2"
