@@ -1,0 +1,13 @@
+{{- /* An absolute URL for a param value: an http(s) URL as it is; else the path of a page (site.GetPage) gives that
+page's URL; else the path is taken under baseURL, with or without a leading slash, so the site's subpath stays. */ -}}
+{{- $url := "" -}}
+{{- if findRE `^https?://` . -}}
+  {{- $url = . -}}
+{{- else -}}
+  {{- with site.GetPage (strings.TrimSuffix "/" .) -}}
+    {{- $url = .Permalink -}}
+  {{- else -}}
+    {{- $url = strings.TrimPrefix "/" . | absURL -}}
+  {{- end -}}
+{{- end -}}
+{{- return $url -}}

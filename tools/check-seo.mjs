@@ -1,6 +1,8 @@
 // Checks the search tags of a built site (make example): node tools/check-seo.mjs DIR [--off]
-// Every page: a title, one h1, and either a canonical URL or a robots noindex. Every JSON-LD block parses and its nodes
-// have the fields Google requires. The sitemap lists no noindex page. With --off (off.toml), none of the tags is there.
+// Every page: a title, one h1, either a canonical URL or a robots noindex, and a description with no entity escaped
+// twice. Every JSON-LD block parses and its nodes have the fields Google requires. The sitemap lists no noindex page
+// and no page whose canonical URL is another page. With --off (off.toml), none of the tags is there. Hugo's alias
+// pages (a refresh to the new URL) are skipped.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -35,7 +37,7 @@ const required = {
   BlogPosting: ["headline", "datePublished", "author"],
 };
 
-function checkNode(file, node, canonical) {
+function checkNode(file, node, ownURL) {
   const type = node["@type"];
   if (!type) return fail(file, "a JSON-LD node has no @type");
   for (const field of required[type] ?? []) {
@@ -50,18 +52,27 @@ function checkNode(file, node, canonical) {
       }
     });
     const last = items.at(-1);
-    if (last && canonical && last.item !== canonical) fail(file, `the last breadcrumb ${last.item} is not the canonical ${canonical}`);
+    if (last && last.item !== ownURL) fail(file, `the last breadcrumb ${last.item} is not the page ${ownURL}`);
   }
   if (type === "Organization" && !absolute(node.logo)) fail(file, "Organization logo is not an absolute URL");
   if (type === "BlogPosting" && !node.author?.name) fail(file, "BlogPosting author has no name");
 }
 
 const noindexPages = new Set();
+const elsewhere = new Set();
+const homeCanonical = (() => {
+  const html = readFileSync(join(dir, "index.html"), "utf8");
+  const link = tags(html, "link").find((t) => attr(t, "rel") === "canonical");
+  const og = metaNamed(html, "og:url")[0];
+  return link ? attr(link, "href") : og ? attr(og, "content") : null;
+})();
 const seen = { WebSite: 0, Organization: 0, BreadcrumbList: 0 };
 
 for (const path of htmlFiles(dir)) {
   const file = relative(dir, path);
   const html = readFileSync(path, "utf8");
+  if (/<meta http-equiv="?refresh/.test(html)) continue;
+  const ownURL = homeCanonical && homeCanonical + (file === "index.html" ? "" : file.replace(/index\.html$/, ""));
   if (!/<title>[^<]+<\/title>/.test(html)) fail(file, "no <title>");
   const h1s = tags(html, "h1").length;
   if (h1s !== 1) fail(file, `${h1s} h1 headings`);
@@ -73,6 +84,11 @@ for (const path of htmlFiles(dir)) {
   if (file === "404.html" && !noindex) fail(file, "the 404 page has no robots noindex");
   if (noindex && canonicals.length) fail(file, "a noindex page has a canonical URL");
   if (!noindex && (canonicals.length !== 1 || !absolute(canonicals[0]))) fail(file, "needs one absolute canonical URL");
+  if (canonicals[0] && ownURL && canonicals[0] !== ownURL) elsewhere.add(file);
+  for (const tag of [...metaNamed(html, "description"), ...metaNamed(html, "og:description"), ...metaNamed(html, "twitter:description")]) {
+    const text = attr(tag, "content") ?? "";
+    if (/&amp;(amp|lt|gt|quot|[a-z]+|#\d+);/.test(tag)) fail(file, `a description escapes an entity twice: ${text}`);
+  }
 
   const blocks = [...html.matchAll(/<script type=(?:"application\/ld\+json"|application\/ld\+json)>([\s\S]*?)<\/script>/g)];
   const crumbs = html.includes('aria-label=Breadcrumb') || html.includes('aria-label="Breadcrumb"');
@@ -102,7 +118,7 @@ for (const path of htmlFiles(dir)) {
     }
     if (data["@context"] !== "https://schema.org") fail(file, "JSON-LD @context is not https://schema.org");
     for (const node of data["@graph"] ?? []) {
-      checkNode(file, node, canonicals[0]);
+      checkNode(file, node, ownURL);
       if (node["@type"] in seen) seen[node["@type"]]++;
     }
     const home = file === "index.html";
@@ -124,6 +140,7 @@ if (existsSync(sitemap)) {
     const page = join(loc.slice(root.length), "index.html");
     if (!existsSync(join(dir, page))) fail("sitemap.xml", `${loc} has no page`);
     if (noindexPages.has(page)) fail("sitemap.xml", `${loc} is a noindex page`);
+    if (elsewhere.has(page)) fail("sitemap.xml", `${loc} has its canonical URL on another page`);
   }
 } else {
   fail("sitemap.xml", "missing");

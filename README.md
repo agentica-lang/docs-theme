@@ -92,7 +92,7 @@ All are optional.
 | Param | Default | What it does |
 |---|---|---|
 | `description` | none | The meta and Open Graph description of a page with no description or summary, and the summary in `llms.txt` |
-| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image; a path is taken from the site root |
+| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image; a value with no `https://` is a path under `baseURL` (see below) |
 | `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
 | `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
 | `tagPrefix` | `""` | Put before the version in the release tag: `v` for a tag `v1.2.0` |
@@ -108,10 +108,14 @@ canonical URL (or a robots `noindex,follow`), the theme color, a link to the
 feed, Open Graph and Twitter card tags, and one JSON-LD block. The JSON-LD of
 the home page has a `WebSite` and an `Organization` (and the `software` block
 below); the other pages have a `BreadcrumbList`, the same path that the visible
-breadcrumbs show above the title. `sitemap.xml` lists the home page, sections
-and pages, with no `noindex` page and no empty section; with `enableGitInfo`
-each one has a `<lastmod>` from Git. The 404 page is `noindex` and links the
-top sections. Each part has its param, and `false` turns it off:
+breadcrumbs show above the title (their first item is the `home` string of
+`i18n/`, "Home"). `sitemap.xml` lists the home page, sections and pages, with
+no `noindex` page, no page whose canonical URL is another page, and no section
+with no text and no indexable page; with `enableGitInfo` each one has a
+`<lastmod>` from Git. A site that is all `noindex` lists only its home page,
+since a sitemap needs one URL. The 404 page is `noindex` and links the home
+page and the top sections that the sitemap lists. Each part has its param, and
+`false` turns it off:
 
 | Param | Default | What it does |
 |---|---|---|
@@ -120,13 +124,20 @@ top sections. Each part has its param, and `false` turns it off:
 | `openGraph` | `true` | The Open Graph and Twitter card tags |
 | `feedLink` | `true` | The `<link rel="alternate">` to the RSS feed of the page or the home page, when the site has one |
 | `themeColor` | `{ light = "#ffffff", dark = "#0f1217" }` | The `theme-color` of the light and the dark system color setting |
-| `noindex` | `false` | `true` makes every page `noindex,follow` and empties the sitemap: for an old version or a preview. `HUGO_PARAMS_NOINDEX=true` sets it too |
+| `noindex` | `false` | `true` makes every page `noindex,follow`: for an old version or a preview. `HUGO_PARAMS_NOINDEX=true` sets it too |
 | `organization` | the agentica-lang org | A table: `name` (`Agentica`), `url` (`https://www.agentica-lang.com/`), `logo` (`icon-512.png` there) and `sameAs` (a list, the GitHub org) |
-| `software` | none | A table that adds a `SoftwareSourceCode` to the home page: `type` (or `SoftwareApplication`), `name` (the site title), `description` (the site's), `codeRepository` (`repo`), `programmingLanguage`, `license`, `applicationCategory`, `operatingSystem` |
+| `software` | none | A table that adds a `SoftwareSourceCode` to the home page: `name` (the site title), `description` (the site's), `codeRepository` (`repo`), `programmingLanguage`, `license`. There is no `SoftwareApplication`: Google wants offers or ratings for it |
 
 In the front matter of a page, `noindex: true` makes that page `noindex` and
-leaves it out of the sitemap, and `canonical: URL` sets its canonical URL (to
-point a copy at its original).
+leaves it out of the sitemap, and `canonical:` sets its canonical URL (to point
+a copy at its original), which also leaves it out of the sitemap.
+
+`canonical`, `image` and the organization's `logo` take a full `https://` URL,
+or else a path: the path of a page (`/guide/code/`, found with
+`site.GetPage`) gives that page's URL, and any other path is taken under
+`baseURL`, with or without a leading slash. So with
+`baseURL = "https://www.agentica-lang.com/my-repo/"`, `/x.png` is
+`https://www.agentica-lang.com/my-repo/x.png`, not the root of the host.
 
 To add JSON-LD nodes, override `_partials/structured-data-extra.html`: it
 returns a list of dicts, which join the page's `@graph`. The example site adds
@@ -144,7 +155,10 @@ one part, copy it from the theme to the same path under `site/layouts/` (or
 `site/layouts/_partials/seo.html`, add to the home page with
 `site/layouts/_partials/home-extra.html` (empty in the theme), and the agentica
 site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no
-longer gets the theme's fixes.
+longer gets the theme's fixes. A copy of `single.html` or `list.html` (or any
+page layout) must call `{{ partial "breadcrumbs.html" . }}` at the top of its
+`<article>`, as the theme's do, or its pages lose the visible breadcrumbs that
+match their `BreadcrumbList`.
 
 ## Update the theme
 
@@ -166,7 +180,8 @@ git commit -m "Update docs-theme"
   be there, a template must not print a format error, and
   `tools/check-seo.mjs` checks the search tags: a title and one h1, a
   canonical URL or `noindex`, JSON-LD that parses with the fields Google
-  requires, breadcrumbs that match it, and a sitemap with no `noindex` page. `make example-serve` serves the first one.
+  requires, breadcrumbs that match it, and a sitemap with no `noindex` page.
+  `make example-serve` serves the first one.
 - Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
 - `exampleSite/hugo.toml` finds the theme with `themesDir = "../.."`, so the
   clone folder must be named `docs-theme`.

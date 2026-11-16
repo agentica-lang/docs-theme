@@ -5,7 +5,9 @@
   <ul class="pages">
     <li><a href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a></li>
     {{- range site.Home.Pages.ByWeight }}
+    {{- if partial "listed.html" . }}
     <li><a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a></li>
+    {{- end }}
     {{- end }}
   </ul>
 </article>

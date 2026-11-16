@@ -1,0 +1,10 @@
+{{- /* True for a page the sitemap lists and the 404 page links: the home page, a section or a page, not noindex, its
+own canonical, and for a section, some text or a child that is not noindex. */ -}}
+{{- $listed := false -}}
+{{- if and .Permalink (in (slice "home" "section" "page") .Kind) (not (partial "noindex.html" .)) (eq (partial "canonical.html" .) .Permalink) -}}
+  {{- $listed = or .IsHome (eq .Kind "page") (strings.TrimSpace .Content) -}}
+  {{- range .Pages -}}
+    {{- if not (partial "noindex.html" .) }}{{ $listed = true }}{{ end -}}
+  {{- end -}}
+{{- end -}}
+{{- return $listed -}}

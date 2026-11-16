@@ -1,0 +1,2 @@
+# The words of the theme that a site can translate (i18n/<lang>.toml of the site wins).
+home = "Home"
