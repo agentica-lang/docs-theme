@@ -44,6 +44,7 @@ links depend on it.
    title = "My repo"
    theme = "docs-theme"
    disableKinds = ["taxonomy", "term", "rss"]
+   enableGitInfo = true
 
    [module.hugoVersion]
      min = "0.167.0"
@@ -75,6 +76,9 @@ links depend on it.
    or `git submodule update --init site/themes/docs-theme`) and point the npm
    cache of `actions/setup-node` at
    `site/themes/docs-theme/highlight/package-lock.json`.
+   With `enableGitInfo`, also check out the whole history
+   (`fetch-depth: 0`): the sitemap's `<lastmod>` is the date of the last
+   commit of each page, and a shallow clone gives every page the same date.
 
 Each folder of the content is a section with an `_index.md`. The sidebar and
 the pager follow the `weight` in the front matter of each page. When the text of
@@ -97,13 +101,47 @@ All are optional.
 | `branch` | `main` | The branch of the page source links |
 | `narrow` | `50rem` | The width at and below which the sidebar becomes a drawer |
 
+## Search engines
+
+Every page gets, in its `<head>` (`_partials/seo.html`): the description, a
+canonical URL (or a robots `noindex,follow`), the theme color, a link to the
+feed, Open Graph and Twitter card tags, and one JSON-LD block. The JSON-LD of
+the home page has a `WebSite` and an `Organization` (and the `software` block
+below); the other pages have a `BreadcrumbList`, the same path that the visible
+breadcrumbs show above the title. `sitemap.xml` lists the home page, sections
+and pages, with no `noindex` page and no empty section; with `enableGitInfo`
+each one has a `<lastmod>` from Git. The 404 page is `noindex` and links the
+top sections. Each part has its param, and `false` turns it off:
+
+| Param | Default | What it does |
+|---|---|---|
+| `structuredData` | `true` | The JSON-LD block |
+| `breadcrumbs` | `true` | The visible breadcrumbs of every page but the home page; the JSON-LD keeps its `BreadcrumbList` |
+| `openGraph` | `true` | The Open Graph and Twitter card tags |
+| `feedLink` | `true` | The `<link rel="alternate">` to the RSS feed of the page or the home page, when the site has one |
+| `themeColor` | `{ light = "#ffffff", dark = "#0f1217" }` | The `theme-color` of the light and the dark system color setting |
+| `noindex` | `false` | `true` makes every page `noindex,follow` and empties the sitemap: for an old version or a preview. `HUGO_PARAMS_NOINDEX=true` sets it too |
+| `organization` | the agentica-lang org | A table: `name` (`Agentica`), `url` (`https://www.agentica-lang.com/`), `logo` (`icon-512.png` there) and `sameAs` (a list, the GitHub org) |
+| `software` | none | A table that adds a `SoftwareSourceCode` to the home page: `type` (or `SoftwareApplication`), `name` (the site title), `description` (the site's), `codeRepository` (`repo`), `programmingLanguage`, `license`, `applicationCategory`, `operatingSystem` |
+
+In the front matter of a page, `noindex: true` makes that page `noindex` and
+leaves it out of the sitemap, and `canonical: URL` sets its canonical URL (to
+point a copy at its original).
+
+To add JSON-LD nodes, override `_partials/structured-data-extra.html`: it
+returns a list of dicts, which join the page's `@graph`. The example site adds
+a `BlogPosting` to each page of its `blog` section that way. The theme has no
+`TechArticle` for docs pages (no search result uses it) and no image render
+hook (width, height, lazy loading, a warning on a missing alt text); both wait
+for a site that needs them.
+
 ## Change a template
 
 A file of the site wins over the file of the theme with the same path. To change
 one part, copy it from the theme to the same path under `site/layouts/` (or
 `site/assets/`) and edit the copy. For example, a site can use its own icon with
-`site/layouts/_partials/favicon.html`, its own canonical, description and
-Open Graph tags with `site/layouts/_partials/seo.html`, add to the home page with
+`site/layouts/_partials/favicon.html`, its own search tags with
+`site/layouts/_partials/seo.html`, add to the home page with
 `site/layouts/_partials/home-extra.html` (empty in the theme), and the agentica
 site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no
 longer gets the theme's fixes.
@@ -121,11 +159,14 @@ git commit -m "Update docs-theme"
 
 ## Work on the theme
 
-- `make example` builds the site in `exampleSite/` as CI does, three times:
-  with all the params, with no version and no repo (`bare.toml`), and with a
-  tag prefix (`prefix.toml`). Hugo fails on a warning, the highlighter runs
-  with `--strict`, the outputs must be there, and a template must not print a
-  format error. `make example-serve` serves the first one.
+- `make example` builds the site in `exampleSite/` as CI does, four times:
+  with all the params, with no version and no repo (`bare.toml`), with a tag
+  prefix (`prefix.toml`), and with every search tag off (`off.toml`). Hugo
+  fails on a warning, the highlighter runs with `--strict`, the outputs must
+  be there, a template must not print a format error, and
+  `tools/check-seo.mjs` checks the search tags: a title and one h1, a
+  canonical URL or `noindex`, JSON-LD that parses with the fields Google
+  requires, breadcrumbs that match it, and a sitemap with no `noindex` page. `make example-serve` serves the first one.
 - Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
 - `exampleSite/hugo.toml` finds the theme with `themesDir = "../.."`, so the
   clone folder must be named `docs-theme`.

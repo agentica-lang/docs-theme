@@ -1,0 +1,3 @@
+{{- /* True for a page that search engines should not index: the 404 page, or `noindex` in the site params or the
+front matter (an environment value comes as the string "true"). The sitemap leaves these pages out. */ -}}
+{{- return or (eq .Kind "404") (in (slice true "true") site.Params.noindex) (in (slice true "true") .Params.noindex) -}}

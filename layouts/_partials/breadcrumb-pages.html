@@ -1,0 +1,3 @@
+{{- /* The path from the home page to this page: its ancestors, then the page. The visible breadcrumbs and the
+BreadcrumbList of the structured data both use it, so they match. */ -}}
+{{- return (.Ancestors.Reverse | append .) -}}

@@ -6,6 +6,16 @@
   repoPublic = false
   # The width at and below which the sidebar becomes a drawer (Sass and nav.js read it).
   narrow = "50rem"
+  # The search tags (README.md, "Search engines"); false turns each one off.
+  breadcrumbs = true
+  feedLink = true
+  noindex = false
+  openGraph = true
+  structuredData = true
+  # The theme-color meta: --bg of the light and the dark theme (_tokens.scss).
+  [params.themeColor]
+    light = "#ffffff"
+    dark = "#0f1217"
 
 # CSS classes for the code blocks of other languages; agentica blocks are colored by highlight/highlight.mjs.
 [markup.highlight]

@@ -4,7 +4,8 @@ locale = "en"
 title = "Example"
 theme = "docs-theme"
 themesDir = "../.."
-disableKinds = ["taxonomy", "term", "rss"]
+disableKinds = ["taxonomy", "term"]
+enableGitInfo = true
 
 [params]
   description = "An example site of the agentica-lang docs theme."
@@ -12,3 +13,11 @@ disableKinds = ["taxonomy", "term", "rss"]
   repo = "https://github.com/agentica-lang/docs-theme"
   repoPublic = true
   version = "0.1.0"
+
+  [params.software]
+    type = "SoftwareSourceCode"
+    programmingLanguage = "Agentica"
+    license = "https://opensource.org/licenses/MIT"
+
+[outputs]
+  home = ["html", "markdown", "search", "llms", "llmsfull", "rss"]

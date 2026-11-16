@@ -1,0 +1,29 @@
+@use "tokens" as *;
+
+.breadcrumbs {
+  margin: 0 0 0.75rem;
+  font-size: 0.9rem;
+
+  ol {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li + li::before {
+    margin: 0 0.4rem;
+    color: var(--muted);
+    content: "›";
+  }
+
+  a {
+    color: var(--muted);
+  }
+
+  [aria-current="page"] {
+    color: var(--fg);
+    text-decoration: none;
+  }
+}
