@@ -113,7 +113,8 @@ breadcrumbs show above the title (their first item is the `home` string of
 `i18n/`, "Home"). `sitemap.xml` lists the home page, sections and pages, with
 no `noindex` page, no page whose canonical URL is another page, and no section
 with no text and no listed page (so a section of empty sections is left out
-too); with `enableGitInfo` each one has a `<lastmod>` from Git. A site that is all `noindex` lists only its home page,
+too); with `enableGitInfo` each one has a `<lastmod>` from Git. A site that is
+all `noindex` lists only its home page,
 since a sitemap needs one URL. The 404 page is `noindex` and links the home
 page and the top sections that the sitemap lists. Each part has its param, and
 `false` turns it off:
@@ -136,7 +137,8 @@ a copy at its original), which also leaves it out of the sitemap.
 `canonical`, `image` and the organization's `logo` take a full `https://` URL
 (a protocol-relative `//host/path` gets `https:`), or else a path: the path of
 a page (`/guide/code/`, found with `site.GetPage`) gives that page's URL, and
-any other path is taken under `baseURL`, with or without a leading slash. So with
+any other path is taken under `baseURL`, with or without a leading slash. So
+with
 `baseURL = "https://www.agentica-lang.com/my-repo/"`, `/x.png` is
 `https://www.agentica-lang.com/my-repo/x.png`, not the root of the host. A
 `canonical` path that is not a page of the site is likely a typo: the build
