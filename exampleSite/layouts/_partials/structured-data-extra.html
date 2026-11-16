@@ -1,0 +1,16 @@
+{{- /* The example of the hook: a BlogPosting for each page of the blog section. */ -}}
+{{- $nodes := slice }}
+{{- if and .IsPage (eq .Section "blog") }}
+  {{- $post := dict
+    "@type" "BlogPosting"
+    "headline" .Title
+    "url" .Permalink
+    "mainEntityOfPage" .Permalink
+    "datePublished" (.Date.Format "2006-01-02T15:04:05Z07:00")
+    "dateModified" (.Lastmod.Format "2006-01-02T15:04:05Z07:00")
+    "author" (dict "@type" "Person" "name" (.Params.author | default site.Title))
+  }}
+  {{- with .Description }}{{ $post = merge $post (dict "description" .) }}{{ end }}
+  {{- $nodes = $nodes | append $post }}
+{{- end }}
+{{- return $nodes -}}

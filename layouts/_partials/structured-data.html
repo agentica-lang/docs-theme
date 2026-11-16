@@ -1,0 +1,40 @@
+{{- /* The JSON-LD of the page, one @graph. The home page: WebSite, Organization and, with [params.software], a
+SoftwareSourceCode. Other pages: a BreadcrumbList that matches the visible breadcrumbs.
+structured-data-extra.html adds the site's own nodes. */ -}}
+{{- $org := site.Params.organization | default dict }}
+{{- $orgURL := $org.url | default "https://www.agentica-lang.com/" }}
+{{- $orgID := printf "%s#organization" $orgURL }}
+{{- $graph := slice }}
+{{- if .IsHome }}
+  {{- $website := dict "@type" "WebSite" "@id" (printf "%s#website" .Permalink) "name" site.Title "url" .Permalink "inLanguage" site.Language.Locale "publisher" (dict "@id" $orgID) }}
+  {{- with site.Params.description }}{{ $website = merge $website (dict "description" .) }}{{ end }}
+  {{- $graph = $graph | append $website }}
+  {{- $graph = $graph | append (dict
+    "@type" "Organization"
+    "@id" $orgID
+    "name" ($org.name | default "Agentica")
+    "url" $orgURL
+    "logo" (partial "site-url.html" ($org.logo | default "https://www.agentica-lang.com/icon-512.png"))
+    "sameAs" ($org.sameAs | default (slice "https://github.com/agentica-lang"))
+  ) }}
+  {{- with site.Params.software }}
+    {{- $software := dict "@type" "SoftwareSourceCode" "name" (.name | default site.Title) "url" $.Permalink "publisher" (dict "@id" $orgID) }}
+    {{- with .description | default site.Params.description }}{{ $software = merge $software (dict "description" .) }}{{ end }}
+    {{- with .codeRepository | default site.Params.repo }}{{ $software = merge $software (dict "codeRepository" .) }}{{ end }}
+    {{- with .programmingLanguage }}{{ $software = merge $software (dict "programmingLanguage" .) }}{{ end }}
+    {{- with .license }}{{ $software = merge $software (dict "license" .) }}{{ end }}
+    {{- $graph = $graph | append $software }}
+  {{- end }}
+{{- else }}
+  {{- $items := slice }}
+  {{- range $i, $p := partial "breadcrumb-pages.html" . }}
+    {{- $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "name" (cond $p.IsHome (i18n "home" | default "Home") $p.LinkTitle) "item" $p.Permalink) }}
+  {{- end }}
+  {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) }}
+{{- end }}
+{{- range partial "structured-data-extra.html" . }}
+  {{- $graph = $graph | append . }}
+{{- end }}
+{{- with $graph }}
+  <script type="application/ld+json">{{ dict "@context" "https://schema.org" "@graph" . | jsonify | safeJS }}</script>
+{{- end }}

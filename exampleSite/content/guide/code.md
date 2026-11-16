@@ -2,6 +2,7 @@
 title: Code blocks
 weight: 1
 description: An agentica block with its output, and a block that does not compile.
+aliases: [/old-code/]
 ---
 
 ## A program

@@ -215,8 +215,9 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
 - Reuse tokens. Add one only when a value repeats or changes with the theme. A
   color token needs a light value on `:root` and a dark value in the `dark`
   mixin, in the same change. Check each color, shadow and scrim in both themes.
-- Colors live in `_tokens.scss`. The chevron mask in `_layout.scss` uses
-  black, which sets only the shape.
+- Colors live in `_tokens.scss`. The `themeColor` param in `hugo.toml` copies
+  the light and dark `--bg`, so it must change with them. The chevron mask in
+  `_layout.scss` uses black, which sets only the shape.
 - No runtime dependency. Hugo, Dart Sass and the Node highlighter run at build
   time (`Makefile`). The browser loads only the built CSS and JS. No CDN, web
   font or outside script. The one exception is the favicon:

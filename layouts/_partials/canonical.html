@@ -1,0 +1,4 @@
+{{- /* The canonical URL of a page: its `canonical` front matter (through site-url.html), else its own URL. */ -}}
+{{- $url := .Permalink -}}
+{{- with .Params.canonical }}{{ $url = partial "site-url.html" . }}{{ end -}}
+{{- return $url -}}

@@ -9,10 +9,11 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
 
-# Three builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), and a tag prefix (prefix.toml).
+# Four builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), and every
+# search tag off (off.toml). tools/check-seo.mjs checks the search tags of each.
 # Each must have the outputs of the theme's hugo.toml (they need `_merge = "deep"`) and no Go format error, which a
 # printf of a missing param writes (%!s(<nil>), or %25!s(%3cnil%3e) in a URL) with no Hugo warning.
-EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml
+EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml
 
 example: highlight/node_modules
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
@@ -25,6 +26,7 @@ example: highlight/node_modules
 	    test -s exampleSite/$$out/$$f || { echo "exampleSite/$$out/$$f is missing" >&2; exit 1; }; \
 	  done; \
 	  if grep -rlE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
+	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
 	@# Each build has the release links it should, and only those.
 	@grep -q 'releases/tag/0.1.0' exampleSite/public/index.html
@@ -35,4 +37,4 @@ example-serve:
 	hugo server --source exampleSite
 
 clean:
-	rm -rf exampleSite/public exampleSite/public-bare exampleSite/public-prefix exampleSite/resources highlight/node_modules
+	rm -rf exampleSite/public exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off exampleSite/resources highlight/node_modules

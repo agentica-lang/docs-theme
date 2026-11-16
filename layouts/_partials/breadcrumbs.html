@@ -1,0 +1,14 @@
+{{- if and site.Params.breadcrumbs (not .IsHome) }}
+{{- $pages := partial "breadcrumb-pages.html" . }}
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <ol>
+    {{- range $i, $p := $pages }}
+    {{- if eq $i (sub (len $pages) 1) }}
+    <li><a href="{{ $p.RelPermalink }}" aria-current="page">{{ $p.LinkTitle }}</a></li>
+    {{- else }}
+    <li><a href="{{ $p.RelPermalink }}">{{ cond $p.IsHome (i18n "home" | default "Home") $p.LinkTitle }}</a></li>
+    {{- end }}
+    {{- end }}
+  </ol>
+</nav>
+{{- end }}

@@ -1,0 +1,7 @@
+# Added to hugo.toml by make example: every search tag turned off.
+[params]
+  breadcrumbs = false
+  feedLink = false
+  openGraph = false
+  structuredData = false
+  themeColor = false
