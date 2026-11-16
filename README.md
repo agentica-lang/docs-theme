@@ -40,7 +40,7 @@ links depend on it.
 
    ```toml
    _merge = "deep"
-   baseURL = "https://agentica-lang.github.io/my-repo/"
+   baseURL = "https://www.agentica-lang.com/my-repo/"
    title = "My repo"
    theme = "docs-theme"
    disableKinds = ["taxonomy", "term", "rss"]
