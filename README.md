@@ -140,6 +140,11 @@ In the front matter of a page, `noindex: true` makes that page `noindex` and
 leaves it out of the sitemap, and `canonical:` sets its canonical URL (to point
 a copy at its original), which also leaves it out of the sitemap.
 
+A page bundle with a `cover.*` image (`blog/my-post/index.md` and
+`blog/my-post/cover.png`) uses it, as a 1200px wide jpg, for its Open Graph and
+Twitter card image, with `twitter:card` `summary_large_image`. The other pages
+keep the `image` param and a `summary` card.
+
 `canonical`, `image` and the organization's `logo` take a full `https://` URL (a
 protocol-relative `//host/path` gets `https:`), or else a path: the path of a
 page (`/guide/code/`, found with `site.GetPage`) gives that page's URL, and any
