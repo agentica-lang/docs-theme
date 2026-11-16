@@ -1,4 +1,10 @@
-{{- /* The canonical URL of a page: its `canonical` front matter (through site-url.html), else its own URL. */ -}}
+{{- /* The canonical URL of a page: its `canonical` front matter (through site-url.html), else its own URL. A path
+with no scheme that is not a page of the site is likely a typo, so the build warns. */ -}}
 {{- $url := .Permalink -}}
-{{- with .Params.canonical }}{{ $url = partial "site-url.html" . }}{{ end -}}
+{{- with .Params.canonical -}}
+  {{- if and (not (findRE `^(https?:)?//` .)) (not (site.GetPage (strings.TrimSuffix "/" .))) -}}
+    {{- warnf "%s: canonical %q is not a page of the site" $.Path . -}}
+  {{- end -}}
+  {{- $url = partial "site-url.html" . -}}
+{{- end -}}
 {{- return $url -}}

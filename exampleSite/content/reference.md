@@ -2,6 +2,7 @@
 title: Reference
 weight: 2
 description: Signature blocks, which wrap and are colored.
+search: false
 ---
 
 # API reference

@@ -1,0 +1,5 @@
+{{- /* True when the page shows the search box: the site has the search output, and `search` is not false in the
+page's front matter or, when the page does not set it, in the site params. */ -}}
+{{- $on := ne site.Params.search false -}}
+{{- if isset .Params "search" }}{{ $on = ne .Params.search false }}{{ end -}}
+{{- return and $on (site.Home.OutputFormats.Get "search") -}}

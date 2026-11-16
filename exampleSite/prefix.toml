@@ -1,3 +1,4 @@
-# Added to hugo.toml by make example: a repo that tags its releases v1.2.0.
+# Added to hugo.toml by make example: a repo that tags its releases v1.2.0, and a protocol-relative image.
 [params]
   tagPrefix = "v"
+  image = "//www.agentica-lang.com/icon-192.png"

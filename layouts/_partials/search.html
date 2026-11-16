@@ -1,3 +1,4 @@
+{{- if partial "search-on.html" . }}
 {{- with site.Home.OutputFormats.Get "search" }}
 <div class="site-search" role="search" data-index="{{ .RelPermalink }}">
   <label class="visually-hidden" for="search-input">Search the docs</label>
@@ -12,5 +13,6 @@
 </div>
 {{- with resources.Get "js/search.js" | js.Build (dict "minify" true "targetPath" "js/search.js") | fingerprint }}
 <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{- end }}
 {{- end }}
 {{- end }}
