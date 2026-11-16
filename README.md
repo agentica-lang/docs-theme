@@ -87,7 +87,8 @@ All are optional.
 
 | Param | Default | What it does |
 |---|---|---|
-| `description` | none | The meta description, and the summary in `llms.txt` |
+| `description` | none | The meta and Open Graph description of a page with no description or summary, and the summary in `llms.txt` |
+| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image; a path is taken from the site root |
 | `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
 | `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
 | `tagPrefix` | `""` | Put before the version in the release tag: `v` for a tag `v1.2.0` |
@@ -101,7 +102,8 @@ All are optional.
 A file of the site wins over the file of the theme with the same path. To change
 one part, copy it from the theme to the same path under `site/layouts/` (or
 `site/assets/`) and edit the copy. For example, a site can use its own icon with
-`site/layouts/_partials/favicon.html`, add to the home page with
+`site/layouts/_partials/favicon.html`, its own canonical, description and
+Open Graph tags with `site/layouts/_partials/seo.html`, add to the home page with
 `site/layouts/_partials/home-extra.html` (empty in the theme), and the agentica
 site keeps its own `layouts/reference/list.html`. Keep copies few: a copy no
 longer gets the theme's fixes.

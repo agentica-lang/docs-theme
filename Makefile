@@ -26,6 +26,9 @@ example: highlight/node_modules
 	  done; \
 	  if grep -rlE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
 	done
+	@# Every page has its canonical URL and Open Graph tags.
+	@grep -q 'rel=canonical href=https://' exampleSite/public/guide/code/index.html
+	@grep -qE 'property="?og:image"? content="?https://' exampleSite/public/guide/code/index.html
 	@# Each build has the release links it should, and only those.
 	@grep -q 'releases/tag/0.1.0' exampleSite/public/index.html
 	@grep -q 'releases/tag/v0.1.0' exampleSite/public-prefix/index.html
