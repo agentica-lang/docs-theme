@@ -44,6 +44,11 @@ example: highlight/node_modules
 	@# A section of empty sections (guide/archive) is not in the sitemap; a protocol-relative image gets https.
 	@if grep -q 'guide/archive' exampleSite/public/sitemap.xml; then echo "the sitemap lists an empty section" >&2; exit 1; fi
 	@grep -qE 'og:image"? content="?https://www.agentica-lang.com/icon-192.png' exampleSite/public-prefix/index.html
+	@# A bundle's cover is its large card, a 1200px jpg; the other pages keep the summary card.
+	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/blog/first-post/cover_[^"> ]*\.jpg' exampleSite/public/blog/first-post/index.html
+	@grep -qE 'og:image:width"? content="?1200"?>' exampleSite/public/blog/first-post/index.html
+	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public/blog/first-post/index.html
+	@grep -qE 'twitter:card"? content="?summary"?>' exampleSite/public/guide/index.html
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
