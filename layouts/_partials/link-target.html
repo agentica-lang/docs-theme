@@ -21,6 +21,11 @@
     {{- if site.Params.repoPublic -}}
       {{- $href = printf "%s/blob/%s/%s%s" site.Params.repo site.Params.branch $target $fragment -}}
     {{- end -}}
+    {{- /* Another file of the repository (LICENSE, a source file) is linked on GitHub, or is plain text on a private
+    site; a link written as a page (`x.md`, `../x/`) must reach one. */ -}}
+    {{- if or (strings.HasSuffix $url.Path ".md") (strings.HasSuffix $url.Path "/") -}}
+      {{- warnf "%s: no page for link %q" $.from.Path $dest -}}
+    {{- end -}}
   {{- end -}}
 {{- end -}}
 {{- return dict "page" $page "fragment" $fragment "href" $href "external" $url.IsAbs -}}

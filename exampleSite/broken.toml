@@ -1,0 +1,9 @@
+# `make example` builds with this file too and expects a warning for each link of broken/links.md that is written as
+# a page and reaches none, and none for its link to a file of the repository.
+[[module.mounts]]
+  source = "content"
+  target = "content"
+
+[[module.mounts]]
+  source = "broken"
+  target = "content/broken"

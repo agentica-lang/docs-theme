@@ -85,6 +85,13 @@ the pager follow the `weight` in the front matter of each page. When the text of
 a page or of the home page starts with a `#` heading (a README mounted as
 `content/_index.md`), that heading is the title shown on the page.
 
+A link to another page names its file, relative to the linking file
+(`[Filters](filters.md)`, `[Guide](guide/_index.md)`), so it works on GitHub
+too. A relative link written as a page (`x.md` or `../x/`) that reaches no page
+is a Hugo warning, which `--panicOnWarning` turns into an error. A link to any
+other file of the repository goes to GitHub when `repoPublic` is true, and is
+plain text otherwise.
+
 ## Params
 
 All are optional.
