@@ -12,7 +12,9 @@
   display: flex;
 }
 
-.site-search ~ .repo {
+// The box takes the free space before the buttons; without it (`search: false`), the theme button does (_header.scss).
+.js .site-search ~ .theme-toggle,
+.js .site-search ~ .repo {
   margin-left: 0;
 }
 

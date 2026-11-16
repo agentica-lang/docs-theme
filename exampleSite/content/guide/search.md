@@ -2,6 +2,7 @@
 title: Search
 weight: 2
 description: The search box and the page actions.
+search: true
 ---
 
 ## Search

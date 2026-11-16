@@ -100,6 +100,7 @@ All are optional.
 | `repoPublic` | `false` | Shows the GitHub link and the page source links; needs `repo` |
 | `branch` | `main` | The branch of the page source links |
 | `narrow` | `50rem` | The width at and below which the sidebar becomes a drawer |
+| `search` | `true` | The search box in the header and its script, which fetches the index. `search: false` (or `"false"`, as `HUGO_PARAMS_SEARCH=false` gives it) in a page's front matter hides them on that page only (a landing page, say), and the page's own value wins over the site's, so `search: true` shows them on one page of a site that turns them off. In a section's `_index.md` it applies to that list page only; use `cascade` for its pages. `search.json` still lists every page, `search: false` ones too |
 
 ## Search engines
 
@@ -109,13 +110,13 @@ feed, Open Graph and Twitter card tags, and one JSON-LD block. The JSON-LD of
 the home page has a `WebSite` and an `Organization` (and the `software` block
 below); the other pages have a `BreadcrumbList`, the same path that the visible
 breadcrumbs show above the title (their first item is the `home` string of
-`i18n/`, "Home"). `sitemap.xml` lists the home page, sections and pages, with
-no `noindex` page, no page whose canonical URL is another page, and no section
-with no text and no indexable page; with `enableGitInfo` each one has a
-`<lastmod>` from Git. A site that is all `noindex` lists only its home page,
-since a sitemap needs one URL. The 404 page is `noindex` and links the home
-page and the top sections that the sitemap lists. Each part has its param, and
-`false` turns it off:
+`i18n/`, "Home"). `sitemap.xml` lists the home page, sections and pages, with no
+`noindex` page, no page whose canonical URL is another page, and no section with
+no text and no listed page (so a section of empty sections is left out too);
+with `enableGitInfo` each one has a `<lastmod>` from Git. A site that is all
+`noindex` lists only its home page, since a sitemap needs one URL. The 404 page
+is `noindex` and links the home page and the top sections that the sitemap
+lists. Each part has its param, and `false` turns it off:
 
 | Param | Default | What it does |
 |---|---|---|
@@ -132,10 +133,10 @@ In the front matter of a page, `noindex: true` makes that page `noindex` and
 leaves it out of the sitemap, and `canonical:` sets its canonical URL (to point
 a copy at its original), which also leaves it out of the sitemap.
 
-`canonical`, `image` and the organization's `logo` take a full `https://` URL,
-or else a path: the path of a page (`/guide/code/`, found with
-`site.GetPage`) gives that page's URL, and any other path is taken under
-`baseURL`, with or without a leading slash. So with
+`canonical`, `image` and the organization's `logo` take a full `https://` URL (a
+protocol-relative `//host/path` gets `https:`), or else a path: the path of a
+page (`/guide/code/`, found with `site.GetPage`) gives that page's URL, and any
+other path is taken under `baseURL`, with or without a leading slash. So with
 `baseURL = "https://www.agentica-lang.com/my-repo/"`, `/x.png` is
 `https://www.agentica-lang.com/my-repo/x.png`, not the root of the host.
 

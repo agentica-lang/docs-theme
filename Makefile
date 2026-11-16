@@ -32,6 +32,18 @@ example: highlight/node_modules
 	@grep -q 'releases/tag/0.1.0' exampleSite/public/index.html
 	@grep -q 'releases/tag/v0.1.0' exampleSite/public-prefix/index.html
 	@if grep -rl 'releases' exampleSite/public-bare; then echo "a build with no version or repo has release links" >&2; exit 1; fi
+	@# `search: false` (reference.md) hides the box and its script on that page only.
+	@if grep -lE 'search-input|js/search' exampleSite/public/reference/index.html; then echo "a page with search: false has the search box" >&2; exit 1; fi
+	@grep -q 'search-input' exampleSite/public/guide/index.html
+	@# Search off for the whole site (bare.toml, the string "false"), on for the one page that sets `search: true`.
+	@if grep -lE 'search-input|js/search' exampleSite/public-bare/guide/index.html; then echo "search: false of the site does not hide the box" >&2; exit 1; fi
+	@grep -q 'search-input' exampleSite/public-bare/guide/search/index.html
+	@# The 404 page points to the search box only when it has one.
+	@grep -q 'Search for it with the box at the top' exampleSite/public/404.html
+	@if grep -q 'Search for it' exampleSite/public-bare/404.html; then echo "the 404 page of a site with no search box mentions it" >&2; exit 1; fi
+	@# A section of empty sections (guide/archive) is not in the sitemap; a protocol-relative image gets https.
+	@if grep -q 'guide/archive' exampleSite/public/sitemap.xml; then echo "the sitemap lists an empty section" >&2; exit 1; fi
+	@grep -qE 'og:image"? content="?https://www.agentica-lang.com/icon-192.png' exampleSite/public-prefix/index.html
 
 example-serve:
 	hugo server --source exampleSite

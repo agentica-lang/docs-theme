@@ -1,5 +1,7 @@
-# Added to hugo.toml by make example: a site with no version and no repo.
+# Added to hugo.toml by make example: a site with no version and no repo, and search off but on the search page
+# (the string "false", as HUGO_PARAMS_SEARCH=false gives it).
 [params]
   version = ""
   repo = ""
   repoPublic = false
+  search = "false"

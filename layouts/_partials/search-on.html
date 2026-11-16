@@ -1,0 +1,6 @@
+{{- /* True when the page shows the search box: the site has the search output, and `search` is not false (or
+"false", as HUGO_PARAMS_SEARCH=false gives it) in the page's front matter or, when the page does not set it, in the
+site params. */ -}}
+{{- $on := not (in (slice false "false") site.Params.search) -}}
+{{- if isset .Params "search" }}{{ $on = not (in (slice false "false") .Params.search) }}{{ end -}}
+{{- return and $on (site.Home.OutputFormats.Get "search") -}}

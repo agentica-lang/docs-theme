@@ -6,6 +6,8 @@
   repoPublic = false
   # The width at and below which the sidebar becomes a drawer (Sass and nav.js read it).
   narrow = "50rem"
+  # The search box and its script; `search: false` in a page's front matter hides it on that page only.
+  search = true
   # The search tags (README.md, "Search engines"); false turns each one off.
   breadcrumbs = true
   feedLink = true
