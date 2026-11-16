@@ -131,8 +131,15 @@
   }
 }
 
+// The first of the right-hand items pushes the rest to the right: the search box when the page has one
+// (_search.scss), else the theme button, else (without JavaScript) the GitHub link.
 .js .theme-toggle {
   display: inline-flex;
+  margin-left: auto;
+}
+
+.js .theme-toggle ~ .repo {
+  margin-left: 0;
 }
 
 // A touch target of 44px, like the menu button.
