@@ -66,6 +66,15 @@ example: highlight/node_modules
 	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/social.png"?>' exampleSite/public-bare/guide/index.html
 	@grep -qE 'og:image:height"? content="?630"?>' exampleSite/public-bare/guide/index.html
 	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public-bare/guide/index.html
+	@# A prompt block wraps; code, signature, input and prompt blocks have a Copy button, output samples do not.
+	@grep -qE '<div class="?code-block prompt"?><div class="?code-bar"?><span class="?sample-label"?>Prompt</span><button [^>]*class="?code-copy"? aria-label="Copy prompt"' exampleSite/public/guide/code/index.html
+	@test "$$(grep -oE 'class="?code-copy"? aria-label="Copy code"' exampleSite/public/guide/code/index.html | wc -l)" = 3 || \
+	  { echo "guide/code: wants a Copy button on each of its 3 code blocks" >&2; exit 1; }
+	@grep -qE 'aria-label="Copy input"' exampleSite/public/guide/code/index.html
+	@grep -qE 'aria-label="Copy signature"' exampleSite/public/reference/index.html
+	@if grep -qE 'Output</span><[^>]*code-copy' exampleSite/public/guide/code/index.html; then echo "an output sample has a Copy button" >&2; exit 1; fi
+	@grep -qE 'js/copy\.[0-9a-f]+\.js' exampleSite/public/guide/code/index.html
+	@if grep -q 'js/copy' exampleSite/public/guide/index.html; then echo "a page with no code block loads copy.js" >&2; exit 1; fi
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }

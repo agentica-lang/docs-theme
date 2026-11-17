@@ -32,6 +32,11 @@
   {{- with resources.Get "js/nav.js" | js.Build (dict "minify" true "targetPath" "js/nav.js" "params" (dict "narrow" site.Params.narrow)) | fingerprint }}
   <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
   {{- end }}
+  {{- if .Store.Get "copy" }}
+  {{- with resources.Get "js/copy.js" | js.Build (dict "minify" true "targetPath" "js/copy.js") | fingerprint }}
+  <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+  {{- end }}
+  {{- end }}
   {{- if .OutputFormats.Get "markdown" }}
   {{- with resources.Get "js/page-actions.js" | js.Build (dict "minify" true "targetPath" "js/page-actions.js") | fingerprint }}
   <script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>

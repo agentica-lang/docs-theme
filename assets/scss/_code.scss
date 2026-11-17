@@ -1,3 +1,5 @@
+@use "tokens" as *;
+
 code,
 pre {
   font-family: var(--mono);
@@ -35,6 +37,91 @@ pre {
   display: block;
   padding-left: 1rem;
   text-indent: -1rem;
+}
+
+// A prompt (render-codeblock.html) is prose to paste: it keeps its line breaks and wraps, so it never scrolls.
+.prompt pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+// A code block with the bar of its Copy button (copy.js) and, for a prompt or an input sample, its label.
+.code-block {
+  margin: 1rem 0;
+
+  pre {
+    margin: 0;
+  }
+}
+
+.code-bar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+
+  &[hidden] {
+    display: none;
+  }
+
+  .sample-label {
+    margin: 0;
+  }
+}
+
+.code-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 1.75rem;
+  margin-left: auto;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.8rem;
+  line-height: 1.25;
+  cursor: pointer;
+
+  &[hidden] {
+    display: none;
+  }
+
+  &:hover {
+    border-color: var(--muted);
+    background: var(--border);
+  }
+
+  &:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+  }
+
+  svg {
+    flex: none;
+    width: 1em;
+    height: 1em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+}
+
+@media (max-width: $narrow) {
+  .code-copy {
+    min-height: var(--target);
+  }
+}
+
+@media print {
+  .code-copy {
+    display: none;
+  }
 }
 
 .sample {
