@@ -1,11 +1,15 @@
 {{- /* The version selector (DESIGN.md, Version selector): with params.versions.enabled (true, or "true" as
 HUGO_PARAMS_VERSIONS_ENABLED=true gives it), publish its two files under _versions/ and load them from the root of all
-versions, params.versions.root (by default this site's root). No fingerprint: every version shares the root's copy. */ -}}
+versions, params.versions.root (by default this site's root). Only the build at that root publishes them, with no
+fingerprint: every version shares its copy. */ -}}
 {{- with site.Params.versions }}
 {{- if in (slice true "true") .enabled }}
-{{- $root := printf "%s/" (strings.TrimSuffix "/" (.root | default site.Home.RelPermalink)) }}
+{{- $own := printf "%s/" (strings.TrimSuffix "/" site.Home.RelPermalink) }}
+{{- $root := printf "%s/" (strings.TrimSuffix "/" (.root | default $own)) }}
+{{- if eq $root $own }}
 {{- range slice "css" "js" }}
 {{- (resources.FromString (printf "_versions/selector.%s" .) (resources.Get (printf "versions/selector.%s" .) | minify).Content).Publish }}
+{{- end }}
 {{- end }}
 <link rel="stylesheet" href="{{ $root }}_versions/selector.css">
 <script src="{{ $root }}_versions/selector.js" defer></script>

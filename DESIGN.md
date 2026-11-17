@@ -189,7 +189,9 @@ Source: `assets/versions/selector.js`, `selector.css`,
   and the build has no `_versions/` folder.
 - The site's root (`params.versions.root`, by default the site's own root)
   holds `versions.json`, which the site's build writes, and
-  `_versions/selector.{js,css}`, which the theme publishes. Every page of every
+  `_versions/selector.{js,css}`, which the theme publishes there: only the
+  build whose own root is that root does, so a version folder has no copy.
+  Every page of every
   version loads the two files from the root, with no fingerprint and no
   `integrity` hash. So one copy serves all versions, and an old build gets the
   current selector. A page built without the theme can load them too.

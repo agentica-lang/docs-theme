@@ -135,11 +135,10 @@ at the root, the others under `0.3.0/`, `dev/`) can show a version selector
   `HUGO_PARAMS_VERSIONS_ENABLED=true HUGO_PARAMS_VERSIONS_ROOT=/docs/ hugo
   --baseURL https://host/docs/0.3.0/`.
 
-Every version's build publishes its own `_versions/selector.js` and
-`_versions/selector.css`, but pages load only the root's copy: every page of
-every version loads them from `root`, with no hash, so a page built before a
-change gets the current selector. The copies in the version folders are
-unused. A page built without this theme can load the same two files from
+Only the build at the root (whose own root is `root`) publishes
+`_versions/selector.js` and `_versions/selector.css`; the version folders get
+no copy. Every page of every version loads them from `root`, with no hash, so
+a page built before a change gets the current selector. A page built without this theme can load the same two files from
 the root with a `<link>` and a `<script defer>` tag.
 
 ## Search engines
