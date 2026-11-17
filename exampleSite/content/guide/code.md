@@ -30,9 +30,11 @@ def name(c: Color) -> String
   end
 end
 
+def shade(c: Color) -> String = "#{name(c)} paint"
+
 def describe(p: Paint) -> String
   big = p.liters > 2.5 && p.liters <= MAX_LITERS
-  return "#{name(p.color)}: #{p.liters} liters, big: #{big}\n"
+  return "#{shade(p.color)}: #{p.liters} liters, big: #{big}\n"
 end
 
 def main() -> Void
@@ -42,7 +44,7 @@ end
 ```
 
 ```output
-red: 4.0 liters, big: true
+red paint: 4.0 liters, big: true
 true
 ```
 

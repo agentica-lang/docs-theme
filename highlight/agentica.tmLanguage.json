@@ -172,7 +172,7 @@
             "1": { "name": "storage.type.function.agentica" },
             "2": { "name": "entity.name.function.agentica" }
           },
-          "end": "(?=#)|$",
+          "end": "(?=\\s=(?:\\s|$))|(?=#(?!\\{))|$",
           "patterns": [
             {
               "begin": "\\(",
@@ -203,7 +203,7 @@
               "beginCaptures": {
                 "0": { "name": "keyword.operator.arrow.agentica" }
               },
-              "end": "(?=#)|$",
+              "end": "(?=\\s=(?:\\s|$))|(?=#(?!\\{))|$",
               "patterns": [{ "include": "#type-expression" }]
             },
             { "include": "#type-expression" }
