@@ -1,0 +1,5 @@
+[
+  { "version": "dev", "path": "dev/" },
+  { "version": "0.1.0", "path": "0.1.0/", "latest": true },
+  { "version": "0.0.9", "path": "0.0.9/" }
+]

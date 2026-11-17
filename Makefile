@@ -9,11 +9,12 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
 
-# Four builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), and every
-# search tag off (off.toml). tools/check-seo.mjs checks the search tags of each.
+# Five builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
+# search tag off (off.toml), and the version selector on (versions.toml). tools/check-seo.mjs checks the search tags of each.
 # Each must have the outputs of the theme's hugo.toml (they need `_merge = "deep"`) and no Go format error, which a
 # printf of a missing param writes (%!s(<nil>), or %25!s(%3cnil%3e) in a URL) with no Hugo warning.
-EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml
+EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml \
+  public-versions:hugo.toml,versions.toml
 
 example: highlight/node_modules
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
@@ -94,6 +95,20 @@ example: highlight/node_modules
 	@node tools/check-seo.mjs exampleSite/public-prefix
 	@printf '<sitemapindex><sitemap><loc>https://agentica-lang.github.io/other/sitemap.xml</loc></sitemap></sitemapindex>' > exampleSite/public-prefix/sitemap.xml
 	@if node tools/check-seo.mjs exampleSite/public-prefix 2>/dev/null; then echo "a sitemap index with no sitemap of the build passes" >&2; exit 1; fi
+	@# The version selector loads only when on: its two files under _versions/ and one tag each in every page's head.
+	@for b in public public-bare public-prefix public-off; do \
+	  if test -e exampleSite/$$b/_versions || grep -rlI '_versions/' exampleSite/$$b; then echo "$$b has the version selector, which is off" >&2; exit 1; fi; \
+	done
+	@test -s exampleSite/public-versions/_versions/selector.js && test -s exampleSite/public-versions/_versions/selector.css
+	@for f in index.html guide/code/index.html 404.html; do \
+	  test "$$(grep -oE '(href|src)="?/docs-theme/_versions/selector\.(css|js)' exampleSite/public-versions/$$f | wc -l)" = 2 || \
+	    { echo "exampleSite/public-versions/$$f does not load the selector from the root once" >&2; exit 1; }; \
+	done
+	@# Each version of a site is built with the selector on from the environment, loading it from the root of all versions.
+	@HUGO_PARAMS_VERSIONS_ENABLED=true HUGO_PARAMS_VERSIONS_ROOT=/site hugo --quiet --cleanDestinationDir --source exampleSite \
+	  --config hugo.toml --baseURL https://example.org/site/0.1.0/ --destination public-env --panicOnWarning
+	@grep -qE 'src="?/site/_versions/selector\.js"? defer' exampleSite/public-env/guide/index.html
+	@test -s exampleSite/public-env/_versions/selector.js
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
@@ -107,4 +122,5 @@ check-seo:
 	node tools/check-seo.mjs "$(DIR)"
 
 clean:
-	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off exampleSite/resources highlight/node_modules
+	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off \
+	  exampleSite/public-versions exampleSite/public-env exampleSite/resources highlight/node_modules

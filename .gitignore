@@ -3,6 +3,8 @@ exampleSite/public-bare/
 exampleSite/public-prefix/
 exampleSite/public-off/
 exampleSite/public-broken/
+exampleSite/public-versions/
+exampleSite/public-env/
 exampleSite/resources/
 exampleSite/.hugo_build.lock
 highlight/node_modules/
