@@ -78,8 +78,8 @@ Source: `_tokens.scss`, `_layout.scss`, `_header.scss`, `_content.scss`.
   the tree column. `--content-width` (50rem) caps text and pager. `--header`
   (3.5rem) is the sticky bar. The drawer is `min(20rem, 85vw)` wide.
 - Breakpoint: `$narrow` is 50rem, from `params.narrow` in `hugo.toml`. Sass and
-  `nav.js` read it. A second one, 30rem, hides the header version (the agentica
-  site also moves its version selector into the menu there).
+  `nav.js` read it. A second one, 30rem, hides the header version and moves
+  the version selector into the menu (see Version selector).
 - `--target` (2.75rem) is the touch size. The pager links use it at every
   width. At 50rem and below, the tree, the code Copy buttons and the share
   links use it too. `--nav-row` is set on `.sidebar`: 2rem, and `--target` at
@@ -179,6 +179,40 @@ Source: `_layout.scss` (50rem and below), `assets/js/nav.js`.
   return focus to the menu button. A plain click on a tree link closes the
   drawer. Growing past 50rem closes it.
 
+### Version selector
+
+Source: `assets/versions/selector.js`, `selector.css`,
+`_partials/versions.html`.
+
+- Off by default. A site that publishes several versions of its docs turns it
+  on with `params.versions.enabled`. With it off, no page loads the two files
+  and the build has no `_versions/` folder.
+- The site's root (`params.versions.root`, by default the site's own root)
+  holds `versions.json`, which the site's build writes, and
+  `_versions/selector.{js,css}`, which the theme publishes. Every page of every
+  version loads the two files from the root, with no fingerprint and no
+  `integrity` hash. So one copy serves all versions, and an old build gets the
+  current selector. A page built without the theme can load them too.
+- `versions.json` is a list of `{ "version", "path", "latest" }`, in the
+  order of the menu. `path` is the version's folder under the root
+  (`0.3.0/`); the `latest` one is served at the root itself.
+- Progressive enhancement: without JS, or when `versions.json` does not load,
+  the header keeps its plain version badge.
+- With JS, a `<select>` named "Version" lists the versions:
+  - Wider than 30rem: in the header, in place of the version badge, or after
+    the brand when there is no badge. `--control` high, 0.85rem text.
+  - 30rem and below: the first row of the menu drawer (the element that the
+    menu button's `aria-controls` names), as wide as the drawer, `--target`
+    high, 1rem (16px) text so a phone does not zoom on focus. A page with no
+    menu button shows it in a strip under the header.
+  - The header's version badge is hidden while the selector shows.
+- Picking a version goes to the same page in it when that page exists (a
+  `HEAD` request), else to its home page. An open menu closes first.
+- Old version banner: on a page of a version that is not the latest, a
+  `role=note` strip under the header, in `--mark-bg`, says so and links the
+  same page in the latest version. `dev` gets its own text. The strip is under
+  the header, not above it, so the skip links stay the first tab stops.
+
 ### Pager
 
 Source: `_partials/pager.html`, `nav-order.html`, `_pager.scss`.
@@ -264,7 +298,8 @@ Source: `_partials/footer.html`, `_footer.scss`.
   `CanvasText`, and focus outlines stay. Reduced motion: see Motion & Focus.
 - Without JS the page works: the content comes first, the tree is a list, and
   the system color setting applies. The menu button, theme button, search,
-  page actions, "Copy link" and the code copy buttons stay hidden.
+  page actions, "Copy link" and the code copy buttons stay hidden. The version
+  selector does not show; the version badge does.
 
 ## Rules for Changes
 
@@ -281,7 +316,9 @@ Source: `_partials/footer.html`, `_footer.scss`.
   absolute URL, so every project site shows the same icon.
 - Vanilla JS: one small file per feature in `assets/js/`, bundled by Hugo's
   `js.Build`, loaded with `defer` and an `integrity` hash. No framework and no
-  library.
+  library. The one exception is the version selector (`assets/versions/`),
+  which every version loads from the site's root, so it has a fixed name and
+  no hash.
 - Phone check: check a visible change at 390px wide, in light and dark, with
   headless Chromium (`--window-size=390,900`). The page has no sideways
   scroll, and a long line in a prose block wraps. Put the screenshots in the
