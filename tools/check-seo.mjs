@@ -2,9 +2,9 @@
 // Every page: a title, one h1, either a canonical URL or a robots noindex, and a description with no entity escaped
 // twice, of 160 characters or less and without the Copy button's text. The canonical URL is https and og:url is the
 // same. An og:type article has an article:published_time, and a large card an og:image:alt. Every JSON-LD block
-// parses and its nodes have the fields Google requires. The sitemap lists no noindex page
-// and no page whose canonical URL is another page. With --off (off.toml), none of the tags is there. Hugo's alias
-// pages (a refresh to the new URL) are skipped.
+// parses and its nodes have the fields Google requires. The sitemap (or each sitemap of this build that a sitemap
+// index lists) lists no noindex page and no page whose canonical URL is another page. With --off (off.toml), none of
+// the tags is there. Hugo's alias pages (a refresh to the new URL) are skipped.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -146,18 +146,34 @@ for (const path of htmlFiles(dir)) {
   }
 }
 
+const locs = (xml) => xml.match(/<loc>(https?:\/\/[^<]+?)<\/loc>/g)?.map((l) => l.slice(5, -6)) ?? [];
+function checkSitemap(name, xml) {
+  const base = locs(xml);
+  if (!base.length) fail(name, "no <loc>");
+  const root = base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
+  for (const loc of base) {
+    if (!loc.startsWith(root)) fail(name, `${loc} is not under ${root}`);
+    const page = join(loc.slice(root.length), "index.html");
+    if (!existsSync(join(dir, page))) fail(name, `${loc} has no page`);
+    if (noindexPages.has(page)) fail(name, `${loc} is a noindex page`);
+    if (elsewhere.has(page)) fail(name, `${loc} has its canonical URL on another page`);
+  }
+}
+
+// A sitemap index (a site that also lists the sitemaps of other sites) is checked through the sitemaps of this
+// build; the others are built and checked elsewhere.
 const sitemap = join(dir, "sitemap.xml");
 if (existsSync(sitemap)) {
   const xml = readFileSync(sitemap, "utf8");
-  const base = xml.match(/<loc>(https?:\/\/[^<]+?)<\/loc>/g)?.map((l) => l.slice(5, -6)) ?? [];
-  if (!base.length) fail("sitemap.xml", "no <loc>");
-  const root = base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
-  for (const loc of base) {
-    if (!loc.startsWith(root)) fail("sitemap.xml", `${loc} is not under ${root}`);
-    const page = join(loc.slice(root.length), "index.html");
-    if (!existsSync(join(dir, page))) fail("sitemap.xml", `${loc} has no page`);
-    if (noindexPages.has(page)) fail("sitemap.xml", `${loc} is a noindex page`);
-    if (elsewhere.has(page)) fail("sitemap.xml", `${loc} has its canonical URL on another page`);
+  if (xml.includes("<sitemapindex")) {
+    const own = locs(xml)
+      .filter((loc) => homeCanonical && loc.startsWith(homeCanonical))
+      .map((loc) => loc.slice(homeCanonical.length))
+      .filter((file) => existsSync(join(dir, file)));
+    if (!own.length) fail("sitemap.xml", "a sitemap index with no sitemap of this build");
+    for (const file of own) checkSitemap(file, readFileSync(join(dir, file), "utf8"));
+  } else {
+    checkSitemap("sitemap.xml", xml);
   }
 } else {
   fail("sitemap.xml", "missing");

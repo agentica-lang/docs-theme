@@ -142,6 +142,8 @@ The description of a page is its `description`, else (on the home page) the
 `make check-seo DIR=<built site>` (`tools/check-seo.mjs`) fails on a missing
 title, h1, canonical URL or tag, a canonical URL that is not `https://`, an
 `og:url` that is not the canonical URL, or a description over 160 characters.
+When `sitemap.xml` is a sitemap index, it checks the sitemaps of the build that
+the index lists and skips those of other sites.
 
 Each part has its param, and `false` turns it off:
 
