@@ -11,9 +11,11 @@ What a site gets:
   ChatGPT or Claude.
 - The outputs: `index.md` next to each page, `search.json`, `llms.txt` and
   `llms-full.txt`.
-- Code blocks: ` ```agentica ` (or `agc`), ` ```signature `, ` ```output ` and
-  ` ```input `; `{expect="CODE"}` on an agentica block shows the error code it
-  gives.
+- Code blocks: ` ```agentica ` (or `agc`), ` ```signature `, ` ```output `,
+  ` ```input ` and ` ```prompt ` (text to paste into a coding agent, which
+  wraps); `{expect="CODE"}` on an agentica block shows the error code it
+  gives. Every block but an output has a Copy button. A test that runs a
+  site's examples should skip `signature` and `prompt` blocks.
 - The highlighter, `highlight/highlight.mjs`, which colors the agentica and
   signature blocks of the built HTML with the TextMate grammar of
   [agc-tmlanguage](https://github.com/agentica-lang/agc-tmlanguage).
