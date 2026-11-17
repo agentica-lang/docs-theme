@@ -9,3 +9,14 @@
 .release-links {
   margin: 0 0 0.5rem;
 }
+
+.org-link {
+  margin: 0.5rem 0 0;
+}
+
+// 24px high links, so each is a target of its own on a phone.
+.site-footer a {
+  display: inline-block;
+  min-height: 1.5rem;
+  line-height: 1.5rem;
+}

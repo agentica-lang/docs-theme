@@ -38,7 +38,7 @@ the system prefers dark and the reader has not picked light.
 | `--syn-number` | `#0550ae` | `#79c0ff` | numbers |
 | `--syn-name` | `#8250df` | `#d2a8ff` | function and builtin names |
 | `--syn-type` | `#953800` | `#ffa657` | types and constants |
-| `--syn-comment` | `#6e7781` | `#8b949e` | comments, in italic |
+| `--syn-comment` | `#656d76` | `#8b949e` | comments, in italic |
 
 - `--shadow`: light `0 6px 18px rgb(31 35 40 / 12%)`, dark
   `0 6px 18px rgb(0 0 0 / 45%)`. Used by the drawer, the search panel and the
@@ -46,7 +46,8 @@ the system prefers dark and the reader has not picked light.
 - `--scrim`: light `rgb(31 35 40 / 45%)`, dark `rgb(0 0 0 / 60%)`. The layer
   behind the open drawer.
 - Contrast: `--fg`, `--muted`, `--link` and `--accent` are at least 4.5:1 on
-  `--bg`, `--code-bg` and `--mark-bg` in both themes. Recheck when one changes.
+  `--bg`, `--code-bg` and `--mark-bg` in both themes, and each `--syn-*` token
+  is at least 4.5:1 on `--bg` and `--code-bg`. Recheck when one changes.
 - Highlighted code uses the `--syn-*` tokens: TextMate for `agentica` blocks,
   Chroma for other languages (`assets/scss/_code.scss`).
 
@@ -204,6 +205,15 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   `data-code-copy` attribute on the block. The HTML has no button text, so
   "Copy" never reaches a page's summary, its description or the search index.
 
+### Footer
+
+Source: `_partials/footer.html`, `_footer.scss`.
+
+- Centered, `--muted`, under a `--border` line. Lines: the version and release
+  links; the page source and GitHub links (`repoPublic`), or the title and
+  tagline; then a link to the org home ("Agentica home", the `organization`
+  URL), left out on the org home's own site.
+
 ### Search, page actions and headings
 
 - Search (`search.js`, `_search.scss`): plain JS; the index loads on the first
@@ -227,7 +237,8 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   tree, `<a>` for links.
 - Targets are at least 24px square everywhere. On narrow pages the menu button,
   the theme button, the search box and the tree rows are `--target` (2.75rem).
-  Links inside running text, such as heading anchors, are exempt.
+  The breadcrumb and footer links are at least 24px high. Links inside running
+  text, such as heading anchors, are exempt.
 - Forced colors: the chevron is a mask. Under `forced-colors: active` it uses
   `CanvasText`, and focus outlines stay. Reduced motion: see Motion & Focus.
 - Without JS the page works: the content comes first, the tree is a list, and
