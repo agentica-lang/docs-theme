@@ -1,0 +1,2 @@
+{{- /* True for a post: a regular page with a date. A post has og:type article and, with share.html, share links. */ -}}
+{{- return and .IsPage (not .Date.IsZero) -}}

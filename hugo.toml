@@ -8,6 +8,8 @@
   narrow = "50rem"
   # The search box and its script; `search: false` in a page's front matter hides it on that page only.
   search = true
+  # Share links at the end of a post (a page with a date); `share: false` in a page's front matter hides them there.
+  share = true
   # The search tags (README.md, "Search engines"); false turns each one off.
   breadcrumbs = true
   feedLink = true

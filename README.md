@@ -99,7 +99,10 @@ All are optional.
 | Param | Default | What it does |
 |---|---|---|
 | `description` | none | The meta and Open Graph description of a page with no description or summary, and the summary in `llms.txt` |
-| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image; a value with no `https://` is a path under `baseURL` (see below) |
+| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image, in a small `summary` card; a value with no `https://` is a path under `baseURL` (see below) |
+| `socialImage` | none | A 1200×630 image for the large card (`summary_large_image`) of every page that has no image of its own; wins over `image`. A path under the site's `static/` folder also gives its width and height |
+| `socialImageAlt` | the site title | The alt text of `socialImage` |
+| `share` | `true` | Share links at the end of each post (see below); `false` (or `"false"`) turns them off, and `share:` in a page's front matter wins over it |
 | `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
 | `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
 | `tagPrefix` | `""` | Put before the version in the release tag: `v` for a tag `v1.2.0` |
@@ -140,10 +143,24 @@ In the front matter of a page, `noindex: true` makes that page `noindex` and
 leaves it out of the sitemap, and `canonical:` sets its canonical URL (to point
 a copy at its original), which also leaves it out of the sitemap.
 
-A page bundle with a `cover.*` image (`blog/my-post/index.md` and
-`blog/my-post/cover.png`) uses it, as a 1200px wide jpg, for its Open Graph and
-Twitter card image, with `twitter:card` `summary_large_image`. The other pages
-keep the `image` param and a `summary` card.
+The card image of a page is, in order: the first entry of `images` in its
+front matter (a file of the page bundle, or a path or URL), a `cover.*` image
+of its page bundle (`blog/my-post/index.md` and `blog/my-post/cover.png`), or
+the `socialImage` param. Each gives `twitter:card` `summary_large_image`, an
+`og:image:alt` (the `imageAlt` front matter, else the page title) and, when
+known, `og:image:width` and `og:image:height`; a file of the page bundle
+becomes a 1200px wide jpg. Make the image 1200×630. A page with none of them
+keeps the `image` param and a `summary` card.
+
+A post is a page with a `date`. Its `og:type` is `article`, with
+`article:published_time` and `article:modified_time` (the date of its last
+commit with `enableGitInfo`, else its `lastmod`); the other pages are
+`website`. `single.html` ends
+a post with share links (`_partials/share.html`): X, LinkedIn, Hacker News,
+Reddit and Bluesky, plain links with nothing loaded from those sites, and a
+"Copy link" button, shown only when the browser has a clipboard.
+`share: false` in the front matter turns them off on one post. A site with its
+own post layout adds them with `{{ partial "share.html" . }}`.
 
 `canonical`, `image` and the organization's `logo` take a full `https://` URL (a
 protocol-relative `//host/path` gets `https:`), or else a path: the path of a

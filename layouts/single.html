@@ -8,6 +8,7 @@
   <div class="page-head"><h1>{{ .Title }}</h1>{{ $actions }}</div>
   {{ .Content }}
   {{- end }}
+  {{- partial "share.html" . }}
 </article>
 {{ partial "pager.html" . }}
 {{ end }}

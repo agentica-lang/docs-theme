@@ -1,0 +1,9 @@
+{{- /* The width and height of an image path under the site's static/ folder, or an empty dict. */ -}}
+{{- $size := dict }}
+{{- if not (findRE `^(https?:)?//` .) }}
+  {{- $file := path.Join "static" (strings.TrimPrefix "/" .) }}
+  {{- if and (fileExists $file) (not (strings.HasSuffix $file ".svg")) }}
+    {{- with images.Config $file }}{{ $size = dict "width" .Width "height" .Height }}{{ end }}
+  {{- end }}
+{{- end }}
+{{- return $size -}}

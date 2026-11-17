@@ -25,7 +25,7 @@ example: highlight/node_modules
 	  for f in search.json llms.txt llms-full.txt index.md guide/code/index.md; do \
 	    test -s exampleSite/$$out/$$f || { echo "exampleSite/$$out/$$f is missing" >&2; exit 1; }; \
 	  done; \
-	  if grep -rlE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
+	  if grep -rlIE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
 	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
 	@# A one-line def keeps the colors of its body: the `#` of `#{` there is not a comment.
@@ -52,6 +52,20 @@ example: highlight/node_modules
 	@grep -qE 'og:image:width"? content="?1200"?>' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'twitter:card"? content="?summary"?>' exampleSite/public/guide/index.html
+	@# A post (a page with a date) is an article with share links; the other pages are not.
+	@grep -qE 'og:type"? content="?article"?>' exampleSite/public/blog/first-post/index.html
+	@grep -qE 'article:published_time"? content="?2026-11-17T09:30:00' exampleSite/public/blog/second-post/index.html
+	@grep -qE 'article:modified_time"? content="?20[0-9]{2}-' exampleSite/public/blog/second-post/index.html
+	@grep -qE 'og:type"? content="?website"?>' exampleSite/public/guide/index.html
+	@grep -qF 'href="https://x.com/intent/post?url=https%3A%2F%2Fagentica-lang.github.io%2Fdocs-theme%2Fblog%2Fsecond-post%2F&amp;text=The+second+post+%26+its+card"' exampleSite/public/blog/second-post/index.html
+	@if grep -l 'class=share' exampleSite/public/guide/index.html exampleSite/public-bare/blog/first-post/index.html; then echo "share links on a page that is not a post, or with share off" >&2; exit 1; fi
+	@# The first `images` entry is the large card; a URL has no size. The site's socialImage, under static/, has one.
+	@grep -qE 'og:image"? content="?https://www.agentica-lang.com/social.png"?>' exampleSite/public/blog/second-post/index.html
+	@grep -qE 'og:image:alt"? content="The Agentica name on a dark background"' exampleSite/public/blog/second-post/index.html
+	@if grep -q 'og:image:width' exampleSite/public/blog/second-post/index.html; then echo "a remote image has a size" >&2; exit 1; fi
+	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/social.png"?>' exampleSite/public-bare/guide/index.html
+	@grep -qE 'og:image:height"? content="?630"?>' exampleSite/public-bare/guide/index.html
+	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public-bare/guide/index.html
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }

@@ -196,6 +196,11 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   clipboard, the copy items are removed. Escape closes the menu.
 - Headings (`_markup/render-heading.html`): each heading below h1 has a `#`
   link, shown on hover or focus.
+- Share links (`_partials/share.html`, `share.js`, `_share.scss`): at the end
+  of a post, under a rule, a row of buttons that wraps: X, LinkedIn,
+  Hacker News, Reddit, Bluesky (text, no logos, new tab) and "Copy link". They
+  look like the page actions and are `--target` high at 50rem and below.
+  "Copy link" shows only with JS and a clipboard. Hidden in print.
 
 ## Accessibility
 
@@ -207,8 +212,8 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
 - Forced colors: the chevron is a mask. Under `forced-colors: active` it uses
   `CanvasText`, and focus outlines stay. Reduced motion: see Motion & Focus.
 - Without JS the page works: the content comes first, the tree is a list, and
-  the system color setting applies. The menu button, theme button, search and
-  page actions stay hidden.
+  the system color setting applies. The menu button, theme button, search,
+  page actions and "Copy link" stay hidden.
 
 ## Rules for Changes
 

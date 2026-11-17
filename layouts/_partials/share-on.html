@@ -1,0 +1,5 @@
+{{- /* True when a page shows share links: it is a post (post.html), and `share` is not false (or "false") in its front
+matter or, when the page does not set it, in the site params. */ -}}
+{{- $on := not (in (slice false "false") site.Params.share) -}}
+{{- if isset .Params "share" }}{{ $on = not (in (slice false "false") .Params.share) }}{{ end -}}
+{{- return and $on (partial "post.html" .) -}}

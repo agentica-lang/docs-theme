@@ -1,7 +1,10 @@
 # Added to hugo.toml by make example: a site with no version and no repo, and search off but on the search page
-# (the string "false", as HUGO_PARAMS_SEARCH=false gives it).
+# (the string "false", as HUGO_PARAMS_SEARCH=false gives it). A default social image (static/social.png) gives every
+# page a large card, and share links are off (the string "false" too).
 [params]
   version = ""
   repo = ""
   repoPublic = false
   search = "false"
+  share = "false"
+  socialImage = "/social.png"

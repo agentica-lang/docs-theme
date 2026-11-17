@@ -1,0 +1,29 @@
+{{- /* Share links at the end of a post (share-on.html): plain links to the share page of each site, nothing loaded
+from them, and a "Copy link" button that share.js shows when the browser has a clipboard. */ -}}
+{{- if partial "share-on.html" . }}
+{{- $url := partial "canonical.html" . | urlquery }}
+{{- $text := .Title | plainify | htmlUnescape | urlquery }}
+{{- $links := slice
+  (dict "name" "X" "href" (printf "https://x.com/intent/post?url=%s&text=%s" $url $text))
+  (dict "name" "LinkedIn" "href" (printf "https://www.linkedin.com/sharing/share-offsite/?url=%s" $url))
+  (dict "name" "Hacker News" "href" (printf "https://news.ycombinator.com/submitlink?u=%s&t=%s" $url $text))
+  (dict "name" "Reddit" "href" (printf "https://www.reddit.com/submit?url=%s&title=%s" $url $text))
+  (dict "name" "Bluesky" "href" (printf "https://bsky.app/intent/compose?text=%s%%20%s" $text $url))
+}}
+<nav class="share" aria-labelledby="share-label">
+  <p class="share-label" id="share-label">Share this post</p>
+  <ul>
+    {{- range $links }}
+    <li><a href="{{ .href }}" target="_blank" rel="noopener noreferrer" aria-label="Share on {{ .name }} (opens in a new tab)">{{ .name }}</a></li>
+    {{- end }}
+    <li class="share-copy-item" hidden><button type="button" class="share-copy" data-url="{{ partial "canonical.html" . }}">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6.5 9.5a2.5 2.5 0 0 0 3.5 0l2.5-2.5a2.5 2.5 0 0 0-3.5-3.5l-.75.75M9.5 6.5a2.5 2.5 0 0 0-3.5 0L3.5 9a2.5 2.5 0 0 0 3.5 3.5l.75-.75"/></svg>
+      <span class="share-copy-text">Copy link</span>
+    </button></li>
+  </ul>
+  <span class="visually-hidden" role="status"></span>
+</nav>
+{{- with resources.Get "js/share.js" | js.Build (dict "minify" true "targetPath" "js/share.js") | fingerprint }}
+<script src="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous" defer></script>
+{{- end }}
+{{- end }}
