@@ -1,0 +1,3 @@
+# Added to hugo.toml by make example: the version selector on, with its list in static/versions.json.
+[params.versions]
+  enabled = true

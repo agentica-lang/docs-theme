@@ -18,11 +18,11 @@ the landing site, bond, packages) pins a commit of it as a submodule.
 ## Rules
 
 - Read `DESIGN.md` before any visual change, and keep it true in the same PR.
-- `make example` must pass: it builds `exampleSite/` four ways, runs the
+- `make example` must pass: it builds `exampleSite/` five ways, runs the
   highlighter and `tools/check-seo.mjs`, and greps the output. It needs Hugo
-  0.167.0 or newer, Dart Sass (`DART_SASS=<its folder>`) and Node. The clone
-  folder must be named `docs-theme`, or set `HUGO_THEMESDIR` to a folder with
-  a `docs-theme` link to it.
+  0.167.0 or newer, Dart Sass (`DART_SASS=<its folder>`) and Node. It uses the
+  checkout itself as the theme, whatever its folder is named
+  (`exampleSite/.themes/docs-theme`, a link).
 - A new feature gets a check in the `example` target of the `Makefile`.
 - A visible change gets the phone check of `DESIGN.md` and screenshots in the
   PR.

@@ -119,6 +119,28 @@ All are optional.
 | `branch` | `main` | The branch of the page source links |
 | `narrow` | `50rem` | The width at and below which the sidebar becomes a drawer |
 | `search` | `true` | The search box in the header and its script, which fetches the index. `search: false` (or `"false"`, as `HUGO_PARAMS_SEARCH=false` gives it) in a page's front matter hides them on that page only (a landing page, say), and the page's own value wins over the site's, so `search: true` shows them on one page of a site that turns them off. In a section's `_index.md` it applies to that list page only; use `cascade` for its pages. `search.json` still lists every page, `search: false` ones too |
+| `versions` | off | A table: `enabled` (`false`) turns on the version selector, and `root` (the site's root path, with or without a trailing slash: `/docs` and `/docs/` are the same) is where `versions.json` and the selector's files are. See below |
+
+## Versions
+
+A site that publishes the docs of several versions in one folder (the latest
+at the root, the others under `0.3.0/`, `dev/`) can show a version selector
+(`DESIGN.md`, Version selector). The site's build:
+
+- writes `versions.json` at the root: a list of
+  `{ "version": "0.3.0", "path": "0.3.0/" }`, in the order of the menu, with
+  `"latest": true` on the one at the root;
+- builds each version with the selector on and the root of all versions, from
+  the environment, so a tag whose `hugo.toml` lacks them gets them too:
+  `HUGO_PARAMS_VERSIONS_ENABLED=true HUGO_PARAMS_VERSIONS_ROOT=/docs/ hugo
+  --baseURL https://host/docs/0.3.0/`.
+
+Every version's build publishes its own `_versions/selector.js` and
+`_versions/selector.css`, but pages load only the root's copy: every page of
+every version loads them from `root`, with no hash, so a page built before a
+change gets the current selector. The copies in the version folders are
+unused. A page built without this theme can load the same two files from
+the root with a `<link>` and a `<script defer>` tag.
 
 ## Search engines
 
@@ -232,8 +254,11 @@ git commit -m "Update docs-theme"
   requires, breadcrumbs that match it, and a sitemap with no `noindex` page.
   `make example-serve` serves the first one.
 - Put Dart Sass on `PATH` or pass `DART_SASS=<its folder>`.
-- `exampleSite/hugo.toml` finds the theme with `themesDir = "../.."`, so the
-  clone folder must be named `docs-theme`.
+- `make example` and `make example-serve` use the checkout itself as the
+  theme, through a link in `exampleSite/.themes/` and `HUGO_THEMESDIR`, so
+  the clone folder can have any name. A plain `hugo --source exampleSite`
+  finds the theme with `themesDir = "../.."`, which needs the folder named
+  `docs-theme`.
 - The grammar is `highlight/agentica.tmLanguage.json`, a copy of the
   agc-tmlanguage commit in the `grammar` field of `highlight/package.json`.
   The `grammarChanges` field says what differs from that commit. To update it,
