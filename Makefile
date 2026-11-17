@@ -87,6 +87,13 @@ example: highlight/node_modules
 	@grep -qE 'name="?description"? content="Tom &(amp;)? Jerry[^"]{100,150}…"' exampleSite/public/guide/no-description/index.html
 	@grep -qE 'js/copy\.[0-9a-f]+\.js' exampleSite/public/guide/code/index.html
 	@if grep -q 'js/copy' exampleSite/public/guide/index.html; then echo "a page with no code block loads copy.js" >&2; exit 1; fi
+	@# check-seo follows a sitemap index to the sitemaps of this build and skips those of other sites.
+	@mv exampleSite/public-prefix/sitemap.xml exampleSite/public-prefix/sitemap-home.xml
+	@printf '<sitemapindex><sitemap><loc>%s</loc></sitemap><sitemap><loc>%s</loc></sitemap></sitemapindex>' \
+	  https://agentica-lang.github.io/docs-theme/sitemap-home.xml https://agentica-lang.github.io/other/sitemap.xml > exampleSite/public-prefix/sitemap.xml
+	@node tools/check-seo.mjs exampleSite/public-prefix
+	@printf '<sitemapindex><sitemap><loc>https://agentica-lang.github.io/other/sitemap.xml</loc></sitemap></sitemapindex>' > exampleSite/public-prefix/sitemap.xml
+	@if node tools/check-seo.mjs exampleSite/public-prefix 2>/dev/null; then echo "a sitemap index with no sitemap of the build passes" >&2; exit 1; fi
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
