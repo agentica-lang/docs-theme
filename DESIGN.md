@@ -64,7 +64,7 @@ Source: `_tokens.scss`, `_base.scss`, `_content.scss`, `_code.scss`.
 - Small text (labels, tree, TOC, pager, footer) is 0.75rem to 0.95rem. Each
   partial sets its own size; there is no size token.
 - Code blocks keep their line breaks and scroll sideways. They do not wrap,
-  except signature blocks (see Code blocks and samples).
+  except signature blocks and prose blocks (see Code blocks and samples).
 
 ## Layout, Spacing & Radius
 
@@ -91,7 +91,7 @@ Source: `_tokens.scss`, `_layout.scss`, `_header.scss`, `_content.scss`.
   `--shadow`, with z-index: page menu 5, scrim 8, drawer 9, header 10, search
   panel 20.
 - Phone width: 16px side gutters. Long text wraps. Code and tables scroll in
-  their own box, except signature blocks, which wrap. The goal is no
+  their own box, except signature and prose blocks, which wrap. The goal is no
   sideways scroll on the page itself.
 
 ## Motion & Focus
@@ -174,6 +174,12 @@ Source: `_partials/pager.html`, `nav-order.html`, `_pager.scss`.
 Source: `_markup/render-codeblock.html`, `_code.scss`.
 
 - `input` and `output` blocks are samples: dashed boxes labeled Input or Output.
+- A prose block is text for a reader to paste, not a program: a prompt for a
+  coding agent. It is a ```` ```prompt ```` fence, labeled Prompt like the
+  samples, in a solid box like code. It keeps its line breaks and wraps long
+  lines at every width (`white-space: pre-wrap`, `overflow-wrap: anywhere`),
+  so it never scrolls sideways. It is not a program, so a test that runs the
+  examples of a site skips it, as it skips signature blocks.
 - `expect="CODE"` adds an accent box under the code. It says "Does not compile",
   or "Runtime error" for `RUNTIME-` codes, and shows `error[CODE]`.
 - Code and tables scroll sideways in their own box. The exception is a signature
@@ -184,6 +190,16 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   names (`s`), types (`nc`) and `->` (`k`). It is not a program, so a test that
   runs the examples of a site skips it. Output, diagnostics and imports stay
   `text` and keep scrolling.
+- Copy button (`copy.js`, `_code.scss`): every code block, prompt, signature
+  block and input sample has a "Copy" button that copies the text of its
+  block. Output samples and the error box have none. The button sits in a row
+  above the block, on the right, with the label (Prompt, Input) on the left
+  when there is one. So it never covers the code, at 390px too. It looks like
+  the page actions (`--code-bg`, `--border`, `--radius`, focus ring), is
+  `--target` high at 50rem and below, and works in light and dark. Its name
+  says what it copies ("Copy code", "Copy prompt"). A `role=status` region
+  announces "Copied" or "Copy failed", and the text goes back after 2s. Like
+  "Copy link", it shows only with JS and a clipboard. Hidden in print.
 
 ### Search, page actions and headings
 
@@ -213,7 +229,7 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   `CanvasText`, and focus outlines stay. Reduced motion: see Motion & Focus.
 - Without JS the page works: the content comes first, the tree is a list, and
   the system color setting applies. The menu button, theme button, search,
-  page actions and "Copy link" stay hidden.
+  page actions, "Copy link" and the code copy buttons stay hidden.
 
 ## Rules for Changes
 
@@ -231,8 +247,13 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
 - Vanilla JS: one small file per feature in `assets/js/`, bundled by Hugo's
   `js.Build`, loaded with `defer` and an `integrity` hash. No framework and no
   library.
+- Phone check: check a visible change at 390px wide, in light and dark, with
+  headless Chromium (`--window-size=390,900`). The page has no sideways
+  scroll, and a long line in a prose block wraps. Put the screenshots in the
+  PR.
 - `make example` must pass. It runs Hugo with `--panicOnWarning`, then the
   highlighter with `--strict`. CI runs it on every PR.
 - Describe the current state here. Progress goes in the PR body. Update this
-  file in the same PR as the change it describes.
+  file in the same PR as the change it describes, or, for a new design, in a
+  PR of its own just before the code.
 - Content rules (prose wrap, fences, links) belong to each site's repo.
