@@ -129,6 +129,17 @@ Source: `_partials/header.html`, `theme-toggle.html`, `_header.scss`.
   one. `theme.js` sets its label and saves the choice under the `theme` key of
   `localStorage`. The head script in `baseof.html` applies a saved choice before
   the body renders. Without a choice, the system setting decides.
+- The menu and theme buttons are ghost icon buttons, `--radius` round:
+  - Normal: no visible border, a transparent background, the icon in
+    `--muted`.
+  - Hover (only where the pointer can hover) and active: `--code-bg`
+    background, the icon in `--fg`. The menu button keeps that look while the
+    drawer is open (`aria-expanded="true"`).
+  - Keyboard focus: the focus ring on `:focus-visible`, offset 2px, so a mouse
+    click draws no ring.
+  - Their border is transparent, not removed: the size stays the same, and
+    under `forced-colors: active` the edge shows.
+- The search box keeps its border: it is an input.
 
 ### Sidebar tree and TOC
 
