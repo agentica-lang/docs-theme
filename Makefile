@@ -55,7 +55,7 @@ example: highlight/node_modules
 	@# A post (a page with a date) is an article with share links; the other pages are not.
 	@grep -qE 'og:type"? content="?article"?>' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'article:published_time"? content="?2026-11-17T09:30:00' exampleSite/public/blog/second-post/index.html
-	@grep -qE 'article:modified_time"? content="?2026-11-18T10:00:00' exampleSite/public/blog/second-post/index.html
+	@grep -qE 'article:modified_time"? content="?20[0-9]{2}-' exampleSite/public/blog/second-post/index.html
 	@grep -qE 'og:type"? content="?website"?>' exampleSite/public/guide/index.html
 	@grep -qF 'href="https://x.com/intent/post?url=https%3A%2F%2Fagentica-lang.github.io%2Fdocs-theme%2Fblog%2Fsecond-post%2F&amp;text=The+second+post+%26+its+card"' exampleSite/public/blog/second-post/index.html
 	@if grep -l 'class=share' exampleSite/public/guide/index.html exampleSite/public-bare/blog/first-post/index.html; then echo "share links on a page that is not a post, or with share off" >&2; exit 1; fi

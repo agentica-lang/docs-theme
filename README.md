@@ -153,8 +153,9 @@ becomes a 1200px wide jpg. Make the image 1200×630. A page with none of them
 keeps the `image` param and a `summary` card.
 
 A post is a page with a `date`. Its `og:type` is `article`, with
-`article:published_time` and `article:modified_time` (its `lastmod`, or the Git
-date with `enableGitInfo`); the other pages are `website`. `single.html` ends
+`article:published_time` and `article:modified_time` (the date of its last
+commit with `enableGitInfo`, else its `lastmod`); the other pages are
+`website`. `single.html` ends
 a post with share links (`_partials/share.html`): X, LinkedIn, Hacker News,
 Reddit and Bluesky, plain links with nothing loaded from those sites, and a
 "Copy link" button, shown only when the browser has a clipboard.
