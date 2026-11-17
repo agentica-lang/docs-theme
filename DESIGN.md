@@ -320,7 +320,8 @@ Source: `_partials/footer.html`, `_footer.scss`.
   which every version loads from the site's root, so it has a fixed name and
   no hash.
 - Phone check: check a visible change at 390px wide, in light and dark, with
-  headless Chromium (`--window-size=390,900`). The page has no sideways
+  headless Chromium and device emulation (a 390x900 viewport, as Playwright
+  sets it): `--window-size` does not go below 500px. The page has no sideways
   scroll, and a long line in a prose block wraps. Put the screenshots in the
   PR.
 - `make example` must pass. It runs Hugo with `--panicOnWarning`, then the

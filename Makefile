@@ -5,6 +5,14 @@
 DART_SASS ?= $(HOME)/.local/opt/dart-sass
 export PATH := $(DART_SASS):$(PATH)
 
+# The example site uses this checkout as its theme, whatever the checkout's folder is named: a link to it, in a themes
+# folder that HUGO_THEMESDIR names (it wins over themesDir in exampleSite/hugo.toml).
+export HUGO_THEMESDIR := $(CURDIR)/exampleSite/.themes
+
+exampleSite/.themes/docs-theme:
+	mkdir -p exampleSite/.themes
+	ln -sfn ../.. $@
+
 highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
@@ -16,7 +24,7 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml \
   public-versions:hugo.toml,versions.toml
 
-example: highlight/node_modules
+example: highlight/node_modules exampleSite/.themes/docs-theme
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
 	@set -e; for build in $(EXAMPLES); do \
 	  out=$${build%%:*}; \
@@ -113,7 +121,7 @@ example: highlight/node_modules
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
 
-example-serve:
+example-serve: exampleSite/.themes/docs-theme
 	hugo server --source exampleSite
 
 # The search tag checks of a built site, for a site's CI: make -C themes/docs-theme check-seo DIR="$PWD/public"

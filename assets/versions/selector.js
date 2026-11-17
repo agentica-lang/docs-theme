@@ -14,7 +14,21 @@
     .then(start)
     .catch(function () {});
 
-  function start(versions) {
+  // An entry whose folder resolves outside the root (another origin, a `javascript:` URL) is left out.
+  function underRoot(v) {
+    if (!v || typeof v.version !== "string" || typeof v.path !== "string") return false;
+    try {
+      var target = new URL(v.path, root);
+      return target.origin === root.origin && target.pathname.indexOf(root.pathname) === 0;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function start(list) {
+    // A page may load the selector twice (the theme's tags and a pair added by a site's build): only the first runs.
+    if (document.documentElement.classList.contains("has-version-select")) return;
+    var versions = (Array.isArray(list) ? list : []).filter(underRoot);
     if (!versions.length || location.pathname.indexOf(root.pathname) !== 0) return;
     var latest = versions.filter(function (v) { return v.latest; })[0] || versions[0];
     var rest = location.pathname.slice(root.pathname.length);
