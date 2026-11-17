@@ -1,15 +1,14 @@
 {{- $lang := .Type -}}
-{{- /* A Copy button (copy.js) sits in a bar above each block but output samples; the bar holds the label of a sample
-or a prompt. Without a label the bar stays hidden until copy.js shows the button. */ -}}
-{{- $copy := `<button type="button" class="code-copy" aria-label="Copy %s" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5v-.5A1.5 1.5 0 0 0 9 1.5H4A1.5 1.5 0 0 0 2.5 3v5A1.5 1.5 0 0 0 4 9.5h.5"/></svg><span class="code-copy-text">Copy</span></button>` -}}
+{{- /* Each block but an output sample has `data-code-copy`, from which copy.js builds its Copy button in a bar above it.
+The bar of a sample or a prompt holds its label. The HTML has no button text, so summaries and search stay clean. */ -}}
 {{- if ne $lang "output" }}{{ .Page.Store.Set "copy" true }}{{ end -}}
 {{- if eq $lang "output" -}}
 <div class="sample sample-output"><span class="sample-label">Output</span><pre><code>{{ .Inner }}</code></pre></div>
 {{- else if eq $lang "input" -}}
-<div class="sample sample-input"><div class="code-bar"><span class="sample-label">Input</span>{{ printf $copy "input" | safeHTML }}</div><pre><code>{{ .Inner }}</code></pre></div>
+<div class="sample sample-input" data-code-copy="input"><div class="code-bar"><span class="sample-label">Input</span></div><pre><code>{{ .Inner }}</code></pre></div>
 {{- else if eq $lang "prompt" -}}
 {{- /* A prompt is prose to paste into an agent: it wraps at every width (_code.scss), and the examples test skips it. */ -}}
-<div class="code-block prompt"><div class="code-bar"><span class="sample-label">Prompt</span>{{ printf $copy "prompt" | safeHTML }}</div><pre><code>{{ .Inner }}</code></pre></div>
+<div class="code-block prompt" data-code-copy="prompt"><div class="code-bar"><span class="sample-label">Prompt</span></div><pre><code>{{ .Inner }}</code></pre></div>
 {{- else -}}
 {{- $expect := "" -}}
 {{- $agentica := in (slice "agentica" "agc") $lang -}}
@@ -17,7 +16,7 @@ or a prompt. Without a label the bar stays hidden until copy.js shows the button
 {{- if and $agentica .Options }}{{ errorf "%s: agentica code blocks take no highlight options, found %v" .Page.File.Path .Options }}{{ end -}}
 {{- /* A `signature` block (each line "Name(...) -> Type") wraps (_code.scss), where other code scrolls, and highlight.mjs colors it. It is not a program, so the examples test skips it. */ -}}
 {{- $signature := eq $lang "signature" -}}
-<div class="code-block"><div class="code-bar" hidden>{{ printf $copy (cond $signature "signature" "code") | safeHTML }}</div>
+<div class="code-block" data-code-copy="{{ cond $signature "signature" "code" }}">
 {{- if $agentica }}<div class="agc-code">{{ else if $signature }}<div class="signature">{{ end -}}
 {{- transform.Highlight .Inner (cond $signature "text" $lang) (cond $agentica (dict) .Options) -}}
 {{- if or $agentica $signature }}</div>{{ end -}}

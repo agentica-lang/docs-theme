@@ -1,6 +1,7 @@
 // Checks the search tags of a built site (make example): node tools/check-seo.mjs DIR [--off]
 // Every page: a title, one h1, either a canonical URL or a robots noindex, and a description with no entity escaped
-// twice. An og:type article has an article:published_time, and a large card an og:image:alt. Every JSON-LD block
+// twice, of 160 characters or less and without the Copy button's text. The canonical URL is https and og:url is the
+// same. An og:type article has an article:published_time, and a large card an og:image:alt. Every JSON-LD block
 // parses and its nodes have the fields Google requires. The sitemap lists no noindex page
 // and no page whose canonical URL is another page. With --off (off.toml), none of the tags is there. Hugo's alias
 // pages (a refresh to the new URL) are skipped.
@@ -27,6 +28,10 @@ const attr = (tag, name) => {
 };
 const tags = (html, name) => html.match(new RegExp(`<${name}\\b[^>]*>`, "g")) ?? [];
 const metaNamed = (html, name) => tags(html, "meta").filter((t) => attr(t, "name") === name || attr(t, "property") === name);
+const entities = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'" };
+const decode = (text) =>
+  text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (whole, name) =>
+    name[0] === "#" ? String.fromCodePoint(Number(name.replace(/^#x/i, "0x").replace(/^#/, ""))) : entities[name] ?? whole);
 const absolute = (url) => typeof url === "string" && /^https?:\/\/[^/]+\//.test(url);
 
 const required = {
@@ -86,9 +91,15 @@ for (const path of htmlFiles(dir)) {
   if (noindex && canonicals.length) fail(file, "a noindex page has a canonical URL");
   if (!noindex && (canonicals.length !== 1 || !absolute(canonicals[0]))) fail(file, "needs one absolute canonical URL");
   if (canonicals[0] && ownURL && canonicals[0] !== ownURL) elsewhere.add(file);
+  if (canonicals[0] && !canonicals[0].startsWith("https://")) fail(file, `the canonical URL is not https: ${canonicals[0]}`);
+  const ogURL = metaNamed(html, "og:url").map((t) => attr(t, "content"))[0];
+  if (canonicals[0] && ogURL && ogURL !== canonicals[0]) fail(file, `og:url ${ogURL} is not the canonical URL ${canonicals[0]}`);
   for (const tag of [...metaNamed(html, "description"), ...metaNamed(html, "og:description"), ...metaNamed(html, "twitter:description")]) {
     const text = attr(tag, "content") ?? "";
     if (/&amp;(amp|lt|gt|quot|[a-z]+|#\d+);/.test(tag)) fail(file, `a description escapes an entity twice: ${text}`);
+    const plain = decode(text);
+    if ([...plain].length > 160) fail(file, `a description has ${[...plain].length} characters, over 160: ${plain}`);
+    if (/\bCopy\b/.test(plain)) fail(file, `a description has the Copy button's text: ${plain}`);
   }
 
   const blocks = [...html.matchAll(/<script type=(?:"application\/ld\+json"|application\/ld\+json)>([\s\S]*?)<\/script>/g)];

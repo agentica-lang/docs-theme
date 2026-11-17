@@ -1,0 +1,12 @@
+{{- /* The meta description of a page: its `description`, else the site's description on the home page, else its
+summary, cut to 160 characters at a word boundary, else the site's description. */ -}}
+{{- $text := .Description -}}
+{{- if and (not $text) .IsHome }}{{ $text = site.Params.description }}{{ end -}}
+{{- if not $text -}}
+  {{- $text = .Summary | plainify | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+  {{- if gt (strings.RuneCount $text) 160 -}}
+    {{- $text = printf "%s…" (substr $text 0 160 | replaceRE `\s+\S*$` "" | replaceRE `[\s,;:.(—–-]+$` "") -}}
+  {{- end -}}
+{{- end -}}
+{{- $text = $text | default site.Params.description | plainify | htmlUnescape | strings.TrimSpace -}}
+{{- return $text -}}

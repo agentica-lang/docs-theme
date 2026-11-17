@@ -1,6 +1,6 @@
 # Builds the example site with the theme, as CI does: Hugo (a warning fails), then the highlighter.
 
-.PHONY: example example-serve clean
+.PHONY: example example-serve check-seo clean
 
 DART_SASS ?= $(HOME)/.local/opt/dart-sass
 export PATH := $(DART_SASS):$(PATH)
@@ -66,13 +66,18 @@ example: highlight/node_modules
 	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/social.png"?>' exampleSite/public-bare/guide/index.html
 	@grep -qE 'og:image:height"? content="?630"?>' exampleSite/public-bare/guide/index.html
 	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public-bare/guide/index.html
-	@# A prompt block wraps; code, signature, input and prompt blocks have a Copy button, output samples do not.
-	@grep -qE '<div class="?code-block prompt"?><div class="?code-bar"?><span class="?sample-label"?>Prompt</span><button [^>]*class="?code-copy"? aria-label="Copy prompt"' exampleSite/public/guide/code/index.html
-	@test "$$(grep -oE 'class="?code-copy"? aria-label="Copy code"' exampleSite/public/guide/code/index.html | wc -l)" = 3 || \
-	  { echo "guide/code: wants a Copy button on each of its 3 code blocks" >&2; exit 1; }
-	@grep -qE 'aria-label="Copy input"' exampleSite/public/guide/code/index.html
-	@grep -qE 'aria-label="Copy signature"' exampleSite/public/reference/index.html
-	@if grep -qE 'Output</span><[^>]*code-copy' exampleSite/public/guide/code/index.html; then echo "an output sample has a Copy button" >&2; exit 1; fi
+	@# A prompt block wraps. copy.js builds a Copy button on each block with data-code-copy: code, signature, input and
+	@# prompt blocks, not output samples. The HTML has no button, so no "Copy" in the summaries or the search index.
+	@grep -qE '<div class="?code-block prompt"? data-code-copy="?prompt"?><div class="?code-bar"?><span class="?sample-label"?>Prompt</span></div>' exampleSite/public/guide/code/index.html
+	@test "$$(grep -oE 'data-code-copy="?code"?[ >]' exampleSite/public/guide/code/index.html | wc -l)" = 3 || \
+	  { echo "guide/code: wants data-code-copy on each of its 3 code blocks" >&2; exit 1; }
+	@grep -qE 'data-code-copy="?input"?[ >]' exampleSite/public/guide/code/index.html
+	@grep -qE 'data-code-copy="?signature"?[ >]' exampleSite/public/reference/index.html
+	@if grep -qE 'sample-output"? data-code-copy' exampleSite/public/guide/code/index.html; then echo "an output sample has a Copy button" >&2; exit 1; fi
+	@if grep -qw 'Copy' exampleSite/public/search.json; then echo "search.json has the Copy button's text" >&2; exit 1; fi
+	@if grep -qE '<button[^>]*code-copy' exampleSite/public/guide/code/index.html; then echo "the HTML has a Copy button; copy.js builds it" >&2; exit 1; fi
+	@# A summary over 160 characters becomes a description cut at a word, with an ellipsis.
+	@grep -qE 'name="?description"? content="Tom &(amp;)? Jerry[^"]{100,150}…"' exampleSite/public/guide/no-description/index.html
 	@grep -qE 'js/copy\.[0-9a-f]+\.js' exampleSite/public/guide/code/index.html
 	@if grep -q 'js/copy' exampleSite/public/guide/index.html; then echo "a page with no code block loads copy.js" >&2; exit 1; fi
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
@@ -81,6 +86,11 @@ example: highlight/node_modules
 
 example-serve:
 	hugo server --source exampleSite
+
+# The search tag checks of a built site, for a site's CI: make -C themes/docs-theme check-seo DIR="$PWD/public"
+check-seo:
+	@test -n "$(DIR)" || { echo "usage: make check-seo DIR=<the built site>" >&2; exit 1; }
+	node tools/check-seo.mjs "$(DIR)"
 
 clean:
 	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off exampleSite/resources highlight/node_modules

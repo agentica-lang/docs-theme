@@ -1,0 +1,4 @@
+{{- /* The <title> of a page: "Page · Site", and "Site: tagline" on the home page, whose og:title is the same. */ -}}
+{{- $title := printf "%s · %s" .Title site.Title -}}
+{{- if .IsHome }}{{ $title = site.Title }}{{ with site.Params.tagline }}{{ $title = printf "%s: %s" $title . }}{{ end }}{{ end -}}
+{{- return $title -}}

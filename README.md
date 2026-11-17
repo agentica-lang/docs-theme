@@ -78,6 +78,12 @@ links depend on it.
    or `git submodule update --init site/themes/docs-theme`) and point the npm
    cache of `actions/setup-node` at
    `site/themes/docs-theme/highlight/package-lock.json`.
+   Then check the search tags of the build (see "Search engines"):
+
+   ```sh
+   make -C site/themes/docs-theme check-seo DIR="$PWD/site/public"
+   ```
+
    With `enableGitInfo`, also check out the whole history
    (`fetch-depth: 0`): the sitemap's `<lastmod>` is the date of the last
    commit of each page, and a shallow clone gives every page the same date.
@@ -100,7 +106,7 @@ All are optional.
 
 | Param | Default | What it does |
 |---|---|---|
-| `description` | none | The meta and Open Graph description of a page with no description or summary, and the summary in `llms.txt` |
+| `description` | none | The meta and Open Graph description of the home page (when its front matter has none) and of a page with no description or summary, and the summary in `llms.txt` |
 | `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image, in a small `summary` card; a value with no `https://` is a path under `baseURL` (see below) |
 | `socialImage` | none | A 1200×630 image for the large card (`summary_large_image`) of every page that has no image of its own; wins over `image`. A path under the site's `static/` folder also gives its width and height |
 | `socialImageAlt` | the site title | The alt text of `socialImage` |
@@ -128,7 +134,16 @@ no text and no listed page (so a section of empty sections is left out too);
 with `enableGitInfo` each one has a `<lastmod>` from Git. A site that is all
 `noindex` lists only its home page, since a sitemap needs one URL. The 404 page
 is `noindex` and links the home page and the top sections that the sitemap
-lists. Each part has its param, and `false` turns it off:
+lists.
+
+The description of a page is its `description`, else (on the home page) the
+`description` param, else its summary cut to 160 characters at a word, else the
+`description` param. The home page's `og:title` is its full `<title>`.
+`make check-seo DIR=<built site>` (`tools/check-seo.mjs`) fails on a missing
+title, h1, canonical URL or tag, a canonical URL that is not `https://`, an
+`og:url` that is not the canonical URL, or a description over 160 characters.
+
+Each part has its param, and `false` turns it off:
 
 | Param | Default | What it does |
 |---|---|---|

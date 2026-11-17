@@ -200,6 +200,9 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   says what it copies ("Copy code", "Copy prompt"). A `role=status` region
   announces "Copied" or "Copy failed", and the text goes back after 2s. Like
   "Copy link", it shows only with JS and a clipboard. Hidden in print.
+  `copy.js` builds the button, and the bar of a block with no label, from a
+  `data-code-copy` attribute on the block. The HTML has no button text, so
+  "Copy" never reaches a page's summary, its description or the search index.
 
 ### Search, page actions and headings
 
