@@ -21,7 +21,7 @@
 .search-input {
   width: 16rem;
   min-width: 0;
-  height: 2.1rem;
+  height: var(--control);
   padding: 0 2rem 0 0.75rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -163,10 +163,11 @@
 
   .search-input {
     width: 100%;
-    height: var(--target);
     min-width: 0;
     max-width: 16rem;
-    padding-right: 0.75rem;
+    padding: 0 0.6rem;
+    // 16px: below it, iOS zooms the page on focus.
+    font-size: 1rem;
   }
 
   .site-search ~ .repo {

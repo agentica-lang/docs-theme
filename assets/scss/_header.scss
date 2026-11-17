@@ -46,10 +46,13 @@
 // Ghost icon buttons: the border stays, transparent, for the size and for forced colors (DESIGN.md, Header).
 .nav-toggle,
 .theme-toggle {
+  position: relative;
   display: none;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
+  width: var(--control);
+  height: var(--control);
   padding: 0;
   border: 1px solid transparent;
   border-radius: var(--radius);
@@ -74,15 +77,24 @@
     outline-offset: 2px;
   }
 
+  // A 44px hit area around the 36px button, with no visible size. The inset is from the padding box: 1px more for the border.
+  &::before {
+    content: "";
+    position: absolute;
+    inset: calc((var(--control) - var(--target)) / 2 - 1px);
+  }
+
   .icon {
     display: inline-flex;
+  }
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
   }
 }
 
 .nav-toggle {
-  width: var(--target);
-  height: var(--target);
-
   &[aria-expanded="true"] {
     background: var(--code-bg);
     color: var(--fg);
@@ -95,11 +107,6 @@
 
   &[aria-expanded="true"] .icon-close {
     display: inline-flex;
-  }
-
-  svg {
-    width: 1.4rem;
-    height: 1.4rem;
   }
 }
 
@@ -120,18 +127,8 @@
   }
 }
 
-.theme-toggle {
-  width: 2.1rem;
-  height: 2.1rem;
-
-  .icon-sun {
-    display: none;
-  }
-
-  svg {
-    width: 1.1rem;
-    height: 1.1rem;
-  }
+.theme-toggle .icon-sun {
+  display: none;
 }
 
 // The first of the right-hand items pushes the rest to the right: the search box when the page has one
@@ -143,14 +140,6 @@
 
 .js .theme-toggle ~ .repo {
   margin-left: 0;
-}
-
-// A touch target of 44px, like the menu button.
-@media (max-width: $narrow) {
-  .theme-toggle {
-    width: var(--target);
-    height: var(--target);
-  }
 }
 
 // The button shows the theme it switches to: the moon on a light page, the sun on a dark one.
