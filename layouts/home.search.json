@@ -15,7 +15,7 @@
       {{- $heading = index $match 3 | plainify | htmlUnescape | strings.TrimSpace -}}
       {{- $body = strings.TrimPrefix (index $match 0) $body -}}
     {{- end -}}
-    {{- $text := replaceRE `<h1[^>]*>[\s\S]*?</h1>|<div class="sample[^"]*">[\s\S]*?</pre></div>` "" $body | replaceRE `<br\s*/?>|</?(?:p|li|td|th|tr|pre|div|dd|dt|blockquote|table|ul|ol)(?:\s[^>]*)?>` " " | replaceRE `<[^>]+>` "" | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
+    {{- $text := replaceRE `<h1[^>]*>[\s\S]*?</h1>|<div class="sample[^"]*"[^>]*>[\s\S]*?</pre></div>|<div class="code-bar">[\s\S]*?</div>` "" $body | replaceRE `<br\s*/?>|</?(?:p|li|td|th|tr|pre|div|dd|dt|blockquote|table|ul|ol)(?:\s[^>]*)?>` " " | replaceRE `<[^>]+>` "" | htmlUnescape | replaceRE `\s+` " " | strings.TrimSpace -}}
     {{- if or $heading $text -}}
       {{- $parts = $parts | append (dict "id" $id "heading" $heading "text" $text) -}}
     {{- end -}}

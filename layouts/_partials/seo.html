@@ -1,7 +1,7 @@
 {{- /* The search tags of the <head>: robots, canonical, description, theme color, feed, Open Graph, Twitter card and
 structured data. README.md lists the param of each part. A site overrides this file to change them. */ -}}
-{{- $description := .Description | default .Summary | default site.Params.description | plainify | htmlUnescape | strings.TrimSpace }}
-{{- $title := cond .IsHome site.Title .Title }}
+{{- $description := partial "description.html" . }}
+{{- $title := cond .IsHome (partial "title.html" .) .Title }}
 {{- $noindex := partial "noindex.html" . }}
 {{- $canonical := partial "canonical.html" . }}
 {{- $image := partial "site-url.html" (site.Params.image | default "https://www.agentica-lang.com/icon-512.png") }}

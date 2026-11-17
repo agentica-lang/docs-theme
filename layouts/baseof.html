@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark">
-  <title>{{ if .IsHome }}{{ site.Title }}{{ with site.Params.tagline }}: {{ . }}{{ end }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
+  <title>{{ partial "title.html" . }}</title>
   {{- partial "seo.html" . }}
   {{- partial "favicon.html" . }}
   {{- $sass := dict "transpiler" "dartsass" "outputStyle" "compressed" "targetPath" "css/main.css" "vars" (dict "narrow" site.Params.narrow) }}
