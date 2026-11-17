@@ -28,6 +28,9 @@ example: highlight/node_modules
 	  if grep -rlE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
 	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
+	@# A one-line def keeps the colors of its body: the `#` of `#{` there is not a comment.
+	@grep -q 'class=nf>shade</span>(c: .*<span class=si>#{</span>' exampleSite/public/guide/code/index.html || \
+	  { echo "the interpolation in a one-line def is not colored" >&2; exit 1; }
 	@# Each build has the release links it should, and only those.
 	@grep -q 'releases/tag/0.1.0' exampleSite/public/index.html
 	@grep -q 'releases/tag/v0.1.0' exampleSite/public-prefix/index.html
