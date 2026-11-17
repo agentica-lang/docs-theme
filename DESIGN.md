@@ -76,15 +76,20 @@ Source: `_tokens.scss`, `_layout.scss`, `_header.scss`, `_content.scss`.
   padding wide, and 1.25rem `--gutter` 3rem at 50rem and below.
 - Widths: `--layout-width` (80rem) caps the grid. `--sidebar-width` (16rem) is
   the tree column. `--content-width` (50rem) caps text and pager. `--header`
-  (3.25rem) is the sticky bar. The drawer is `min(20rem, 85vw)` wide.
+  (3.5rem) is the sticky bar. The drawer is `min(20rem, 85vw)` wide.
 - Breakpoint: `$narrow` is 50rem, from `params.narrow` in `hugo.toml`. Sass and
   `nav.js` read it. A second one, 30rem, hides the header version (the agentica
   site also moves its version selector into the menu there).
 - `--target` (2.75rem) is the touch size. The pager links use it at every
-  width. At 50rem and below, the menu button, the theme button, the search box
-  and the tree use it too. `--nav-row` is set on `.sidebar`: 2rem, and
-  `--target` at 50rem and below. Tree rows are at least that high, and the
-  section toggle is that square.
+  width. At 50rem and below, the tree, the code Copy buttons and the share
+  links use it too. `--nav-row` is set on `.sidebar`: 2rem, and `--target` at
+  50rem and below. Tree rows are at least that high, and the section toggle is
+  that square.
+- `--control` (2.25rem) is the height of the header controls at every width:
+  the menu button and the theme button are that square, and the search box is
+  that high. The two buttons have a 44px hit area: a transparent `::before`
+  reaches 4px past each edge, with no visible size. In the `--header` bar they
+  leave 9.5px above and below, to the bottom line.
 - Radius: `--radius-sm` (4px) for small parts: inline code, tree links, search
   keys, section tags. `--radius` (6px) for buttons, inputs, code blocks, the
   pager, the search panel and the page menu.
@@ -121,7 +126,9 @@ Source: `_partials/header.html`, `theme-toggle.html`, `_header.scss`.
   skip links are "Skip to content" (`#main`), and "Skip to navigation"
   (`#sidebar`), which shows only on a narrow page without JS. A GitHub link
   shows only when `params.repoPublic` is true (false by default).
-- A sticky bar, `--header` high, with a `--border` line under it.
+- A sticky bar, `--header` high, with a `--border` line under it. Its
+  controls are `--control` high and centered in it. Their icons are 1.125rem
+  (18px).
 - Menu button: a native `<button>` with `aria-controls="sidebar"` and
   `aria-expanded`. It shows only with JS, at 50rem and below. Its icon turns
   from menu to x.
@@ -139,7 +146,9 @@ Source: `_partials/header.html`, `theme-toggle.html`, `_header.scss`.
     click draws no ring.
   - Their border is transparent, not removed: the size stays the same, and
     under `forced-colors: active` the edge shows.
-- The search box keeps its border: it is an input.
+- The search box keeps its border: it is an input. Its text is 0.95rem, and
+  1rem (16px) at 50rem and below, so a phone does not zoom on focus. Its side
+  padding is smaller there.
 
 ### Sidebar tree and TOC
 
@@ -246,8 +255,9 @@ Source: `_partials/footer.html`, `_footer.scss`.
 
 - Native first: `<button>` for controls, `<details>` and `<summary>` for the
   tree, `<a>` for links.
-- Targets are at least 24px square everywhere. On narrow pages the menu button,
-  the theme button, the search box and the tree rows are `--target` (2.75rem).
+- Targets are at least 24px square everywhere. On narrow pages the tree rows
+  are `--target` (2.75rem). The header controls are `--control` (36px) at
+  every width; the menu and theme buttons reach 44px through their `::before`.
   The breadcrumb and footer links are at least 24px high. Links inside running
   text, such as heading anchors, are exempt.
 - Forced colors: the chevron is a mask. Under `forced-colors: active` it uses
