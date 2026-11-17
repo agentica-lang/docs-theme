@@ -107,9 +107,9 @@ All are optional.
 | Param | Default | What it does |
 |---|---|---|
 | `description` | none | The meta and Open Graph description of the home page (when its front matter has none) and of a page with no description or summary, and the summary in `llms.txt` |
-| `image` | `https://www.agentica-lang.com/icon-512.png` | The Open Graph and Twitter card image, in a small `summary` card; a value with no `https://` is a path under `baseURL` (see below) |
-| `socialImage` | none | A 1200×630 image for the large card (`summary_large_image`) of every page that has no image of its own; wins over `image`. A path under the site's `static/` folder also gives its width and height |
-| `socialImageAlt` | the site title | The alt text of `socialImage` |
+| `image` | none | An image for a small `summary` card on every page with no image of its own, in place of the theme's large card; a value with no `https://` is a path under `baseURL` (see below) |
+| `socialImage` | the theme's org card | A 1200×630 image for the large card (`summary_large_image`) of every page that has no image of its own; wins over `image`. A path under the site's `static/` folder also gives its width and height. Without it and without `image`, pages get the theme's `assets/images/social.png` (the Agentica name and tagline), which a site replaces with its own `assets/images/social.png` |
+| `socialImageAlt` | the site title, or "Agentica: Ruby with static types" for the org card | The alt text of the large card |
 | `share` | `true` | Share links at the end of each post (see below); `false` (or `"false"`) turns them off, and `share:` in a page's front matter wins over it |
 | `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
 | `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
@@ -153,7 +153,7 @@ Each part has its param, and `false` turns it off:
 | `feedLink` | `true` | The `<link rel="alternate">` to the RSS feed of the page or the home page, when the site has one |
 | `themeColor` | `{ light = "#ffffff", dark = "#0f1217" }` | The `theme-color` of the light and the dark system color setting |
 | `noindex` | `false` | `true` makes every page `noindex,follow`: for an old version or a preview. `HUGO_PARAMS_NOINDEX=true` sets it too |
-| `organization` | the agentica-lang org | A table: `name` (`Agentica`), `url` (`https://www.agentica-lang.com/`), `logo` (`icon-512.png` there) and `sameAs` (a list, the GitHub org) |
+| `organization` | the agentica-lang org | A table: `name` (`Agentica`), `url` (`https://www.agentica-lang.com/`), `logo` (`icon-512.png` there) and `sameAs` (a list, the GitHub org). The footer links `url` as "`name` home", except on the site at that URL |
 | `software` | none | A table that adds a `SoftwareSourceCode` to the home page: `name` (the site title), `description` (the site's), `codeRepository` (`repo`), `programmingLanguage`, `license`. There is no `SoftwareApplication`: Google wants offers or ratings for it |
 
 In the front matter of a page, `noindex: true` makes that page `noindex` and
@@ -163,11 +163,11 @@ a copy at its original), which also leaves it out of the sitemap.
 The card image of a page is, in order: the first entry of `images` in its
 front matter (a file of the page bundle, or a path or URL), a `cover.*` image
 of its page bundle (`blog/my-post/index.md` and `blog/my-post/cover.png`), or
-the `socialImage` param. Each gives `twitter:card` `summary_large_image`, an
+the `socialImage` param (or the theme's org card). Each gives `twitter:card` `summary_large_image`, an
 `og:image:alt` (the `imageAlt` front matter, else the page title) and, when
 known, `og:image:width` and `og:image:height`; a file of the page bundle
 becomes a 1200px wide jpg. Make the image 1200×630. A page with none of them
-keeps the `image` param and a `summary` card.
+of a site that sets the `image` param keeps it, in a `summary` card.
 
 A post is a page with a `date`. Its `og:type` is `article`, with
 `article:published_time` and `article:modified_time` (the date of its last

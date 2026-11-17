@@ -1,7 +1,8 @@
 {{- /* The large card image of a page, as a dict of url, size (a dict of width and height, empty when unknown) and alt,
 or false. The first `images` entry of the front matter (a file of the page bundle, or a path or URL), else a page
-bundle's cover.* image, else the site's socialImage. A file of the page bundle becomes a 1200px wide jpg. A path under
-the site's static/ folder gives its size; a remote URL does not. */ -}}
+bundle's cover.* image, else the site's socialImage, else (with no `image` param) the theme's org card,
+assets/images/social.png. A file of the page bundle becomes a 1200px wide jpg. A path under the site's static/ folder
+gives its size; a remote URL does not. */ -}}
 {{- $result := false }}
 {{- $src := "" }}
 {{- $res := false }}
@@ -17,10 +18,14 @@ the site's static/ folder gives its size; a remote URL does not. */ -}}
   {{- $result = dict "url" $img.Permalink "size" (dict "width" $img.Width "height" $img.Height) "alt" $alt }}
 {{- else if $src }}
   {{- $result = dict "url" (partial "site-url.html" $src) "size" (partial "static-image-size.html" $src) "alt" $alt }}
-{{- else }}
-  {{- with site.Params.socialImage }}
-    {{- $alt = site.Params.socialImageAlt | default site.Title }}
-    {{- $result = dict "url" (partial "site-url.html" .) "size" (partial "static-image-size.html" .) "alt" $alt }}
+{{- else if site.Params.socialImage }}
+  {{- $alt = site.Params.socialImageAlt | default site.Title }}
+  {{- $url := site.Params.socialImage }}
+  {{- $result = dict "url" (partial "site-url.html" $url) "size" (partial "static-image-size.html" $url) "alt" $alt }}
+{{- else if not site.Params.image }}
+  {{- with resources.Get "images/social.png" }}
+    {{- $alt = site.Params.socialImageAlt | default "Agentica: Ruby with static types" }}
+    {{- $result = dict "url" .Permalink "size" (dict "width" .Width "height" .Height) "alt" $alt }}
   {{- end }}
 {{- end }}
 {{- return $result -}}

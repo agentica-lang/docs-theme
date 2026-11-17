@@ -14,4 +14,9 @@
   {{- else }}
   {{ site.Title }}{{ with site.Params.tagline }}: {{ . }}{{ end }}
   {{- end }}
+  {{- $org := site.Params.organization | default dict }}
+  {{- $orgURL := $org.url | default "https://www.agentica-lang.com/" }}
+  {{- if ne site.Home.Permalink $orgURL }}
+  <p class="org-link"><a href="{{ $orgURL }}">{{ $org.name | default "Agentica" }} home</a></p>
+  {{- end }}
 </footer>

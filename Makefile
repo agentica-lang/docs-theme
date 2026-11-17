@@ -51,7 +51,14 @@ example: highlight/node_modules
 	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/blog/first-post/cover_[^"> ]*\.jpg' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'og:image:width"? content="?1200"?>' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public/blog/first-post/index.html
-	@grep -qE 'twitter:card"? content="?summary"?>' exampleSite/public/guide/index.html
+	@# A page with no image gets the theme's org card, 1200x630, unless the site sets `image` (prefix.toml).
+	@grep -qE 'og:image"? content="?https://agentica-lang.github.io/docs-theme/images/social[^"> ]*\.png"?>' exampleSite/public/guide/index.html
+	@grep -qE 'og:image:width"? content="?1200"?>' exampleSite/public/guide/index.html
+	@grep -qE 'og:image:alt"? content="Agentica: Ruby with static types"' exampleSite/public/guide/index.html
+	@grep -qE 'twitter:card"? content="?summary_large_image"?>' exampleSite/public/guide/index.html
+	@grep -qE 'twitter:card"? content="?summary"?>' exampleSite/public-prefix/guide/index.html
+	@# The footer links the org home.
+	@grep -qE '<a href="?https://www.agentica-lang.com/"?>Agentica home</a>' exampleSite/public/guide/index.html
 	@# A post (a page with a date) is an article with share links; the other pages are not.
 	@grep -qE 'og:type"? content="?article"?>' exampleSite/public/blog/first-post/index.html
 	@grep -qE 'article:published_time"? content="?2026-11-17T09:30:00' exampleSite/public/blog/second-post/index.html
