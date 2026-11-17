@@ -1,6 +1,7 @@
 // Checks the search tags of a built site (make example): node tools/check-seo.mjs DIR [--off]
 // Every page: a title, one h1, either a canonical URL or a robots noindex, and a description with no entity escaped
-// twice. Every JSON-LD block parses and its nodes have the fields Google requires. The sitemap lists no noindex page
+// twice. An og:type article has an article:published_time, and a large card an og:image:alt. Every JSON-LD block
+// parses and its nodes have the fields Google requires. The sitemap lists no noindex page
 // and no page whose canonical URL is another page. With --off (off.toml), none of the tags is there. Hugo's alias
 // pages (a refresh to the new URL) are skipped.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -104,6 +105,11 @@ for (const path of htmlFiles(dir)) {
   if (!noindex && file !== "404.html") {
     if (!og || !metaNamed(html, "og:image").length || !metaNamed(html, "twitter:card").length) fail(file, "no Open Graph or Twitter card");
     if (blocks.length !== 1) fail(file, `${blocks.length} JSON-LD blocks, wants 1`);
+    const content = (name) => metaNamed(html, name).map((t) => attr(t, "content"))[0];
+    const article = content("og:type") === "article";
+    if (article && Number.isNaN(Date.parse(content("article:published_time")))) fail(file, "an article has no article:published_time");
+    if (!article && content("article:published_time")) fail(file, "a page that is not an article has article:published_time");
+    if (content("twitter:card") === "summary_large_image" && !content("og:image:alt")) fail(file, "a large card image has no alt text");
   }
   if (existsSync(join(dir, "index.xml")) && !tags(html, "link").some((t) => attr(t, "type") === "application/rss+xml")) {
     fail(file, "the site has a feed and the page does not link it");
