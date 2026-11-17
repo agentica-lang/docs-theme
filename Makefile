@@ -112,11 +112,12 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	  test "$$(grep -oE '(href|src)="?/docs-theme/_versions/selector\.(css|js)' exampleSite/public-versions/$$f | wc -l)" = 2 || \
 	    { echo "exampleSite/public-versions/$$f does not load the selector from the root once" >&2; exit 1; }; \
 	done
-	@# Each version of a site is built with the selector on from the environment, loading it from the root of all versions.
+	@# Each version of a site is built with the selector on from the environment, loading it from the root of all versions,
+	@# which is not its own: that build publishes no copy.
 	@HUGO_PARAMS_VERSIONS_ENABLED=true HUGO_PARAMS_VERSIONS_ROOT=/site hugo --quiet --cleanDestinationDir --source exampleSite \
 	  --config hugo.toml --baseURL https://example.org/site/0.1.0/ --destination public-env --panicOnWarning
 	@grep -qE 'src="?/site/_versions/selector\.js"? defer' exampleSite/public-env/guide/index.html
-	@test -s exampleSite/public-env/_versions/selector.js
+	@if test -e exampleSite/public-env/_versions; then echo "a build under the root publishes the selector" >&2; exit 1; fi
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
