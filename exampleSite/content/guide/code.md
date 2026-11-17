@@ -65,3 +65,16 @@ Other languages get Hugo's own colors.
 ```sh
 make example
 ```
+
+```input
+3 4
+```
+
+## A prompt
+
+A `prompt` block is text to paste into a coding agent. It wraps, so a phone reader sees all of it.
+
+```prompt
+Install Agentica on this machine from https://www.agentica-lang.com/agentica/getting-started/ with the install script for this platform, put the binary on PATH, run `agentica version` to check it, then write a hello world program in hello.agc and run it with `agentica hello.agc`.
+Tell me each command you ran and its output.
+```
