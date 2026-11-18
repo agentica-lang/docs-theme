@@ -2,7 +2,8 @@
 from them, and a "Copy link" button that share.js shows when the browser has a clipboard. */ -}}
 {{- if partial "share-on.html" . }}
 {{- $url := partial "canonical.html" . | urlquery }}
-{{- $text := .Title | plainify | htmlUnescape | urlquery }}
+{{- /* urlquery writes a space as "+", which Hacker News shows as is; "%20" works on every site. */ -}}
+{{- $text := replace (.Title | plainify | htmlUnescape | urlquery) "+" "%20" }}
 {{- $links := slice
   (dict "name" "X" "href" (printf "https://x.com/intent/post?url=%s&text=%s" $url $text))
   (dict "name" "LinkedIn" "href" (printf "https://www.linkedin.com/sharing/share-offsite/?url=%s" $url))
