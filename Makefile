@@ -73,7 +73,8 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@grep -qE 'article:published_time"? content="?2026-11-17T09:30:00' exampleSite/public/blog/second-post/index.html
 	@grep -qE 'article:modified_time"? content="?20[0-9]{2}-' exampleSite/public/blog/second-post/index.html
 	@grep -qE 'og:type"? content="?website"?>' exampleSite/public/guide/index.html
-	@grep -qF 'href="https://x.com/intent/post?url=https%3A%2F%2Fagentica-lang.github.io%2Fdocs-theme%2Fblog%2Fsecond-post%2F&amp;text=The+second+post+%26+its+card"' exampleSite/public/blog/second-post/index.html
+	@grep -qF 'href="https://x.com/intent/post?url=https%3A%2F%2Fagentica-lang.github.io%2Fdocs-theme%2Fblog%2Fsecond-post%2F&amp;text=The%20second%20post%20%26%20its%20card"' exampleSite/public/blog/second-post/index.html
+	@grep -qF 'href="https://news.ycombinator.com/submitlink?u=https%3A%2F%2Fagentica-lang.github.io%2Fdocs-theme%2Fblog%2Fsecond-post%2F&amp;t=The%20second%20post%20%26%20its%20card"' exampleSite/public/blog/second-post/index.html
 	@if grep -l 'class=share' exampleSite/public/guide/index.html exampleSite/public-bare/blog/first-post/index.html; then echo "share links on a page that is not a post, or with share off" >&2; exit 1; fi
 	@# The first `images` entry is the large card; a URL has no size. The site's socialImage, under static/, has one.
 	@grep -qE 'og:image"? content="?https://www.agentica-lang.com/social.png"?>' exampleSite/public/blog/second-post/index.html
