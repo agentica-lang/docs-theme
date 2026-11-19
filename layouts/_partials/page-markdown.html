@@ -6,6 +6,19 @@
   {{- $title = .Title -}}
 {{- end -}}
 {{- $body = partial "markdown-links.html" (dict "page" . "body" $body) -}}
+{{- /* The Markdown copy drops a heading's {#id}, except inside a fenced block. */ -}}
+{{- $inFence := false -}}
+{{- $lines := slice -}}
+{{- range split $body "\n" -}}
+  {{- $line := . -}}
+  {{- if strings.HasPrefix (strings.TrimLeft " \t" $line) "```" -}}
+    {{- $inFence = not $inFence -}}
+  {{- else if not $inFence -}}
+    {{- $line = replaceRE `^(#{1,6} .*?)[ \t]*\{#[^}\n]+\}[ \t]*$` "${1}" $line -}}
+  {{- end -}}
+  {{- $lines = $lines | append $line -}}
+{{- end -}}
+{{- $body = delimit $lines "\n" -}}
 {{- range findRESubmatch "(?m)^```agentica \\{[^}\\n]*file=\"([^\"]+)\"[^}\\n]*\\}$" $body -}}
   {{- $line := index . 0 -}}
   {{- $fence := "```agentica" -}}
