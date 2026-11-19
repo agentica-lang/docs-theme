@@ -70,7 +70,8 @@ runtime_error = "Error de runtime"
 does_not_compile = "No compila"
 
 # Share links
-share_label = "Compartir esta entrada"
+share_label = "Compartir este artículo"
+social_image_alt = "Agentica: Ruby con tipos estáticos"
 share_on = "Compartir en {name} (se abre en una pestaña nueva)"
 copy_link = "Copiar enlace"
 

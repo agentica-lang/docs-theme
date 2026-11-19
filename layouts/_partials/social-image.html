@@ -24,7 +24,7 @@ gives its size; a remote URL does not. */ -}}
   {{- $result = dict "url" (partial "site-url.html" $url) "size" (partial "static-image-size.html" $url) "alt" $alt }}
 {{- else if not site.Params.image }}
   {{- with resources.Get "images/social.png" }}
-    {{- $alt = site.Params.socialImageAlt | default "Agentica: Ruby with static types" }}
+    {{- $alt = site.Params.socialImageAlt | default (partial "t.html" "social_image_alt") }}
     {{- $result = dict "url" .Permalink "size" (dict "width" .Width "height" .Height) "alt" $alt }}
   {{- end }}
 {{- end }}

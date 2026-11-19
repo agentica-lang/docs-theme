@@ -71,6 +71,7 @@ does_not_compile = "Does not compile"
 
 # Share links
 share_label = "Share this post"
+social_image_alt = "Agentica: Ruby with static types"
 share_on = "Share on {name} (opens in a new tab)"
 copy_link = "Copy link"
 

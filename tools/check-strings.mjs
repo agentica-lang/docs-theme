@@ -3,7 +3,7 @@
 // English phrase is gone, its translation (i18n/LANG.toml) is in, and no value is left as English by mistake.
 // Also checked, for every locale: each key of en.toml has a value in i18n/es.toml, the keys the scripts ask for are
 // the keys of the theme-strings block, and the English of the version selector is the English of en.toml.
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 
 const [lang, build] = process.argv.slice(2);
@@ -70,16 +70,21 @@ for (const [page, keys] of Object.entries(PAGES)) {
       for (const part of fragments(english[key])) if (!has(part)) fail(`${page}: English "${part}" (${key}) is missing`);
       continue;
     }
-    if (shown(key) === english[key] && !SAME_IN_SPANISH.has(key)) {
-      fail(`${key}: the ${lang} value is the English one; translate it or list it in SAME_IN_SPANISH`);
-      continue;
-    }
     if (shown(key) === english[key]) continue;
     const kept = fragments(shown(key));
     for (const part of fragments(english[key])) {
       if (!kept.includes(part) && has(part)) fail(`${page}: English "${part}" (${key}) is still there`);
     }
     for (const part of kept) if (!has(part)) fail(`${page}: "${part}" (${key}) is not there`);
+  }
+}
+
+// Every key of a language other than English is translated, unless it is listed in SAME_IN_SPANISH on purpose.
+if (lang !== "en") {
+  for (const key of Object.keys(english)) {
+    if (shown(key) === english[key] && !SAME_IN_SPANISH.has(key)) {
+      fail(`${key}: the ${lang} value is the English one; translate it or list it in SAME_IN_SPANISH`);
+    }
   }
 }
 
@@ -91,6 +96,27 @@ if (lang !== "en") {
 // The keys the scripts ask for, against the list the block is written from.
 const blockKeys = [...readFileSync("layouts/_partials/theme-strings.html", "utf8").matchAll(/^\s+((?:"\w+"\s*)+)/gm)]
   .flatMap((match) => [...match[1].matchAll(/"(\w+)"/g)].map((m) => m[1]));
+
+// The block of the built page: every key of the list, with a value (an empty one is a missing translation).
+const block = /<script type=(?:"application\/json"|application\/json) id=(?:"theme-strings"|theme-strings)>([\s\S]*?)<\/script>/.exec(
+  readFileSync(join(build, "index.html"), "utf8"),
+);
+if (!block) fail("index.html has no theme-strings block");
+else {
+  const values = JSON.parse(block[1]);
+  for (const key of blockKeys) {
+    if (typeof values[key] !== "string" || values[key] === "") fail(`theme-strings: ${key} is empty`);
+  }
+  for (const key of Object.keys(values)) if (!blockKeys.includes(key)) fail(`theme-strings: ${key} is not in the list`);
+}
+
+// Every key a template asks for with partial "t.html" must be a key of en.toml.
+const layouts = readdirSync("layouts", { recursive: true }).filter((file) => file.endsWith(".html") || file.endsWith(".txt") || file.endsWith(".json") || file.endsWith(".md"));
+for (const file of layouts) {
+  for (const match of readFileSync(join("layouts", file), "utf8").matchAll(/partial "t\.html" "(\w+)"/g)) {
+    if (!(match[1] in english)) fail(`layouts/${file} asks for ${match[1]}, which is not a key of en.toml`);
+  }
+}
 const asked = new Set();
 for (const file of ["assets/js/copy.js", "assets/js/page-actions.js", "assets/js/share.js", "assets/js/theme.js", "assets/js/search.js", "assets/versions/selector.js"]) {
   const source = readFileSync(file, "utf8");

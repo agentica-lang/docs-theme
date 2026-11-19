@@ -109,7 +109,7 @@ All are optional.
 | `description` | none | The meta and Open Graph description of the home page (when its front matter has none) and of a page with no description or summary, and the summary in `llms.txt` |
 | `image` | none | An image for a small `summary` card on every page with no image of its own, in place of the theme's large card; a value with no `https://` is a path under `baseURL` (see below) |
 | `socialImage` | the theme's org card | A 1200×630 image for the large card (`summary_large_image`) of every page that has no image of its own; wins over `image`. A path under the site's `static/` folder also gives its width and height. Without it and without `image`, pages get the theme's `assets/images/social.png` (the Agentica name and tagline), which a site replaces with its own `assets/images/social.png` |
-| `socialImageAlt` | the site title, or "Agentica: Ruby with static types" for the org card | The alt text of the large card |
+| `socialImageAlt` | the site title, or the theme's `social_image_alt` ("Agentica: Ruby with static types") for the org card | The alt text of the large card |
 | `share` | `true` | Share links at the end of each post (see below); `false` (or `"false"`) turns them off, and `share:` in a page's front matter wins over it |
 | `version` | none | A string such as `"1.2.0"`: the version in the header, the footer and `llms.txt`; `HUGO_PARAMS_VERSION` in the environment sets it too. Without it, they show no version |
 | `repo` | none | The GitHub repo URL: the footer links to its releases, and with `version` the version links to its release |
@@ -235,8 +235,11 @@ match their `BreadcrumbList`.
 The words of the theme (buttons, labels, messages, the 404 page) are in
 `i18n/en.toml`. The theme also ships `i18n/es.toml`, the Spanish. A site that
 sets another `locale` copies `i18n/en.toml` to `i18n/<lang>.toml` in its own
-folder, translates the values and keeps the keys. A key with no value in the
-site's language falls back to the English, so a partial file is safe.
+folder, translates the values and keeps the keys. A site's own file with the
+language's name replaces the theme's file of that name. So a site's
+`i18n/en.toml` must hold every key: a partial `i18n/en.toml` would replace the
+English, and the fallback would find nothing. A partial file is safe for another
+language: a key left out there falls back to the English.
 
 A template reads a key with `{{ partial "t.html" "key" }}`, which falls back to
 the English. A value may hold placeholders in braces, such as `{version}` or
@@ -265,6 +268,8 @@ The keys, by part of the page:
 - llms.txt, llms-full.txt and each page's Markdown: `llms_intro`,
   `llms_version`, `llms_version_repo`, `group_docs`, `docs_title`,
   `source_label`, `pages_in_section`, `file_label`.
+- The large social card's alt text, when the site sets no `socialImageAlt`:
+  `social_image_alt`.
 
 The scripts read the strings they show from one JSON block, `theme-strings`,
 which `layouts/_partials/theme-strings.html` writes into each page. The scripts
@@ -273,11 +278,15 @@ runs on the pages of old versions that have no block: it keeps a short English
 fallback, and `tools/check-strings.mjs` checks that it equals `en.toml`.
 
 `make example` builds the example in Spanish too, and `tools/check-strings.mjs`
-checks it: it fails when an English phrase is left on the page, a key has no
-value, or a Spanish value is the English one without being listed. It checks the
-labels of the home page, the 404 page, llms.txt, a page of a section with a
-pager, a code page (the sample and copy labels) and a page with breadcrumbs. It
-also builds a site whose language has no file, which must show English.
+checks it. For each language other than English, every key of `en.toml` must
+have a value that is not the English one, unless the key is listed in
+`SAME_IN_SPANISH` on purpose. The labels of the home page, the 404 page,
+llms.txt, a page with a pager, a code page (the sample and copy labels) and a
+page with breadcrumbs must be in the page. The `theme-strings` block must have
+a value for each of its keys. Every key that a template asks for must be in
+`en.toml`. A site with no file for its language, and one with a partial file,
+are built too: the first must show English, the second must show its
+apostrophes once.
 
 ## Update the theme
 
