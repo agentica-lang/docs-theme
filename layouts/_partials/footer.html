@@ -2,21 +2,21 @@
   {{- $version := partial "version.html" . }}
   {{- if or $version site.Params.repo }}
   <p class="release-links">
-  {{- with $version }}{{ site.Title }} {{ . }}{{ with partial "release-url.html" $ }} · <a href="{{ . }}">Release {{ $version }}</a>{{ end }}{{ end }}
-  {{- with site.Params.repo }}{{ if $version }} · {{ end }}<a href="{{ . }}/releases">All releases</a>{{ end -}}
+  {{- with $version }}{{ site.Title }} {{ . }}{{ with partial "release-url.html" $ }} · <a href="{{ . }}">{{ replace (i18n "release_version") "{version}" $version }}</a>{{ end }}{{ end }}
+  {{- with site.Params.repo }}{{ if $version }} · {{ end }}<a href="{{ . }}/releases">{{ i18n "all_releases" }}</a>{{ end -}}
   </p>
   {{- end }}
   {{- if site.Params.repoPublic }}
   {{- with partial "source-path.html" . }}
-  <a href="{{ site.Params.repo }}/blob/{{ site.Params.branch }}/{{ . }}">Page source</a> ·
+  <a href="{{ site.Params.repo }}/blob/{{ site.Params.branch }}/{{ . }}">{{ i18n "page_source" }}</a> ·
   {{- end }}
-  <a href="{{ site.Params.repo }}">{{ site.Title }} on GitHub</a>
+  <a href="{{ site.Params.repo }}">{{ replace (i18n "site_on_github") "{title}" site.Title }}</a>
   {{- else }}
   {{ site.Title }}{{ with site.Params.tagline }}: {{ . }}{{ end }}
   {{- end }}
   {{- $org := site.Params.organization | default dict }}
   {{- $orgURL := $org.url | default "https://www.agentica-lang.com/" }}
   {{- if ne site.Home.Permalink $orgURL }}
-  <p class="org-link"><a href="{{ $orgURL }}">{{ $org.name | default "Agentica" }} home</a></p>
+  <p class="org-link"><a href="{{ $orgURL }}">{{ replace (i18n "org_home") "{name}" ($org.name | default "Agentica") }}</a></p>
   {{- end }}
 </footer>

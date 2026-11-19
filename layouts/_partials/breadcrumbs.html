@@ -1,6 +1,6 @@
 {{- if and site.Params.breadcrumbs (not .IsHome) }}
 {{- $pages := partial "breadcrumb-pages.html" . }}
-<nav class="breadcrumbs" aria-label="Breadcrumb">
+<nav class="breadcrumbs" aria-label="{{ i18n "breadcrumb" }}">
   <ol>
     {{- range $i, $p := $pages }}
     {{- if eq $i (sub (len $pages) 1) }}

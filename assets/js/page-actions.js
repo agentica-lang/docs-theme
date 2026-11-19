@@ -1,3 +1,4 @@
+import { t } from "./strings.js";
 const root = document.querySelector(".page-actions");
 if (root) {
   const toggle = root.querySelector(".page-actions-toggle");
@@ -29,7 +30,7 @@ if (root) {
   if (!clipboard || !clipboard.writeText) {
     root.classList.add("no-copy");
     for (const element of root.querySelectorAll("[data-copy]")) (element.closest("li") ?? element).remove();
-    toggle.setAttribute("aria-label", "Page actions");
+    toggle.setAttribute("aria-label", t("page_actions"));
   } else {
     let timer;
     const show = (message) => {
@@ -37,7 +38,7 @@ if (root) {
       status.textContent = message;
       clearTimeout(timer);
       timer = setTimeout(() => {
-        text.textContent = "Copy page";
+        text.textContent = t("copy_page");
         status.textContent = "";
       }, 2000);
     };
@@ -57,7 +58,7 @@ if (root) {
           setOpen(false);
           toggle.focus();
         }
-        copy().then(() => show("Copied"), () => show("Copy failed"));
+        copy().then(() => show(t("copied")), () => show(t("copy_failed")));
       });
     }
   }

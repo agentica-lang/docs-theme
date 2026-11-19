@@ -1,4 +1,4 @@
-# {{ site.Title }} documentation
+# {{ replace (i18n "docs_title") "{title}" site.Title }}
 
 > {{ site.Params.description }}
 {{- with partial "llms-version.html" . }}
@@ -11,7 +11,7 @@
 
 # {{ $md.title }}
 
-Source: {{ (.OutputFormats.Get "markdown").Permalink }}
+{{ i18n "source_label" }} {{ (.OutputFormats.Get "markdown").Permalink }}
 
 {{ $md.body }}
 {{- end }}

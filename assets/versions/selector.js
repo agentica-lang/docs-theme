@@ -8,6 +8,20 @@
   if (!script || !window.fetch || !window.URL) return;
   var root = new URL("../", script.src);
 
+  // The page's strings (the theme-strings block of baseof.html). A page built before that block has none: English.
+  var English = {
+    version_label: "Version",
+    latest: "(latest)",
+    view_in_version: "View this page in {version}",
+    version_dev_note: "This is the development documentation: it may describe changes that are not released.",
+    version_old_note: "This is the documentation of version {version}, not the latest release."
+  };
+  var page = {};
+  try { page = JSON.parse(document.getElementById("theme-strings").textContent); } catch (e) {}
+  function t(key) {
+    return page[key] || English[key];
+  }
+
   // selector.css is linked next to this script, so the page is styled when it runs.
   fetch(new URL("versions.json", root).href)
     .then(function (response) { return response.json(); })
@@ -63,11 +77,11 @@
 
     var select = document.createElement("select");
     select.className = "version-select";
-    select.setAttribute("aria-label", "Version");
+    select.setAttribute("aria-label", t("version_label"));
     versions.forEach(function (v) {
       var option = document.createElement("option");
       option.value = v.version;
-      option.textContent = v.version + (v.latest ? " (latest)" : "");
+      option.textContent = v.version + (v.latest ? " " + t("latest") : "");
       option.selected = v === current;
       select.appendChild(option);
     });
@@ -84,15 +98,15 @@
       var note = document.createElement("span");
       var link = document.createElement("a");
       link.href = url(latest);
-      link.textContent = "View this page in " + latest.version;
+      link.textContent = t("view_in_version").replace("{version}", latest.version);
       link.addEventListener("click", function (event) {
         event.preventDefault();
         go(latest);
       });
       note.append(
-        current.version === "dev"
-          ? "This is the development documentation: it may describe changes that are not released. "
-          : "This is the documentation of version " + current.version + ", not the latest release. ",
+        (current.version === "dev"
+          ? t("version_dev_note")
+          : t("version_old_note").replace("{version}", current.version)) + " ",
         link,
         "."
       );

@@ -103,7 +103,7 @@ for (const path of htmlFiles(dir)) {
   }
 
   const blocks = [...html.matchAll(/<script type=(?:"application\/ld\+json"|application\/ld\+json)>([\s\S]*?)<\/script>/g)];
-  const crumbs = html.includes('aria-label=Breadcrumb') || html.includes('aria-label="Breadcrumb"');
+  const crumbs = /<nav class="?breadcrumbs"?/.test(html);
   const og = metaNamed(html, "og:title").length > 0;
   const themeColor = metaNamed(html, "theme-color").length;
 

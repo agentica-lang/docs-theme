@@ -1,3 +1,4 @@
+import { t } from "./strings.js";
 const button = document.querySelector(".theme-toggle");
 if (button) {
   const root = document.documentElement;
@@ -6,7 +7,7 @@ if (button) {
   // system preference decides.
   const current = () => root.dataset.theme || (system.matches ? "dark" : "light");
   const label = () => {
-    button.setAttribute("aria-label", current() === "dark" ? "Switch to light theme" : "Switch to dark theme");
+    button.setAttribute("aria-label", current() === "dark" ? t("switch_light") : t("switch_dark"));
   };
   button.addEventListener("click", () => {
     const next = current() === "dark" ? "light" : "dark";

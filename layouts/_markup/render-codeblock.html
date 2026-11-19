@@ -3,12 +3,12 @@
 The bar of a sample or a prompt holds its label. The HTML has no button text, so summaries and search stay clean. */ -}}
 {{- if ne $lang "output" }}{{ .Page.Store.Set "copy" true }}{{ end -}}
 {{- if eq $lang "output" -}}
-<div class="sample sample-output"><span class="sample-label">Output</span><pre><code>{{ .Inner }}</code></pre></div>
+<div class="sample sample-output"><span class="sample-label">{{ i18n "output" }}</span><pre><code>{{ .Inner }}</code></pre></div>
 {{- else if eq $lang "input" -}}
-<div class="sample sample-input" data-code-copy="input"><div class="code-bar"><span class="sample-label">Input</span></div><pre><code>{{ .Inner }}</code></pre></div>
+<div class="sample sample-input" data-code-copy="input"><div class="code-bar"><span class="sample-label">{{ i18n "input" }}</span></div><pre><code>{{ .Inner }}</code></pre></div>
 {{- else if eq $lang "prompt" -}}
 {{- /* A prompt is prose to paste into an agent: it wraps at every width (_code.scss), and the examples test skips it. */ -}}
-<div class="code-block prompt" data-code-copy="prompt"><div class="code-bar"><span class="sample-label">Prompt</span></div><pre><code>{{ .Inner }}</code></pre></div>
+<div class="code-block prompt" data-code-copy="prompt"><div class="code-bar"><span class="sample-label">{{ i18n "prompt" }}</span></div><pre><code>{{ .Inner }}</code></pre></div>
 {{- else -}}
 {{- $expect := "" -}}
 {{- $agentica := in (slice "agentica" "agc") $lang -}}
@@ -22,6 +22,6 @@ The bar of a sample or a prompt holds its label. The HTML has no button text, so
 {{- if or $agentica $signature }}</div>{{ end -}}
 </div>
 {{- with $expect }}
-<div class="sample sample-error"><span class="sample-label">{{ cond (hasPrefix . "RUNTIME-") "Runtime error" "Does not compile" }}</span><pre><code>error[{{ . }}]</code></pre></div>
+<div class="sample sample-error"><span class="sample-label">{{ cond (hasPrefix . "RUNTIME-") (i18n "runtime_error") (i18n "does_not_compile") }}</span><pre><code>error[{{ . }}]</code></pre></div>
 {{- end -}}
 {{- end -}}

@@ -1,3 +1,4 @@
+import { t } from "./strings.js";
 const MIN_QUERY_LENGTH = 2;
 const MAX_RESULTS = 12;
 const MAX_PER_PAGE = 4;
@@ -204,12 +205,12 @@ async function update() {
   if (!terms(query).length) {
     results = [];
     list.innerHTML = "";
-    setStatus(query ? `Type a word of at least ${MIN_QUERY_LENGTH} characters.` : "");
+    setStatus(query ? t("search_min").replace("{n}", MIN_QUERY_LENGTH) : "");
     setOpen(query.length > 0);
     return;
   }
   if (!entries) {
-    setStatus("Loading…");
+    setStatus(t("search_loading"));
     setOpen(true);
     const opened = closings;
     const ready = await loadIndex();
@@ -217,13 +218,14 @@ async function update() {
     if (!ready) {
       results = [];
       list.innerHTML = "";
-      setStatus("Search could not load. Type again to retry.");
+      setStatus(t("search_error"));
       return;
     }
   }
   results = search(query);
   render(query);
-  setStatus(results.length ? `${results.length} result${results.length === 1 ? "" : "s"}` : "No results.");
+  const count = results.length === 1 ? "search_count_one" : "search_count_other";
+  setStatus(results.length ? t(count).replace("{n}", results.length) : t("search_none"));
   setOpen(true);
 }
 

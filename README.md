@@ -230,6 +230,51 @@ page layout) must call `{{ partial "breadcrumbs.html" . }}` at the top of its
 `<article>`, as the theme's do, or its pages lose the visible breadcrumbs that
 match their `BreadcrumbList`.
 
+## Translate the theme
+
+The words of the theme (buttons, labels, messages, the 404 page) are in
+`i18n/en.toml`. The theme also ships `i18n/es.toml`, the Spanish. A site that
+sets another `locale` copies `i18n/en.toml` to `i18n/<lang>.toml` in its own
+folder, translates the values and keeps the keys. Hugo gives an empty string for
+a key with no value in the site's language, so a new language needs all of them.
+
+A value may hold placeholders in braces, such as `{version}` or `{url}`. The
+template or the script replaces them. Keep them as they are.
+
+The keys, by part of the page:
+
+- Header and sidebar: `skip_content`, `skip_navigation`, `menu`, `home`,
+  `site_nav`, `section_pages`, `release_version`, `switch_dark`, `switch_light`.
+- Search: `search_label`, `search_placeholder`, `search_help`, `search_results`,
+  `search_min`, `search_loading`, `search_error`, `search_none`,
+  `search_count_one`, `search_count_other`.
+- Pager, breadcrumbs, headings: `previous`, `next`, `pager_nav`, `breadcrumb`,
+  `link_to_section`.
+- Footer: `all_releases`, `page_source`, `site_on_github`, `org_home`.
+- The 404 page: `error_404_title` (the tab title), `not_found_title`,
+  `not_found_text`, `not_found_search`, `not_found_try`, `not_found_list`.
+- Page actions: `page_label`, `page_actions`, `more_page_actions`, `copy_page`,
+  `view_source`, `open_chatgpt`, `open_claude`, `page_prompt`.
+- Code blocks: `copy`, `copy_code`, `copy_prompt`, `copy_input`,
+  `copy_signature`, `copied`, `copy_failed`, `output`, `input`, `prompt`,
+  `runtime_error`, `does_not_compile`.
+- Share links: `share_label`, `share_on`, `copy_link`.
+- The version selector and its note: `version_label`, `latest`,
+  `view_in_version`, `version_dev_note`, `version_old_note`.
+- llms.txt, llms-full.txt and each page's Markdown: `llms_intro`,
+  `llms_version`, `llms_version_repo`, `group_docs`, `docs_title`,
+  `source_label`, `pages_in_section`.
+
+The scripts read the strings they show from one JSON block, `theme-strings`,
+which `layouts/_partials/theme-strings.html` writes into each page. A key that
+is missing from the block, or a page with no block (a version built before
+it), shows the English of the script. The version selector falls back the same
+way, so a version built before the block still works with it.
+
+`make example` builds the example in Spanish too, and `tools/check-strings.mjs`
+checks it: it fails when an English phrase is left on the page or a key has no
+value.
+
 ## Update the theme
 
 The repo pins a commit of the theme. To take a newer one:
