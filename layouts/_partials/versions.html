@@ -4,7 +4,8 @@ versions, params.versions.root (by default this site's root). Only the build at 
 fingerprint: every version shares its copy. */ -}}
 {{- with site.Params.versions }}
 {{- if in (slice true "true") .enabled }}
-{{- $own := printf "%s/" (strings.TrimSuffix "/" site.Home.RelPermalink) }}
+{{- /* The root of the site is the default language's home: a Spanish home is under /es/. */ -}}
+{{- $own := printf "%s/" (strings.TrimSuffix "/" hugo.Sites.Default.Home.RelPermalink) }}
 {{- $root := printf "%s/" (strings.TrimSuffix "/" (.root | default $own)) }}
 {{- if eq $root $own }}
 {{- range slice "css" "js" }}

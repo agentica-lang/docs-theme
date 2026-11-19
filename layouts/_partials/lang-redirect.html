@@ -1,0 +1,58 @@
+{{- /* The language redirect and the stored pick (DESIGN.md, Language selector). An inline script, first in the head so
+that the reader never sees the first language. An arrival from outside moves to this page in the reader's language when
+the page has that translation: the stored pick (localStorage "docs-lang") wins; with no pick, the first browser language
+the site has moves only a reader of the default language. "Outside" is a referrer that does not start with the site's root
+(its origin and first folder, the same for every version of the site), so a sibling docs site on the same origin counts
+as outside. A Back navigation never redirects. A change of the language select stores the pick and goes to the option.
+A site with one language has none of it. */ -}}
+{{- if gt (len hugo.Sites) 1 }}
+{{- $targets := dict }}
+{{- range .AllTranslations }}{{ $targets = merge $targets (dict .Language.Locale .RelPermalink) }}{{ end }}
+{{- $locales := slice }}
+{{- range hugo.Sites }}{{ $locales = $locales | append .Language.Locale }}{{ end }}
+{{- /* The site's root, shared by every build of the site: the origin and the first folder of baseURL. A version's build
+(baseURL `<root>/dev/`) has the same root, so a switch between versions is not an arrival from outside. */ -}}
+{{- $base := urls.Parse site.BaseURL }}
+{{- $root := printf "%s://%s/" $base.Scheme $base.Host }}
+{{- with index (split (strings.Trim $base.Path "/") "/") 0 }}{{ $root = printf "%s%s/" $root . }}{{ end }}
+{{- $config := dict "lang" .Language.Locale "default" hugo.Sites.Default.Language.Locale "root" $root "languages" $locales "targets" $targets }}
+<script>
+(function () {
+  var c = {{ $config | jsonify | safeJS }};
+  var back = false;
+  try { back = performance.getEntriesByType("navigation")[0].type === "back_forward"; } catch (e) {}
+  if (!back && document.referrer.indexOf(c.root) !== 0) {
+    var want = "";
+    try { want = localStorage.getItem("docs-lang") || ""; } catch (e) {}
+    if (c.languages.indexOf(want) < 0) want = "";
+    if (!want && c.lang === c.default) want = browserLocale();
+    if (want && want !== c.lang && c.targets[want]) location.replace(c.targets[want] + location.search + location.hash);
+  }
+  function browserLocale() {
+    var langs = navigator.languages || [navigator.language || ""];
+    for (var i = 0; i < langs.length; i++) {
+      var tag = String(langs[i]).split("-")[0].toLowerCase();
+      for (var j = 0; j < c.languages.length; j++) {
+        if (c.languages[j].split("-")[0].toLowerCase() === tag) return c.languages[j];
+      }
+    }
+    return "";
+  }
+  document.addEventListener("change", function (e) {
+    var select = e.target;
+    if (!select || !select.matches || !select.matches("select[data-lang-select]")) return;
+    try { localStorage.setItem("docs-lang", select.options[select.selectedIndex].getAttribute("data-lang-pick")); } catch (err) {}
+    location.assign(select.value);
+  });
+  // Back to this page from another language: the browser may restore the select with the language it had.
+  window.addEventListener("pageshow", function () {
+    var selects = document.querySelectorAll("select[data-lang-select]");
+    for (var i = 0; i < selects.length; i++) {
+      for (var j = 0; j < selects[i].options.length; j++) {
+        if (selects[i].options[j].defaultSelected) selects[i].selectedIndex = j;
+      }
+    }
+  });
+})();
+</script>
+{{- end -}}

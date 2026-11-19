@@ -4,5 +4,5 @@
 {{- if eq $href "" -}}
 {{ .Text }}
 {{- else -}}
-<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ if $link.external }} rel="noopener"{{ end }}>{{ .Text }}</a>
+<a href="{{ $href }}"{{ with .Title }} title="{{ . }}"{{ end }}{{ with $link.lang }} hreflang="{{ . }}"{{ end }}{{ if $link.external }} rel="noopener"{{ end }}>{{ .Text }}</a>
 {{- end -}}

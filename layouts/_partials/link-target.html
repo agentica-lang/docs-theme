@@ -3,10 +3,18 @@
 {{- $fragment := cond (eq $url.Fragment "") "" (printf "#%s" $url.Fragment) -}}
 {{- $page := false -}}
 {{- $href := $dest -}}
+{{- /* A page of a language that has no page at the link (a Spanish page with no Spanish version) goes to the default
+language's page, with hreflang of that language. */ -}}
+{{- $lang := "" -}}
+{{- $default := hugo.Sites.Default -}}
+{{- $fallback := ne site.Language.Lang $default.Language.Lang -}}
 {{- if or $url.IsAbs (eq $url.Path "") -}}
 {{- else if hasPrefix $url.Path "/" -}}
   {{- with site.GetPage $url.Path -}}
     {{- $page = . -}}
+  {{- else with and $fallback ($default.GetPage $url.Path) -}}
+    {{- $page = . -}}
+    {{- $lang = $default.Language.Lang -}}
   {{- else -}}
     {{- warnf "%s: no page for link %q" $.from.Path $dest -}}
   {{- end -}}
@@ -15,6 +23,12 @@
   {{- $target := path.Join (path.Dir $source) $url.Path -}}
   {{- range site.Pages -}}
     {{- if eq (partial "source-path.html" .) $target }}{{ $page = . }}{{ end -}}
+  {{- end -}}
+  {{- if and (not $page) $fallback -}}
+    {{- $logical := path.Join (path.Dir $.from.File.Path) $url.Path -}}
+    {{- range $default.Pages -}}
+      {{- if and .File (eq .File.Path $logical) }}{{ $page = . }}{{ $lang = $default.Language.Lang }}{{ end -}}
+    {{- end -}}
   {{- end -}}
   {{- if not $page -}}
     {{- $href = "" -}}
@@ -28,4 +42,4 @@
     {{- end -}}
   {{- end -}}
 {{- end -}}
-{{- return dict "page" $page "fragment" $fragment "href" $href "external" $url.IsAbs -}}
+{{- return dict "page" $page "fragment" $fragment "href" $href "external" $url.IsAbs "lang" $lang -}}

@@ -41,6 +41,18 @@ function loadIndex() {
   return loading;
 }
 
+// Accents do not count: "cafe" finds "café". Each character folds to one character, so an offset in the folded text is
+// the offset in the original, and the snippets and the marks come from the original text.
+function fold(text) {
+  if (/^[\x00-\x7f]*$/.test(text)) return text.toLowerCase();
+  return Array.from(text, (char) => {
+    const plain = char.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+    if (plain.length === char.length) return plain;
+    const lower = char.toLowerCase();
+    return lower.length === char.length ? lower : char;
+  }).join("");
+}
+
 function buildEntries(index) {
   const pages = Array.isArray(index && index.pages) ? index.pages : [];
   const built = [];
@@ -54,9 +66,9 @@ function buildEntries(index) {
         id: section.id || "",
         heading: section.heading || "",
         text,
-        lowTitle: String(page.title || "").toLowerCase(),
-        lowHeading: String(section.heading || "").toLowerCase(),
-        lowText: text.toLowerCase(),
+        lowTitle: fold(String(page.title || "")),
+        lowHeading: fold(String(section.heading || "")),
+        lowText: fold(text),
       });
     }
   }
@@ -64,11 +76,11 @@ function buildEntries(index) {
 }
 
 function terms(query) {
-  return [...new Set(query.toLowerCase().split(/\s+/).filter((word) => word.length >= MIN_QUERY_LENGTH))].sort((a, b) => b.length - a.length);
+  return [...new Set(fold(query).split(/\s+/).filter((word) => word.length >= MIN_QUERY_LENGTH))].sort((a, b) => b.length - a.length);
 }
 
 function wordStart(text, at) {
-  return at === 0 || !/[a-z0-9_]/.test(text[at - 1]);
+  return at === 0 || !/[\p{L}\p{N}_]/u.test(text[at - 1]);
 }
 
 function fieldScore(text, term, weight) {
@@ -100,7 +112,7 @@ function scoreEntry(entry, words, phrase) {
 
 function search(query) {
   const words = terms(query);
-  const ordered = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const ordered = fold(query).split(/\s+/).filter(Boolean);
   const phrase = ordered.length > 1 ? new RegExp(ordered.map(escapeRegex).join("[\\s._:/()-]*")) : null;
   const scored = [];
   for (const entry of entries) {
@@ -130,11 +142,15 @@ function escapeRegex(text) {
 
 function highlight(text, words) {
   if (!words.length) return escapeHtml(text);
-  const pattern = new RegExp(`(${words.map(escapeRegex).join("|")})`, "gi");
-  return text
-    .split(pattern)
-    .map((part, i) => (i % 2 ? `<mark>${escapeHtml(part)}</mark>` : escapeHtml(part)))
-    .join("");
+  const pattern = new RegExp(words.map(escapeRegex).join("|"), "g");
+  let html = "";
+  let last = 0;
+  for (const match of fold(text).matchAll(pattern)) {
+    const end = match.index + match[0].length;
+    html += escapeHtml(text.slice(last, match.index)) + `<mark>${escapeHtml(text.slice(match.index, end))}</mark>`;
+    last = end;
+  }
+  return html + escapeHtml(text.slice(last));
 }
 
 function snippet(entry, words) {

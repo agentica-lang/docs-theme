@@ -1,0 +1,25 @@
+# Added to hugo.toml by make example: the site in two languages. English is at the existing URLs, Spanish under /es/,
+# with its content in content.es/ (the home page, a section and a page of that section). reference.md has no Spanish
+# page, so its links from Spanish go to the English page.
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false
+
+[languages.en]
+label = "English"
+locale = "en"
+weight = 1
+
+[languages.en.params]
+  ogLocale = "en_US"
+
+[languages.es]
+label = "Español"
+locale = "es"
+weight = 2
+title = "Ejemplo"
+contentDir = "content.es"
+
+[languages.es.params]
+  ogLocale = "es_ES"
+  description = "Un sitio de ejemplo del tema de documentación de agentica-lang."
+  tagline = "el tema de documentación"

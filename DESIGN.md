@@ -215,6 +215,51 @@ Source: `assets/versions/selector.js`, `selector.css`,
   same page in the latest version. `dev` gets its own text. The strip is under
   the header, not above it, so the skip links stay the first tab stops.
 
+### Language selector
+
+Source: `_partials/lang-select.html`, `lang-redirect.html`, `_lang.scss`,
+`_partials/seo.html`.
+
+- Only a site with two or more languages has it (`hugo.Sites`). The options are
+  built at build time, so the page's links are right without JavaScript.
+- A `<select>` labelled "Language", like the version selector, with one option
+  per language, in the order of the site's languages. An option's value is this
+  page in that language when the page has that translation (its
+  `AllTranslations`), else that language's home. The current language is the
+  selected option. Each option has `lang` and `data-lang-pick`.
+- Look and size follow the version selector: `--control` high and 0.85rem text
+  above 30rem; under 30rem, as wide as the drawer, `--target` high, 1rem (16px)
+  text so a phone does not zoom on focus.
+- The header has the select from 30rem up; the menu has it under 30rem. The menu
+  order is fixed: the version select first (selector.js puts it at the top of
+  the drawer, when the site has versions and runs its script), then the language
+  select, then the tree. Without the version select, the language select is the
+  first row. The two copies sit in a `role="group"`, not a landmark, and the
+  hidden copy is out of the accessibility tree, so a screen reader meets one
+  "Language" control.
+- Without JavaScript the select is hidden and a `<noscript>` shows the same
+  languages as a list of links, the current one marked `aria-current`.
+- A change of the select stores the language in `localStorage` as `docs-lang`
+  and goes to the option's value (`lang-redirect.html`).
+- The redirect is a script at the top of the head, before the first paint. It
+  runs only on an arrival from outside the site: a referrer that does not start
+  with the site's root (the origin and the first folder of baseURL, the same for
+  every version of the site) counts as outside, so a sibling docs site of the
+  same origin does too. The stored pick wins when the page has that language;
+  with no pick, the browser's first language the site has moves only a reader of
+  the default language. A page with no version in the wanted language stays. It
+  replaces the history entry (`location.replace`). A Back navigation never
+  redirects, and a `pageshow` puts the select back to its own language, so Back
+  to a page the reader left by a change does not send them forward again.
+- `hreflang` in the head (`seo.html`): one link per translation, the page itself
+  included, and `x-default` to the default language's page; `og:locale` and
+  `og:locale:alternate` take each language's `params.ogLocale`. Only a page with
+  two or more translations has them.
+- Versions: the version selector keeps the language (`selector.js` reads the
+  stored pick, else the page's language, and the version's `languages`); a
+  version with no page in that language shows the English page, then the
+  version's home.
+
 ### Pager
 
 Source: `_partials/pager.html`, `nav-order.html`, `_pager.scss`.

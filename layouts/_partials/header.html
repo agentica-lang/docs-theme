@@ -14,6 +14,7 @@
   <span class="version">{{ . }}</span>
   {{- end }}
   {{- end }}
+  {{- partial "lang-select.html" (dict "page" . "class" "lang-select-header") }}
   {{- partial "search.html" . }}
   {{- partial "theme-toggle.html" . }}
   {{- if site.Params.repoPublic }}

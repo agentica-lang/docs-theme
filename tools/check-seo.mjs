@@ -4,7 +4,9 @@
 // same. An og:type article has an article:published_time, and a large card an og:image:alt. Every JSON-LD block
 // parses and its nodes have the fields Google requires. The sitemap (or each sitemap of this build that a sitemap
 // index lists) lists no noindex page and no page whose canonical URL is another page. With --off (off.toml), none of
-// the tags is there. Hugo's alias pages (a refresh to the new URL) are skipped.
+// the tags is there. A page with translations lists each of them, itself included, and x-default to the root's
+// language; every link is an https URL of this site, and each target lists the same links (reciprocal).
+// Hugo's alias pages (a refresh to the new URL) are skipped.
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join, relative } from "node:path";
 
@@ -73,6 +75,8 @@ const homeCanonical = (() => {
   return link ? attr(link, "href") : og ? attr(og, "content") : null;
 })();
 const seen = { WebSite: 0, Organization: 0, BreadcrumbList: 0 };
+const alternates = new Map();
+const htmlLang = (html) => attr(tags(html, "html")[0] ?? "", "lang");
 
 for (const path of htmlFiles(dir)) {
   const file = relative(dir, path);
@@ -106,6 +110,14 @@ for (const path of htmlFiles(dir)) {
   const crumbs = /<nav class="?breadcrumbs"?[\s>]/.test(html);
   const og = metaNamed(html, "og:title").length > 0;
   const themeColor = metaNamed(html, "theme-color").length;
+  const links = tags(html, "link").filter((t) => attr(t, "rel") === "alternate" && attr(t, "hreflang") !== null);
+  if (links.length) {
+    alternates.set(file, {
+      lang: htmlLang(html),
+      canonical: canonicals[0],
+      links: links.map((t) => ({ lang: attr(t, "hreflang"), href: attr(t, "href") })),
+    });
+  }
 
   if (off) {
     if (blocks.length || crumbs || og || themeColor) fail(file, "a search tag is on in the off build");
@@ -138,7 +150,7 @@ for (const path of htmlFiles(dir)) {
       checkNode(file, node, ownURL);
       if (node["@type"] in seen) seen[node["@type"]]++;
     }
-    const home = file === "index.html";
+    const home = file === "index.html" || file === `${htmlLang(html)}/index.html`;
     const types = (data["@graph"] ?? []).map((n) => n["@type"]);
     if (home && !(types.includes("WebSite") && types.includes("Organization"))) fail(file, "the home page needs WebSite and Organization");
     if (!home && !types.includes("BreadcrumbList")) fail(file, "no BreadcrumbList");
@@ -150,7 +162,9 @@ const locs = (xml) => xml.match(/<loc>(https?:\/\/[^<]+?)<\/loc>/g)?.map((l) => 
 function checkSitemap(name, xml) {
   const base = locs(xml);
   if (!base.length) fail(name, "no <loc>");
-  const root = base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
+  // The site's root is the root page's URL. Not the shortest URL: a language's own sitemap (es/sitemap.xml) has its home,
+  // `es/`, as its shortest one, and that is not the root.
+  const root = homeCanonical || base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
   for (const loc of base) {
     if (!loc.startsWith(root)) fail(name, `${loc} is not under ${root}`);
     const page = join(loc.slice(root.length), "index.html");
@@ -180,6 +194,31 @@ if (existsSync(sitemap)) {
 }
 
 if (!off && (!seen.WebSite || !seen.Organization || !seen.BreadcrumbList)) fail(dir, "the build has no WebSite, Organization or BreadcrumbList");
+if (off && alternates.size) fail(dir, "hreflang links in the off build");
+const linkSet = (links) => links.map((l) => `${l.lang} ${l.href}`).sort().join("\n");
+const pageFile = (href) => {
+  const rel = href.slice(homeCanonical.length);
+  return join(dir, rel === "" || rel.endsWith("/") ? `${rel}index.html` : rel);
+};
+const defaultLang = alternates.size ? htmlLang(readFileSync(join(dir, "index.html"), "utf8")) : "";
+for (const [file, page] of alternates) {
+  const languages = page.links.filter((l) => l.lang !== "x-default");
+  const self = languages.find((l) => l.href === page.canonical);
+  if (!self || self.lang !== page.lang) fail(file, "hreflang has no link of this page in its own language");
+  if (languages.length < 2) fail(file, "the hreflang set is missing a translation");
+  const english = languages.find((l) => l.lang === defaultLang);
+  const xDefault = page.links.filter((l) => l.lang === "x-default");
+  if (xDefault.length !== 1 || !english || xDefault[0].href !== english.href) fail(file, "x-default is not the root language's page");
+  for (const link of page.links) {
+    if (!link.href.startsWith("https://") || !link.href.startsWith(homeCanonical)) fail(file, `hreflang ${link.lang} is not an https URL of this site: ${link.href}`);
+  }
+  for (const link of languages) {
+    const path = pageFile(link.href);
+    const back = existsSync(path) ? alternates.get(relative(dir, path)) : null;
+    if (!back) fail(file, `hreflang ${link.lang} goes nowhere: ${link.href}`);
+    else if (linkSet(back.links) !== linkSet(page.links)) fail(file, `hreflang of ${link.href} is not reciprocal`);
+  }
+}
 if (errors.length) {
   console.error(errors.join("\n"));
   process.exit(1);

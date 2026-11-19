@@ -1,5 +1,5 @@
 {{- /* A self-test of markdown-links.html, run by home.llms.txt: links are rewritten outside code only. It links to the first page of the sidebar order, so it needs no fixed page. */ -}}
-{{- range first 1 (partialCached "nav-order.html" site.Home) -}}
+{{- range first 1 (partialCached "nav-order.html" site.Home site.Language.Lang) -}}
 {{- $dest := .Path -}}
 {{- $target := (.OutputFormats.Get "markdown").Permalink -}}
 {{- $self := (site.Home.OutputFormats.Get "markdown").Permalink -}}

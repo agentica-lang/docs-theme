@@ -1,0 +1,109 @@
+@use "tokens" as *;
+
+// The language selector (DESIGN.md, Language selector): a <select> in the header from 30rem up, and in the menu under
+// it. Without JavaScript the select does nothing and the list of links in its <noscript> takes its place.
+.lang-select {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    color: var(--muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--fg);
+      text-decoration: underline;
+    }
+
+    &[aria-current="page"] {
+      background: none;
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.lang-select-control {
+  display: none;
+  flex-shrink: 0;
+  max-width: 9rem;
+  height: var(--control);
+  padding: 0 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+  }
+}
+
+.js .lang-select-control {
+  display: block;
+}
+
+.lang-select-header {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.lang-select-menu {
+  display: none;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+
+  ul {
+    gap: 0 1rem;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+  }
+
+  .lang-select-control {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    height: var(--target);
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.js .lang-select-menu .lang-select-control {
+  display: block;
+}
+
+// The sidebar marks its current page with a filled row; the language links are not pages of the tree.
+.lang-select-menu a[aria-current="page"] {
+  background: none;
+}
+
+@media (max-width: 30rem) {
+  .lang-select-header {
+    display: none;
+  }
+
+  .lang-select-menu {
+    display: block;
+  }
+}
