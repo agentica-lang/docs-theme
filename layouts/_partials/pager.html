@@ -10,12 +10,12 @@
   {{- end -}}
 {{- end -}}
 {{- if or $prev $next }}
-<nav class="pager" aria-label="{{ i18n "pager_nav" }}">
+<nav class="pager" aria-label="{{ partial "t.html" "pager_nav" }}">
   {{- with $prev }}
-  <a class="pager-prev" href="{{ .RelPermalink }}" rel="prev"><span class="pager-label">{{ i18n "previous" }}</span><span class="pager-title"><span aria-hidden="true">← </span>{{ .LinkTitle }}</span></a>
+  <a class="pager-prev" href="{{ .RelPermalink }}" rel="prev"><span class="pager-label">{{ partial "t.html" "previous" }}</span><span class="pager-title"><span aria-hidden="true">← </span>{{ .LinkTitle }}</span></a>
   {{- end }}
   {{- with $next }}
-  <a class="pager-next" href="{{ .RelPermalink }}" rel="next"><span class="pager-label">{{ i18n "next" }}</span><span class="pager-title">{{ .LinkTitle }}<span aria-hidden="true"> →</span></span></a>
+  <a class="pager-next" href="{{ .RelPermalink }}" rel="next"><span class="pager-label">{{ partial "t.html" "next" }}</span><span class="pager-title">{{ .LinkTitle }}<span aria-hidden="true"> →</span></span></a>
   {{- end }}
 </nav>
 {{- end -}}

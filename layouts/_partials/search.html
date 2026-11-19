@@ -1,14 +1,14 @@
 {{- if partial "search-on.html" . }}
 {{- with site.Home.OutputFormats.Get "search" }}
 <div class="site-search" role="search" data-index="{{ .RelPermalink }}">
-  <label class="visually-hidden" for="search-input">{{ i18n "search_label" }}</label>
-  <input id="search-input" class="search-input" type="search" placeholder="{{ i18n "search_placeholder" }}" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-results" aria-describedby="search-help">
+  <label class="visually-hidden" for="search-input">{{ partial "t.html" "search_label" }}</label>
+  <input id="search-input" class="search-input" type="search" placeholder="{{ partial "t.html" "search_placeholder" }}" autocomplete="off" spellcheck="false" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="search-results" aria-describedby="search-help">
   <kbd class="search-key" aria-hidden="true">/</kbd>
-  <span id="search-help" class="visually-hidden">{{ i18n "search_help" }}</span>
+  <span id="search-help" class="visually-hidden">{{ partial "t.html" "search_help" }}</span>
   <span id="search-status" class="visually-hidden" role="status" aria-live="polite"></span>
   <div class="search-panel" hidden>
     <p class="search-message" aria-hidden="true"></p>
-    <ul id="search-results" class="search-results" role="listbox" aria-label="{{ i18n "search_results" }}"></ul>
+    <ul id="search-results" class="search-results" role="listbox" aria-label="{{ partial "t.html" "search_results" }}"></ul>
   </div>
 </div>
 {{- with resources.Get "js/search.js" | js.Build (dict "minify" true "targetPath" "js/search.js") | fingerprint }}

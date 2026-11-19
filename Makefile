@@ -17,13 +17,14 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
 
-# Six builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
-# search tag off (off.toml), the version selector on (versions.toml), and the theme in Spanish (spanish.toml).
+# Seven builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
+# search tag off (off.toml), the version selector on (versions.toml), the theme in Spanish (spanish.toml), and a language
+# with no i18n file (fallback.toml), which must show English.
 # tools/check-seo.mjs checks the search tags of each.
 # Each must have the outputs of the theme's hugo.toml (they need `_merge = "deep"`) and no Go format error, which a
 # printf of a missing param writes (%!s(<nil>), or %25!s(%3cnil%3e) in a URL) with no Hugo warning.
 EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml \
-  public-versions:hugo.toml,versions.toml public-spanish:hugo.toml,spanish.toml
+  public-versions:hugo.toml,versions.toml public-spanish:hugo.toml,spanish.toml public-fallback:hugo.toml,fallback.toml
 
 example: highlight/node_modules exampleSite/.themes/docs-theme
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
@@ -40,6 +41,7 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	done
 	@# The strings of each locale: the English of each build, and the Spanish with no English left (tools/check-strings.mjs).
 	@node tools/check-strings.mjs en exampleSite/public
+	@node tools/check-strings.mjs en exampleSite/public-fallback
 	@node tools/check-strings.mjs es exampleSite/public-spanish
 	@# A one-line def keeps the colors of its body: the `#` of `#{` there is not a comment.
 	@grep -q 'class=nf>shade</span>(c: .*<span class=si>#{</span>' exampleSite/public/guide/code/index.html || \
@@ -137,4 +139,4 @@ check-seo:
 
 clean:
 	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off \
-	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/resources highlight/node_modules
+	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/resources highlight/node_modules

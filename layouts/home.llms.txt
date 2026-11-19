@@ -6,7 +6,7 @@
 {{ with partial "llms-version.html" . }}{{ . }}
 
 {{ end -}}
-{{ replace (i18n "llms_intro") "{url}" (.OutputFormats.Get "llmsfull").Permalink }}
+{{ replace (partial "t.html" "llms_intro") "{url}" (.OutputFormats.Get "llmsfull").Permalink }}
 {{- range partial "llms-groups.html" . }}
 
 ## {{ .title }}

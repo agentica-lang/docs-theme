@@ -235,11 +235,12 @@ match their `BreadcrumbList`.
 The words of the theme (buttons, labels, messages, the 404 page) are in
 `i18n/en.toml`. The theme also ships `i18n/es.toml`, the Spanish. A site that
 sets another `locale` copies `i18n/en.toml` to `i18n/<lang>.toml` in its own
-folder, translates the values and keeps the keys. Hugo gives an empty string for
-a key with no value in the site's language, so a new language needs all of them.
+folder, translates the values and keeps the keys. A key with no value in the
+site's language falls back to the English, so a partial file is safe.
 
-A value may hold placeholders in braces, such as `{version}` or `{url}`. The
-template or the script replaces them. Keep them as they are.
+A template reads a key with `{{ partial "t.html" "key" }}`, which falls back to
+the English. A value may hold placeholders in braces, such as `{version}` or
+`{url}`. The template or the script replaces them. Keep them as they are.
 
 The keys, by part of the page:
 
@@ -263,17 +264,18 @@ The keys, by part of the page:
   `view_in_version`, `version_dev_note`, `version_old_note`.
 - llms.txt, llms-full.txt and each page's Markdown: `llms_intro`,
   `llms_version`, `llms_version_repo`, `group_docs`, `docs_title`,
-  `source_label`, `pages_in_section`.
+  `source_label`, `pages_in_section`, `file_label`.
 
 The scripts read the strings they show from one JSON block, `theme-strings`,
-which `layouts/_partials/theme-strings.html` writes into each page. A key that
-is missing from the block, or a page with no block (a version built before
-it), shows the English of the script. The version selector falls back the same
-way, so a version built before the block still works with it.
+which `layouts/_partials/theme-strings.html` writes into each page. The scripts
+have no English of their own. The one exception is the version selector, which
+runs on the pages of old versions that have no block: it keeps a short English
+fallback, and `tools/check-strings.mjs` checks that it equals `en.toml`.
 
 `make example` builds the example in Spanish too, and `tools/check-strings.mjs`
-checks it: it fails when an English phrase is left on the page or a key has no
-value.
+checks it: it fails when an English phrase is left on the page, a key has no
+value, or a Spanish value is the English one without being listed. It also
+builds a site whose language has no file, which must show English.
 
 ## Update the theme
 

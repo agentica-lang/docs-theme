@@ -5,7 +5,7 @@
   {{- if $page.IsSection }}
   <a href="{{ $page.RelPermalink }}"{{ if eq $page $current }} aria-current="page"{{ end }}>{{ $page.LinkTitle }}</a>
   <details{{ if or (eq $page $current) ($page.IsAncestor $current) }} open{{ end }}>
-    <summary aria-label="{{ replace (i18n "section_pages") "{title}" $page.LinkTitle }}"></summary>
+    <summary aria-label="{{ replace (partial "t.html" "section_pages") "{title}" $page.LinkTitle }}"></summary>
     {{- if eq $page $current }}{{ partial "toc.html" $page }}{{ end }}
     <ul>
       {{- range $page.Pages.ByWeight }}

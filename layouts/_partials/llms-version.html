@@ -1,9 +1,9 @@
 {{- /* The version line of llms.txt and llms-full.txt, or "" without params.version. With a repo, it links the release. */ -}}
 {{- $line := "" -}}
 {{- with partial "version.html" -}}
-  {{- $line = replace (i18n "llms_version") "{version}" . -}}
+  {{- $line = replace (partial "t.html" "llms_version") "{version}" . -}}
   {{- with partial "release-url.html" -}}
-    {{- $line = replace (replace (replace (i18n "llms_version_repo") "{version}" (partial "version.html")) "{url}" .) "{repo}" site.Params.repo -}}
+    {{- $line = replace (replace (replace (partial "t.html" "llms_version_repo") "{version}" (partial "version.html")) "{url}" .) "{repo}" site.Params.repo -}}
   {{- end -}}
 {{- end -}}
 {{- return $line -}}

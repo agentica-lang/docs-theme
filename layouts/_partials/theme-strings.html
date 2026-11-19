@@ -1,9 +1,9 @@
-{{- /* The interface strings the scripts show, as one JSON block that assets/js/strings.js and assets/versions/selector.js
-read. A key left out here, or a page with no block (a tag built before this), gets the English of the script. */ -}}
+{{- /* The interface strings the scripts show, as one JSON block that assets/js/strings.js reads. The keys are the ones the
+scripts ask for (check-strings.mjs checks the list). */ -}}
 {{- $keys := slice
   "copy" "copy_code" "copy_prompt" "copy_input" "copy_signature" "copied" "copy_failed" "copy_page" "page_actions"
   "copy_link" "switch_dark" "switch_light" "search_min" "search_loading" "search_error" "search_none" "search_count_one"
   "search_count_other" "version_label" "latest" "view_in_version" "version_dev_note" "version_old_note" }}
 {{- $strings := dict }}
-{{- range $keys }}{{ $strings = merge $strings (dict . (i18n .)) }}{{ end -}}
+{{- range $keys }}{{ $strings = merge $strings (dict . (partial "t.html" .)) }}{{ end -}}
 <script type="application/json" id="theme-strings">{{ $strings | jsonify | safeJS }}</script>

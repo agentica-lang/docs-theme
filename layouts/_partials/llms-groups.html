@@ -1,4 +1,4 @@
-{{- $groups := slice (dict "title" (i18n "group_docs") "pages" ((slice site.Home) | append site.Home.Pages.ByWeight)) -}}
+{{- $groups := slice (dict "title" (partial "t.html" "group_docs") "pages" ((slice site.Home) | append site.Home.Pages.ByWeight)) -}}
 {{- range where site.Home.Pages.ByWeight "IsSection" true -}}
   {{- $groups = $groups | append (dict "title" .LinkTitle "pages" (partial "section-pages.html" .)) -}}
 {{- end -}}

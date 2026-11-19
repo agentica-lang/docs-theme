@@ -1,7 +1,7 @@
 {{ define "main" }}
 <article class="content">
-  <h1>{{ i18n "not_found_title" }}</h1>
-  <p>{{ i18n "not_found_text" }} {{ if partial "search-on.html" . }}{{ i18n "not_found_search" }}{{ else }}{{ i18n "not_found_try" }}{{ end }} {{ i18n "not_found_list" }}</p>
+  <h1>{{ partial "t.html" "not_found_title" }}</h1>
+  <p>{{ partial "t.html" "not_found_text" }} {{ if partial "search-on.html" . }}{{ partial "t.html" "not_found_search" }}{{ else }}{{ partial "t.html" "not_found_try" }}{{ end }} {{ partial "t.html" "not_found_list" }}</p>
   <ul class="pages">
     <li><a href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a></li>
     {{- range site.Home.Pages.ByWeight }}

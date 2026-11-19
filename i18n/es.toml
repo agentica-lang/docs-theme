@@ -1,13 +1,12 @@
-# The words of the theme in Spanish (neutral, tú). Terms follow the docs-i18n glossary (agentica's
-# .agents/skills/docs-i18n/references/glossary-es.md); a term that stays in English keeps its English here too.
-# Keys and placeholders are the same as in en.toml.
+# The words of the theme in Spanish (neutral, tú). Terms follow the docs-i18n glossary of Agentica. A term that stays
+# in English keeps its English here too. Keys and placeholders are the same as in en.toml.
 
 # Header and sidebar
 skip_content = "Ir al contenido"
 skip_navigation = "Ir a la navegación"
 menu = "Menú"
 home = "Inicio"
-site_nav = "Sitio"
+site_nav = "Navegación del sitio"
 section_pages = "Páginas de {title}"
 release_version = "Release {version}"
 switch_dark = "Cambiar al tema oscuro"
@@ -16,7 +15,7 @@ switch_light = "Cambiar al tema claro"
 # Search
 search_label = "Buscar en la documentación"
 search_placeholder = "Buscar"
-search_help = "Pulsa / o Control K para buscar. Usa las flechas para elegir un resultado y Enter para abrirlo."
+search_help = "Pulsa / o Ctrl+K para buscar. Usa las flechas para elegir un resultado y Enter para abrirlo."
 search_results = "Resultados de la búsqueda"
 search_min = "Escribe una palabra de al menos {n} caracteres."
 search_loading = "Cargando…"
@@ -51,7 +50,7 @@ page_label = "Página"
 page_actions = "Acciones de la página"
 more_page_actions = "Más acciones de la página"
 copy_page = "Copiar página"
-view_source = "Ver fuente"
+view_source = "Ver código fuente"
 open_chatgpt = "Abrir en ChatGPT"
 open_claude = "Abrir en Claude"
 page_prompt = "Lee {url} para que pueda hacerte preguntas sobre su contenido."
@@ -77,7 +76,7 @@ copy_link = "Copiar enlace"
 
 # The version selector and the old-version note
 version_label = "Versión"
-latest = "(última)"
+latest = "(última versión)"
 view_in_version = "Ver esta página en {version}"
 version_dev_note = "Esta es la documentación de desarrollo: puede describir cambios que aún no se han publicado."
 version_old_note = "Esta es la documentación de la versión {version}, no de la última release."
@@ -90,3 +89,4 @@ group_docs = "Documentación"
 docs_title = "Documentación de {title}"
 source_label = "Fuente:"
 pages_in_section = "Páginas de esta sección"
+file_label = "Archivo `{file}`:"

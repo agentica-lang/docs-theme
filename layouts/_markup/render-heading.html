@@ -1,1 +1,1 @@
-<h{{ .Level }} id="{{ .Anchor }}">{{ .Text }}{{ if gt .Level 1 }} <a class="anchor" href="#{{ .Anchor }}" aria-label="{{ i18n "link_to_section" }}">#</a>{{ end }}</h{{ .Level }}>
+<h{{ .Level }} id="{{ .Anchor }}">{{ .Text }}{{ if gt .Level 1 }} <a class="anchor" href="#{{ .Anchor }}" aria-label="{{ partial "t.html" "link_to_section" }}">#</a>{{ end }}</h{{ .Level }}>
