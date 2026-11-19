@@ -34,6 +34,25 @@
   }
 }
 
+// The notice above a translated page that is out of date (page-notice.html, a site's copy). As wide as the content.
+.translation-notice {
+  max-width: var(--content-width);
+  margin: 0 0 1.5rem;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.95rem;
+
+  p {
+    margin: 0;
+  }
+
+  a {
+    color: var(--link);
+  }
+}
+
 .lang-select-control {
   display: none;
   flex-shrink: 0;
