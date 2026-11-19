@@ -1,0 +1,7 @@
+# A partial file: keys with an apostrophe, in text, in attributes, in the JSON block and through a string function.
+# The rest falls back to the English of the theme.
+skip_content = "Vai all'inizio"
+copy = "Copia l'estratto"
+menu = "Menu dell'indice"
+search_placeholder = "Cerca nell'indice"
+site_on_github = "{title} su GitHub, dell'autore"

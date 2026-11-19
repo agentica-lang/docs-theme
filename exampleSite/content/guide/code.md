@@ -78,3 +78,14 @@ A `prompt` block is text to paste into a coding agent. It wraps, so a phone read
 Install Agentica on this machine from https://www.agentica-lang.com/agentica/getting-started/ with the install script for this platform, put the binary on PATH, run `agentica version` to check it, then write a hello world program in hello.agc and run it with `agentica hello.agc`.
 Tell me each command you ran and its output.
 ```
+
+## A module file
+
+A block with a `file` attribute is a module that the other blocks of the page can import.
+
+```agentica {file="shapes.agc"}
+struct Point
+  x: Int
+  y: Int
+end
+```

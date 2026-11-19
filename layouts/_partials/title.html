@@ -1,4 +1,7 @@
-{{- /* The <title> of a page: "Page · Site", and "Site: tagline" on the home page, whose og:title is the same. */ -}}
-{{- $title := printf "%s · %s" .Title site.Title -}}
+{{- /* The <title> of a page: "Page · Site", and "Site: tagline" on the home page, whose og:title is the same. The 404 page
+has its own title. */ -}}
+{{- $page := .Title -}}
+{{- if eq .Kind "404" }}{{ $page = partial "t.html" "error_404_title" }}{{ end -}}
+{{- $title := printf "%s · %s" $page site.Title -}}
 {{- if .IsHome }}{{ $title = site.Title }}{{ with site.Params.tagline }}{{ $title = printf "%s: %s" $title . }}{{ end }}{{ end -}}
 {{- return $title -}}

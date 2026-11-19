@@ -1,0 +1,5 @@
+{{- /* The interface string of the key in the context: the site's language, else the English of the theme (i18n/en.toml).
+So a language with no file, or with a key left out, still shows English. The string is returned raw: the caller escapes it. */ -}}
+{{- $v := i18n . -}}
+{{- if not $v }}{{ $v = index (resources.FromString "en.toml" (readFile "i18n/en.toml") | transform.Unmarshal) . }}{{ end -}}
+{{- return $v -}}

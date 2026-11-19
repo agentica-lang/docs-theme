@@ -1,0 +1,4 @@
+# Added to hugo.toml by make example: a site whose language has no i18n file (the theme has none for fr), so every label
+# is the English of the theme.
+locale = "fr"
+defaultContentLanguage = "fr"

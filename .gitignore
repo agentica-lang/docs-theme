@@ -4,6 +4,9 @@ exampleSite/public-prefix/
 exampleSite/public-off/
 exampleSite/public-broken/
 exampleSite/public-versions/
+exampleSite/public-spanish/
+exampleSite/public-fallback/
+exampleSite/public-partial/
 exampleSite/public-env/
 exampleSite/resources/
 exampleSite/.themes/

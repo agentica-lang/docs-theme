@@ -231,6 +231,7 @@ Source: `_partials/pager.html`, `nav-order.html`, `_pager.scss`.
 Source: `_markup/render-codeblock.html`, `_code.scss`.
 
 - `input` and `output` blocks are samples: dashed boxes labeled Input or Output.
+  The labels are i18n keys in `i18n/en.toml`.
 - A prose block is text for a reader to paste, not a program: a prompt for a
   coding agent. It is a ```` ```prompt ```` fence, labeled Prompt like the
   samples, in a solid box like code. It keeps its line breaks and wraps long
@@ -253,13 +254,14 @@ Source: `_markup/render-codeblock.html`, `_code.scss`.
   above the block, on the right, with the label (Prompt, Input) on the left
   when there is one. So it never covers the code, at 390px too. It looks like
   the page actions (`--code-bg`, `--border`, `--radius`, focus ring), is
-  `--target` high at 50rem and below, and works in light and dark. Its name
-  says what it copies ("Copy code", "Copy prompt"). A `role=status` region
-  announces "Copied" or "Copy failed", and the text goes back after 2s. Like
-  "Copy link", it shows only with JS and a clipboard. Hidden in print.
-  `copy.js` builds the button, and the bar of a block with no label, from a
-  `data-code-copy` attribute on the block. The HTML has no button text, so
-  "Copy" never reaches a page's summary, its description or the search index.
+  `--target` high at 50rem and below, and works in light and dark. Its labels
+  are i18n keys in `i18n/en.toml`. Its name says what it copies ("Copy code",
+  "Copy prompt"). A `role=status` region announces "Copied" or "Copy failed",
+  and the text goes back after 2s. Like "Copy link", it shows only with JS and
+  a clipboard. Hidden in print. `copy.js` builds the button, and the bar of a
+  block with no label, from a `data-code-copy` attribute on the block. The
+  HTML has no button text, so "Copy" never reaches a page's summary, its
+  description or the search index.
 
 ### Footer
 

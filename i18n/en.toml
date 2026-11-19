@@ -1,2 +1,93 @@
-# The words of the theme that a site can translate (i18n/<lang>.toml of the site wins).
+# The words of the theme that a site can translate (i18n/<lang>.toml of the site wins). A value may hold
+# placeholders in braces, such as {version}, which the template or the script fills in. README.md lists them.
+
+# Header and sidebar
+skip_content = "Skip to content"
+skip_navigation = "Skip to navigation"
+menu = "Menu"
 home = "Home"
+site_nav = "Site"
+section_pages = "{title} pages"
+release_version = "Release {version}"
+switch_dark = "Switch to dark theme"
+switch_light = "Switch to light theme"
+
+# Search
+search_label = "Search the docs"
+search_placeholder = "Search"
+search_help = "Press / or Control K to search. Use the arrow keys to choose a result and Enter to open it."
+search_results = "Search results"
+search_min = "Type a word of at least {n} characters."
+search_loading = "Loading…"
+search_error = "Search could not load. Type again to retry."
+search_none = "No results."
+search_count_one = "1 result"
+search_count_other = "{n} results"
+
+# Pager, breadcrumbs and headings
+previous = "Previous"
+next = "Next"
+pager_nav = "Previous and next pages"
+breadcrumb = "Breadcrumb"
+link_to_section = "Link to this section"
+
+# Footer
+all_releases = "All releases"
+page_source = "Page source"
+site_on_github = "{title} on GitHub"
+org_home = "{name} home"
+
+# The 404 page
+not_found_title = "Page not found"
+error_404_title = "404 Page not found"
+not_found_text = "This page does not exist, or it moved."
+not_found_search = "Search for it with the box at the top, or"
+not_found_try = "Try"
+not_found_list = "one of these pages:"
+
+# Page actions
+page_label = "Page"
+page_actions = "Page actions"
+more_page_actions = "More page actions"
+copy_page = "Copy page"
+view_source = "View Source"
+open_chatgpt = "Open in ChatGPT"
+open_claude = "Open in Claude"
+page_prompt = "Read {url} so I can ask questions about it."
+
+# Code blocks and copy buttons
+copy = "Copy"
+copy_code = "Copy code"
+copy_prompt = "Copy prompt"
+copy_input = "Copy input"
+copy_signature = "Copy signature"
+copied = "Copied"
+copy_failed = "Copy failed"
+output = "Output"
+input = "Input"
+prompt = "Prompt"
+runtime_error = "Runtime error"
+does_not_compile = "Does not compile"
+
+# Share links
+share_label = "Share this post"
+social_image_alt = "Agentica: Ruby with static types"
+share_on = "Share on {name} (opens in a new tab)"
+copy_link = "Copy link"
+
+# The version selector and the old-version note
+version_label = "Version"
+latest = "(latest)"
+view_in_version = "View this page in {version}"
+version_dev_note = "This is the development documentation: it may describe changes that are not released."
+version_old_note = "This is the documentation of version {version}, not the latest release."
+
+# llms.txt, llms-full.txt and the Markdown of each page
+llms_intro = "Every page of this site is also published as Markdown, and the links below point to those versions. [llms-full.txt]({url}) has the full text of all pages in one file."
+llms_version = "Version {version}."
+llms_version_repo = "Version {version}: [Release {version}]({url}). All releases: {repo}/releases"
+group_docs = "Docs"
+docs_title = "{title} documentation"
+source_label = "Source:"
+pages_in_section = "Pages in this section"
+file_label = "File `{file}`:"

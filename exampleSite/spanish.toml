@@ -1,0 +1,3 @@
+# Added to hugo.toml by make example: the site in Spanish (i18n/es.toml of the theme), with its content still English.
+locale = "es"
+defaultContentLanguage = "es"

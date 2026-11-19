@@ -28,7 +28,7 @@ structured-data-extra.html adds the site's own nodes. */ -}}
 {{- else }}
   {{- $items := slice }}
   {{- range $i, $p := partial "breadcrumb-pages.html" . }}
-    {{- $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "name" (cond $p.IsHome (i18n "home" | default "Home") $p.LinkTitle) "item" $p.Permalink) }}
+    {{- $items = $items | append (dict "@type" "ListItem" "position" (add $i 1) "name" (cond $p.IsHome (partial "t.html" "home") $p.LinkTitle) "item" $p.Permalink) }}
   {{- end }}
   {{- $graph = $graph | append (dict "@type" "BreadcrumbList" "itemListElement" $items) }}
 {{- end }}

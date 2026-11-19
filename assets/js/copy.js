@@ -1,3 +1,4 @@
+import { t } from "./strings.js";
 const clipboard = window.isSecureContext ? navigator.clipboard : undefined;
 const blocks = clipboard?.writeText ? document.querySelectorAll("[data-code-copy]") : [];
 const icon =
@@ -18,10 +19,11 @@ if (blocks.length) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "code-copy";
-    button.setAttribute("aria-label", `Copy ${block.dataset.codeCopy}`);
-    button.innerHTML = `${icon}<span class="code-copy-text">Copy</span>`;
+    button.setAttribute("aria-label", t(`copy_${block.dataset.codeCopy}`));
+    button.innerHTML = `${icon}<span class="code-copy-text"></span>`;
     bar.append(button);
     const text = button.querySelector(".code-copy-text");
+    text.textContent = t("copy");
     const code = block.querySelector("pre code");
     let timer;
     const show = (message) => {
@@ -29,12 +31,12 @@ if (blocks.length) {
       status.textContent = message;
       clearTimeout(timer);
       timer = setTimeout(() => {
-        text.textContent = "Copy";
+        text.textContent = t("copy");
         status.textContent = "";
       }, 2000);
     };
     button.addEventListener("click", () => {
-      clipboard.writeText(code.textContent.replace(/\n$/, "")).then(() => show("Copied"), () => show("Copy failed"));
+      clipboard.writeText(code.textContent.replace(/\n$/, "")).then(() => show(t("copied")), () => show(t("copy_failed")));
     });
   }
 }

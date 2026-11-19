@@ -12,6 +12,8 @@ the landing site, bond, packages) pins a commit of it as a submodule.
 - `highlight/`: the Node highlighter of agentica blocks, run on the built site.
 - `exampleSite/`: the site that `make example` builds and checks.
 - `tools/check-seo.mjs`: the check of the search tags.
+- `tools/check-strings.mjs`: the check of the interface strings of the Spanish and English builds.
+- `i18n/`: the interface strings, `en.toml` and `es.toml`; README "Translate the theme".
 - `README.md`: how a site uses the theme and its params.
 - `DESIGN.md`: the design rules.
 

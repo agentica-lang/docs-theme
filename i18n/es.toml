@@ -1,0 +1,93 @@
+# The words of the theme in Spanish (neutral, tú). Terms follow the docs-i18n glossary of Agentica. A term that stays
+# in English keeps its English here too. Keys and placeholders are the same as in en.toml.
+
+# Header and sidebar
+skip_content = "Ir al contenido"
+skip_navigation = "Ir a la navegación"
+menu = "Menú"
+home = "Inicio"
+site_nav = "Navegación del sitio"
+section_pages = "Páginas de {title}"
+release_version = "Release {version}"
+switch_dark = "Cambiar al tema oscuro"
+switch_light = "Cambiar al tema claro"
+
+# Search
+search_label = "Buscar en la documentación"
+search_placeholder = "Buscar"
+search_help = "Pulsa / o Ctrl+K para buscar. Usa las flechas para elegir un resultado y Enter para abrirlo."
+search_results = "Resultados de la búsqueda"
+search_min = "Escribe una palabra de al menos {n} caracteres."
+search_loading = "Cargando…"
+search_error = "No se pudo cargar la búsqueda. Escribe de nuevo para intentarlo."
+search_none = "Sin resultados."
+search_count_one = "1 resultado"
+search_count_other = "{n} resultados"
+
+# Pager, breadcrumbs and headings
+previous = "Anterior"
+next = "Siguiente"
+pager_nav = "Página anterior y siguiente"
+breadcrumb = "Ruta de navegación"
+link_to_section = "Enlace a esta sección"
+
+# Footer
+all_releases = "Todas las releases"
+page_source = "Fuente de la página"
+site_on_github = "{title} en GitHub"
+org_home = "Inicio de {name}"
+
+# The 404 page
+not_found_title = "Página no encontrada"
+error_404_title = "404: página no encontrada"
+not_found_text = "Esta página no existe o se ha movido."
+not_found_search = "Búscala con el cuadro de arriba, o"
+not_found_try = "Prueba"
+not_found_list = "una de estas páginas:"
+
+# Page actions
+page_label = "Página"
+page_actions = "Acciones de la página"
+more_page_actions = "Más acciones de la página"
+copy_page = "Copiar página"
+view_source = "Ver código fuente"
+open_chatgpt = "Abrir en ChatGPT"
+open_claude = "Abrir en Claude"
+page_prompt = "Lee {url} para que pueda hacerte preguntas sobre su contenido."
+
+# Code blocks and copy buttons
+copy = "Copiar"
+copy_code = "Copiar código"
+copy_prompt = "Copiar prompt"
+copy_input = "Copiar entrada"
+copy_signature = "Copiar firma"
+copied = "Copiado"
+copy_failed = "No se pudo copiar"
+output = "Salida"
+input = "Entrada"
+prompt = "Prompt"
+runtime_error = "Error de runtime"
+does_not_compile = "No compila"
+
+# Share links
+share_label = "Compartir este artículo"
+social_image_alt = "Agentica: Ruby con tipos estáticos"
+share_on = "Compartir en {name} (se abre en una pestaña nueva)"
+copy_link = "Copiar enlace"
+
+# The version selector and the old-version note
+version_label = "Versión"
+latest = "(última versión)"
+view_in_version = "Ver esta página en {version}"
+version_dev_note = "Esta es la documentación de desarrollo: puede describir cambios que aún no se han publicado."
+version_old_note = "Esta es la documentación de la versión {version}, no de la última release."
+
+# llms.txt, llms-full.txt and the Markdown of each page
+llms_intro = "Cada página de este sitio también se publica en Markdown, y los enlaces de abajo apuntan a esas versiones. [llms-full.txt]({url}) reúne el texto completo de todas las páginas en un solo archivo."
+llms_version = "Versión {version}."
+llms_version_repo = "Versión {version}: [Release {version}]({url}). Todas las releases: {repo}/releases"
+group_docs = "Documentación"
+docs_title = "Documentación de {title}"
+source_label = "Fuente:"
+pages_in_section = "Páginas de esta sección"
+file_label = "Archivo `{file}`:"

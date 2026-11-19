@@ -17,12 +17,15 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
 
-# Five builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
-# search tag off (off.toml), and the version selector on (versions.toml). tools/check-seo.mjs checks the search tags of each.
+# Eight builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
+# search tag off (off.toml), the version selector on (versions.toml), the theme in Spanish (spanish.toml), a language
+# with no i18n file (fallback.toml), which must show English, and a language with a partial file (partial.toml).
+# tools/check-seo.mjs checks the search tags of each.
 # Each must have the outputs of the theme's hugo.toml (they need `_merge = "deep"`) and no Go format error, which a
 # printf of a missing param writes (%!s(<nil>), or %25!s(%3cnil%3e) in a URL) with no Hugo warning.
 EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml \
-  public-versions:hugo.toml,versions.toml
+  public-versions:hugo.toml,versions.toml public-spanish:hugo.toml,spanish.toml public-fallback:hugo.toml,fallback.toml \
+  public-partial:hugo.toml,partial.toml
 
 example: highlight/node_modules exampleSite/.themes/docs-theme
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
@@ -35,8 +38,23 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	    test -s exampleSite/$$out/$$f || { echo "exampleSite/$$out/$$f is missing" >&2; exit 1; }; \
 	  done; \
 	  if grep -rlIE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
+	  if grep -rlF '&amp;#39;' exampleSite/$$out; then echo "an apostrophe is escaped twice" >&2; exit 1; fi; \
 	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
+	@# The strings of each locale: the English of each build, and the Spanish with no English left (tools/check-strings.mjs).
+	@node tools/check-strings.mjs en exampleSite/public
+	@node tools/check-strings.mjs en exampleSite/public-fallback
+	@node tools/check-strings.mjs es exampleSite/public-spanish
+	@# A partial file (partial.toml, i18n/it.toml): its apostrophes reach the page once (the escape check above covers every
+	@# build), in text, attributes, the JSON block and a string function, and the other labels are the English.
+	@grep -qF "Vai all'inizio" exampleSite/public-partial/index.html
+	@grep -qF "Copia l'estratto" exampleSite/public-partial/guide/code/index.html
+	@grep -qF "dell'autore" exampleSite/public-partial/index.html
+	@grep -qF "Cerca nell'indice" exampleSite/public-partial/index.html
+	@grep -qF 'Search the docs' exampleSite/public-partial/index.html
+	@# A file block (guide/code.md) is labeled in the Markdown of its page, in each language.
+	@grep -qF 'File `shapes.agc`:' exampleSite/public/llms-full.txt
+	@grep -qF 'Archivo `shapes.agc`:' exampleSite/public-spanish/llms-full.txt
 	@# A one-line def keeps the colors of its body: the `#` of `#{` there is not a comment.
 	@grep -q 'class=nf>shade</span>(c: .*<span class=si>#{</span>' exampleSite/public/guide/code/index.html || \
 	  { echo "the interpolation in a one-line def is not colored" >&2; exit 1; }
@@ -86,8 +104,8 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@# A prompt block wraps. copy.js builds a Copy button on each block with data-code-copy: code, signature, input and
 	@# prompt blocks, not output samples. The HTML has no button, so no "Copy" in the summaries or the search index.
 	@grep -qE '<div class="?code-block prompt"? data-code-copy="?prompt"?><div class="?code-bar"?><span class="?sample-label"?>Prompt</span></div>' exampleSite/public/guide/code/index.html
-	@test "$$(grep -oE 'data-code-copy="?code"?[ >]' exampleSite/public/guide/code/index.html | wc -l)" = 3 || \
-	  { echo "guide/code: wants data-code-copy on each of its 3 code blocks" >&2; exit 1; }
+	@test "$$(grep -oE 'data-code-copy="?code"?[ >]' exampleSite/public/guide/code/index.html | wc -l)" = 4 || \
+	  { echo "guide/code: wants data-code-copy on each of its 4 code blocks" >&2; exit 1; }
 	@grep -qE 'data-code-copy="?input"?[ >]' exampleSite/public/guide/code/index.html
 	@grep -qE 'data-code-copy="?signature"?[ >]' exampleSite/public/reference/index.html
 	@if grep -qE 'sample-output"? data-code-copy' exampleSite/public/guide/code/index.html; then echo "an output sample has a Copy button" >&2; exit 1; fi
@@ -133,4 +151,4 @@ check-seo:
 
 clean:
 	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off \
-	  exampleSite/public-versions exampleSite/public-env exampleSite/resources highlight/node_modules
+	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/public-partial exampleSite/resources highlight/node_modules

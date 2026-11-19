@@ -1,0 +1,4 @@
+# Added to hugo.toml by make example: a language with a partial i18n file (i18n/it.toml). Its keys have an apostrophe,
+# which must reach the page once, in text, attributes and the JSON block. Every other label is the English.
+locale = "it"
+defaultContentLanguage = "it"
