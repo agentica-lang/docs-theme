@@ -220,33 +220,39 @@ Source: `assets/versions/selector.js`, `selector.css`,
 Source: `_partials/lang-select.html`, `lang-redirect.html`, `_lang.scss`,
 `_partials/seo.html`.
 
-- Only a site with two or more languages has it (`hugo.Sites`). The page's
-  links are built at build time, so it works without JavaScript.
-- One link per language, in the order of the site's languages. A link goes to
-  this page in that language when the page has that translation (its
-  `AllTranslations`), else to that language's home. The current language is
-  `aria-current`, in bold. Each link has `hreflang`, `lang` and
-  `data-lang-pick`.
-- Wide screens (above 30rem): a row of links in the header, before the search
-  box. Under 30rem the header has no row; the menu has the same links at its
-  top, in a 2.75rem touch row, as the version selector does.
-- A click on a link stores the language in `localStorage` as `docs-lang`
-  (`lang-redirect.html`); the link then goes on as a plain link.
+- Only a site with two or more languages has it (`hugo.Sites`). The options are
+  built at build time, so the page's links are right without JavaScript.
+- A `<select>` labelled "Language", like the version selector, with one option
+  per language, in the order of the site's languages. An option's value is this
+  page in that language when the page has that translation (its
+  `AllTranslations`), else that language's home. The current language is the
+  selected option. Each option has `lang` and `data-lang-pick`.
+- Look and size follow the version selector: `--control` high and 0.85rem text
+  above 30rem; under 30rem, in the menu's first row, as wide as the drawer,
+  `--target` high, 1rem (16px) text so a phone does not zoom on focus.
+- The header has the select from 30rem up; the menu has it under 30rem. The two
+  copies sit in a `role="group"`, not a landmark, and the hidden copy is out of
+  the accessibility tree, so a screen reader meets one "Language" control.
+- Without JavaScript the select is hidden and a `<noscript>` shows the same
+  languages as a list of links, the current one marked `aria-current`.
+- A change of the select stores the language in `localStorage` as `docs-lang`
+  and goes to the option's value (`lang-redirect.html`).
 - The redirect is a script at the top of the head, before the first paint. It
-  runs only on an arrival from outside the site (no referrer, or another
-  origin). The stored pick wins when the page has that language; with no pick,
-  the browser's first language the site has moves only a reader of the default
-  language. A page with no version in the wanted language stays. It replaces the
-  history entry (`location.replace`), so Back does not return to the page it
-  left.
+  runs only on an arrival from outside the site: a referrer that does not start
+  with the site's root (the default home's permalink) counts as outside, so a
+  sibling docs site of the same origin does too. The stored pick wins when the
+  page has that language; with no pick, the browser's first language the site
+  has moves only a reader of the default language. A page with no version in the
+  wanted language stays. It replaces the history entry (`location.replace`), so
+  Back does not return to the page it left.
 - `hreflang` in the head (`seo.html`): one link per translation, the page itself
-  included, and `x-default` to the default language's page; the same
-  `og:locale` and `og:locale:alternate`. Only a page with two or more
-  translations has them. A page with no translation has none.
-- Versions: the selector of the version keeps the language (`selector.js`
-  reads the stored pick, else the page's language, and the version's
-  `languages`); a version with no page in that language shows the English page,
-  then the version's home.
+  included, and `x-default` to the default language's page; `og:locale` and
+  `og:locale:alternate` take each language's `params.ogLocale`. Only a page with
+  two or more translations has them.
+- Versions: the version selector keeps the language (`selector.js` reads the
+  stored pick, else the page's language, and the version's `languages`); a
+  version with no page in that language shows the English page, then the
+  version's home.
 
 ### Pager
 

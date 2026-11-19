@@ -51,11 +51,11 @@
     if (!versions.length || location.pathname.indexOf(root.pathname) !== 0) return;
     var latest = versions.filter(function (v) { return v.latest; })[0] || versions[0];
     var rest = location.pathname.slice(root.pathname.length);
-    // A page of another language sits under its code (`es/`); the version is found without it.
-    if (pageLang && rest.indexOf(pageLang + "/") === 0) rest = rest.slice(pageLang.length + 1);
     // The root is the latest release; a version's own folder starts with its path.
     var current = versions.filter(function (v) { return rest.indexOf(v.path) === 0; })[0];
     var page = current ? rest.slice(current.path.length) : rest;
+    // A page of another language sits under its code (`es/`), in each version's folder too.
+    if (pageLang && page.indexOf(pageLang + "/") === 0) page = page.slice(pageLang.length + 1);
     current = current || latest;
     var want = stored || pageLang;
 

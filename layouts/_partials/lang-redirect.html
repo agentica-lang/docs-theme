@@ -1,20 +1,19 @@
 {{- /* The language redirect and the stored pick (DESIGN.md, Language selector). An inline script, first in the head so
-that the reader never sees the first language. An arrival from outside (no referrer, or another origin) moves to this
-page in the reader's language when the page has that translation: the stored pick (localStorage "docs-lang") wins; with
-no pick, the first browser language the site has moves only a reader of the default language. A click on a language
-link stores the pick. A site with one language has none of it. */ -}}
+that the reader never sees the first language. An arrival from outside moves to this page in the reader's language when
+the page has that translation: the stored pick (localStorage "docs-lang") wins; with no pick, the first browser language
+the site has moves only a reader of the default language. "Outside" is a referrer that does not start with this site's
+root, so a sibling docs site on the same origin counts as outside. A change of the language select stores the pick and
+goes to the option. A site with one language has none of it. */ -}}
 {{- if gt (len hugo.Sites) 1 }}
 {{- $targets := dict }}
 {{- range .AllTranslations }}{{ $targets = merge $targets (dict .Language.Locale .RelPermalink) }}{{ end }}
 {{- $locales := slice }}
 {{- range hugo.Sites }}{{ $locales = $locales | append .Language.Locale }}{{ end }}
-{{- $config := dict "lang" .Language.Locale "default" hugo.Sites.Default.Language.Locale "languages" $locales "targets" $targets }}
+{{- $config := dict "lang" .Language.Locale "default" hugo.Sites.Default.Language.Locale "root" hugo.Sites.Default.Home.Permalink "languages" $locales "targets" $targets }}
 <script>
 (function () {
   var c = {{ $config | jsonify | safeJS }};
-  var inside = false;
-  try { inside = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
-  if (!inside) {
+  if (document.referrer.indexOf(c.root) !== 0) {
     var want = "";
     try { want = localStorage.getItem("docs-lang") || ""; } catch (e) {}
     if (c.languages.indexOf(want) < 0) want = "";
@@ -31,10 +30,11 @@ link stores the pick. A site with one language has none of it. */ -}}
     }
     return "";
   }
-  document.addEventListener("click", function (e) {
-    var link = e.target instanceof Element ? e.target.closest("[data-lang-pick]") : null;
-    if (!link) return;
-    try { localStorage.setItem("docs-lang", link.getAttribute("data-lang-pick")); } catch (err) {}
+  document.addEventListener("change", function (e) {
+    var select = e.target;
+    if (!select || !select.matches || !select.matches("select[data-lang-select]")) return;
+    try { localStorage.setItem("docs-lang", select.options[select.selectedIndex].getAttribute("data-lang-pick")); } catch (err) {}
+    location.assign(select.value);
   });
 })();
 </script>

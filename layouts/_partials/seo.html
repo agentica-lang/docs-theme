@@ -46,9 +46,9 @@ structured data. README.md lists the param of each part. A site overrides this f
   <meta property="og:description" content="{{ $description }}">
   <meta property="og:url" content="{{ $canonical }}">
   {{- if gt (len .AllTranslations) 1 }}
-  <meta property="og:locale" content="{{ .Language.Locale }}">
+  <meta property="og:locale" content="{{ .Language.Params.ogLocale | default .Language.Locale }}">
   {{- range .AllTranslations }}{{ if ne .Language.Locale $.Language.Locale }}
-  <meta property="og:locale:alternate" content="{{ .Language.Locale }}">
+  <meta property="og:locale:alternate" content="{{ .Language.Params.ogLocale | default .Language.Locale }}">
   {{- end }}{{ end }}
   {{- end }}
   <meta property="og:type" content="{{ cond $post "article" "website" }}">

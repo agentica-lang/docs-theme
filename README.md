@@ -149,21 +149,29 @@ root, each other one under its code (`/es/`), with its content in its own
 `content.es/` folder and its strings in `i18n/es.toml`. With one language the
 site has none of the parts below.
 
-- The language selector (`DESIGN.md`, Language selector) lists every language.
-  Each link goes to the same page in that language when the page has it, else
-  to that language's home. It is in the header and, under 30rem, in the menu.
+- The language selector (`DESIGN.md`, Language selector) is a `<select>` of
+  every language. Each option goes to the same page in that language when the
+  page has it, else to that language's home. It is in the header and, under
+  30rem, in the menu. Without JavaScript, a `<noscript>` holds the same
+  languages as links.
 - The redirect is an inline script at the top of `<head>`. An arrival from
-  outside the site (no referrer, or another origin) moves to the same page in
-  the reader's language when that page exists. A pick in the selector is stored
-  in `localStorage` as `docs-lang` and wins over the browser. With no pick, the
-  browser's first language the site has moves only a reader of the default
-  language. A click inside the site never redirects. Crawlers get each URL as
-  it is.
+  outside the site moves to the same page in the reader's language when that
+  page exists. "Outside" means a referrer that does not start with the site's
+  root, so a sibling docs site on the same origin counts as outside. A pick in
+  the select is stored in `localStorage` as `docs-lang` and wins over the
+  browser. With no pick, the browser's first language the site has moves only a
+  reader of the default language. A change inside the site never redirects.
+  Crawlers get each URL as it is, but a crawler that sends `es` as a browser
+  language can be moved from an English URL to Spanish; `hreflang` covers the
+  indexing.
 - Each page with translations has `hreflang` for each of them, itself included,
   and `x-default` to the default language's page, and `og:locale` and
-  `og:locale:alternate`. A page with no translation has none of them.
-- A link to a page the language does not have (Markdown links) goes to the
-  default language's page, with `hreflang="en"`.
+  `og:locale:alternate`. A page with no translation has none of them. The
+  `og:locale` of a language is its `params.ogLocale` in the language's config
+  (such as `es_ES`, `en_US` in `exampleSite/multilingual.toml`); without it,
+  the language code.
+- A Markdown link to a page the language does not have goes to the default
+  language's page, with `hreflang="en"`.
 
 ## Search engines
 

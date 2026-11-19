@@ -45,6 +45,7 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
 	@# The strings of each locale: the English of each build, and the Spanish with no English left (tools/check-strings.mjs).
+	@node tools/check-selector.mjs
 	@node tools/check-strings.mjs en exampleSite/public
 	@node tools/check-strings.mjs en exampleSite/public-fallback
 	@node tools/check-strings.mjs es exampleSite/public-spanish
@@ -67,6 +68,11 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@grep -qE 'href="?/docs-theme/reference/"? hreflang="?en"?' exampleSite/public-multilingual/es/index.html
 	@grep -q 'docs-lang' exampleSite/public-multilingual/guide/code/index.html
 	@grep -q 'og:locale:alternate' exampleSite/public-multilingual/guide/code/index.html
+	@grep -qE 'og:locale" content="es_ES"' exampleSite/public-multilingual/es/guide/code/index.html
+	@grep -qE 'og:locale:alternate" content="en_US"' exampleSite/public-multilingual/es/guide/code/index.html
+	@# A nested page's `../reference.md` resolves to the English page with no Spanish one (link-target.html's fallback).
+	@grep -qE 'href="?/docs-theme/reference/"? hreflang="?en"?' exampleSite/public-multilingual/es/guide/links/index.html
+	@node tools/check-redirect.mjs exampleSite/public-multilingual
 	@if grep -qE '"(Code blocks|Reference|Guide)"' exampleSite/public-multilingual/es/search.json; then echo "es/search.json has English titles" >&2; exit 1; fi
 	@grep -qF '"Bloques de código"' exampleSite/public-multilingual/es/search.json
 	@# A file block (guide/code.md) is labeled in the Markdown of its page, in each language.

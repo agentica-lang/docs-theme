@@ -1,16 +1,28 @@
-{{- /* The language selector (DESIGN.md, Language selector): a link to this page in each language of the site when the page
-has that translation, else to that language's home. `class` names the copy: the header's (from 30rem up) or the menu's
-(under 30rem, see _lang.scss). Nothing on a site with one language. The links work without JavaScript. */ -}}
+{{- /* The language selector (DESIGN.md, Language selector): a <select> of the site's languages, each option the page in
+that language when the page has that translation, else that language's home. With JavaScript, lang-redirect.html stores
+the pick and goes to the option. Without it, a <noscript> holds the same languages as links. `class` names the copy: the
+header's (from 30rem up) or the menu's (under 30rem, see _lang.scss). Nothing on a site with one language. */ -}}
 {{- if gt (len hugo.Sites) 1 }}
 {{- $page := .page }}
-<nav class="lang-select {{ .class }}" aria-label="{{ partial "t.html" "language_label" }}">
-  <ul>
-    {{- range hugo.Sites }}
-    {{- $locale := .Language.Locale }}
-    {{- $href := .Home.RelPermalink }}
-    {{- range $page.AllTranslations }}{{ if eq .Language.Locale $locale }}{{ $href = .RelPermalink }}{{ end }}{{ end }}
-    <li><a href="{{ $href }}" hreflang="{{ $locale }}" lang="{{ $locale }}" data-lang-pick="{{ $locale }}"{{ if eq $locale $page.Language.Locale }} aria-current="page"{{ end }}>{{ .Language.Label }}</a></li>
+{{- $items := slice }}
+{{- range hugo.Sites }}
+{{- $locale := .Language.Locale }}
+{{- $href := .Home.RelPermalink }}
+{{- range $page.AllTranslations }}{{ if eq .Language.Locale $locale }}{{ $href = .RelPermalink }}{{ end }}{{ end }}
+{{- $items = $items | append (dict "href" $href "locale" $locale "name" .Language.Label) }}
+{{- end }}
+<div class="lang-select {{ .class }}" role="group" aria-label="{{ partial "t.html" "language_label" }}">
+  <select class="lang-select-control" data-lang-select aria-label="{{ partial "t.html" "language_label" }}">
+    {{- range $items }}
+    <option value="{{ .href }}" lang="{{ .locale }}" data-lang-pick="{{ .locale }}"{{ if eq .locale $page.Language.Locale }} selected{{ end }}>{{ .name }}</option>
     {{- end }}
-  </ul>
-</nav>
+  </select>
+  <noscript>
+    <ul>
+      {{- range $items }}
+      <li><a href="{{ .href }}" hreflang="{{ .locale }}" lang="{{ .locale }}"{{ if eq .locale $page.Language.Locale }} aria-current="page"{{ end }}>{{ .name }}</a></li>
+      {{- end }}
+    </ul>
+  </noscript>
+</div>
 {{- end -}}

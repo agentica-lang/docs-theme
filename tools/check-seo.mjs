@@ -162,7 +162,8 @@ const locs = (xml) => xml.match(/<loc>(https?:\/\/[^<]+?)<\/loc>/g)?.map((l) => 
 function checkSitemap(name, xml) {
   const base = locs(xml);
   if (!base.length) fail(name, "no <loc>");
-  const root = base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
+  // The site's root is the root page's URL: a shorter URL of a language's home is not the root.
+  const root = homeCanonical || base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
   for (const loc of base) {
     if (!loc.startsWith(root)) fail(name, `${loc} is not under ${root}`);
     const page = join(loc.slice(root.length), "index.html");
@@ -203,7 +204,7 @@ for (const [file, page] of alternates) {
   const languages = page.links.filter((l) => l.lang !== "x-default");
   const self = languages.find((l) => l.href === page.canonical);
   if (!self || self.lang !== page.lang) fail(file, "hreflang has no link of this page in its own language");
-  if (languages.length < 2) fail(file, "hreflang with one language: a page with no translation has none");
+  if (languages.length < 2) fail(file, "the hreflang set is missing a translation");
   const english = languages.find((l) => l.lang === defaultLang);
   const xDefault = page.links.filter((l) => l.lang === "x-default");
   if (xDefault.length !== 1 || !english || xDefault[0].href !== english.href) fail(file, "x-default is not the root language's page");
