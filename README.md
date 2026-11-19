@@ -272,14 +272,14 @@ translation is out of date). The home layout calls it too.
 The words of the theme (buttons, labels, messages, the 404 page) are in
 `i18n/en.toml`. The theme also ships `i18n/es.toml`, the Spanish. A site that
 sets another `locale` copies `i18n/en.toml` to `i18n/<lang>.toml` in its own
-folder, translates the values and keeps the keys. A site's own file with the
-language's name replaces the theme's file of that name. So a site's
-`i18n/en.toml` must hold every key: a partial `i18n/en.toml` would replace the
-English, and the fallback would find nothing. A partial file is safe for another
-language: a key left out there falls back to the English.
+folder, translates the values and keeps the keys. Hugo merges the theme's and
+the site's files key by key: a site's file may hold only the keys it changes,
+and the theme's other keys still resolve, in English too. A partial file is
+safe for another language: a key left out there falls back to the English.
 
-A template reads a key with `{{ partial "t.html" "key" }}`, which falls back to
-the English. A value may hold placeholders in braces, such as `{version}` or
+A template reads a key with `{{ partial "t.html" "key" }}`. Its fallback reads
+`i18n/en.toml` as a file, and it runs only when no bundle gives the key a value.
+A value may hold placeholders in braces, such as `{version}` or
 `{url}`. The template or the script replaces them. Keep them as they are.
 
 The keys, by part of the page:

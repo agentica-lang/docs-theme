@@ -80,6 +80,11 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@node tools/check-redirect.mjs exampleSite/public-multilingual exampleSite/public-multilingual-dev
 	@if grep -qE '"(Code blocks|Reference|Guide)"' exampleSite/public-multilingual/es/search.json; then echo "es/search.json has English titles" >&2; exit 1; fi
 	@grep -qF '"Bloques de código"' exampleSite/public-multilingual/es/search.json
+	@grep -qxF '# Bloques de código' exampleSite/public-multilingual/es/guide/code/index.md
+	@grep -qxF '## Un encabezado con id' exampleSite/public-multilingual/es/guide/code/index.md
+	@if grep -hF '{#' exampleSite/public-multilingual/es/guide/code/index.md exampleSite/public-multilingual/es/llms-full.txt | grep -vxF '# Un comentario {#no-es-un-id}'; then echo "a Spanish Markdown copy keeps a heading id" >&2; exit 1; fi
+	@grep -qxF '# Un comentario {#no-es-un-id}' exampleSite/public-multilingual/es/guide/code/index.md
+	@grep -qxF '# Un comentario {#no-es-un-id}' exampleSite/public-multilingual/es/llms-full.txt
 	@# A file block (guide/code.md) is labeled in the Markdown of its page, in each language.
 	@grep -qF 'File `shapes.agc`:' exampleSite/public/llms-full.txt
 	@grep -qF 'Archivo `shapes.agc`:' exampleSite/public-spanish/llms-full.txt
