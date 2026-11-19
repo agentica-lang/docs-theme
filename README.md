@@ -274,8 +274,10 @@ fallback, and `tools/check-strings.mjs` checks that it equals `en.toml`.
 
 `make example` builds the example in Spanish too, and `tools/check-strings.mjs`
 checks it: it fails when an English phrase is left on the page, a key has no
-value, or a Spanish value is the English one without being listed. It also
-builds a site whose language has no file, which must show English.
+value, or a Spanish value is the English one without being listed. It checks the
+labels of the home page, the 404 page, llms.txt, a page of a section with a
+pager, a code page (the sample and copy labels) and a page with breadcrumbs. It
+also builds a site whose language has no file, which must show English.
 
 ## Update the theme
 
