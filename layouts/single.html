@@ -1,5 +1,5 @@
 {{ define "main" }}
-<article class="content">
+{{ partial "page-notice.html" . }}<article class="content">
   {{- partial "breadcrumbs.html" . }}
   {{- $actions := partial "page-actions.html" . }}
   {{- if partial "heading.html" . }}

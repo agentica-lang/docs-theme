@@ -17,15 +17,16 @@ highlight/node_modules: highlight/package.json highlight/package-lock.json
 	npm ci --prefix highlight --ignore-scripts --no-audit --no-fund
 	touch $@
 
-# Eight builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
+# Nine builds, OUTPUT:CONFIG: all the params, no version and no repo (bare.toml), a tag prefix (prefix.toml), every
 # search tag off (off.toml), the version selector on (versions.toml), the theme in Spanish (spanish.toml), a language
-# with no i18n file (fallback.toml), which must show English, and a language with a partial file (partial.toml).
+# with no i18n file (fallback.toml), which must show English, a language with a partial file (partial.toml), and two
+# languages (multilingual.toml: English, and Spanish under /es/ with content.es/).
 # tools/check-seo.mjs checks the search tags of each.
 # Each must have the outputs of the theme's hugo.toml (they need `_merge = "deep"`) and no Go format error, which a
 # printf of a missing param writes (%!s(<nil>), or %25!s(%3cnil%3e) in a URL) with no Hugo warning.
 EXAMPLES := public:hugo.toml public-bare:hugo.toml,bare.toml public-prefix:hugo.toml,prefix.toml public-off:hugo.toml,off.toml \
   public-versions:hugo.toml,versions.toml public-spanish:hugo.toml,spanish.toml public-fallback:hugo.toml,fallback.toml \
-  public-partial:hugo.toml,partial.toml
+  public-partial:hugo.toml,partial.toml public-multilingual:hugo.toml,multilingual.toml
 
 example: highlight/node_modules exampleSite/.themes/docs-theme
 	@command -v sass >/dev/null || { echo "The theme needs Dart Sass: put its sass on PATH or in $(DART_SASS)" >&2; exit 1; }
@@ -39,6 +40,8 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	  done; \
 	  if grep -rlIE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
 	  if grep -rlF '&amp;#39;' exampleSite/$$out; then echo "an apostrophe is escaped twice" >&2; exit 1; fi; \
+	  if [ $$out != public-multilingual ] && grep -rlE 'hreflang|lang-select|docs-lang' --include=*.html exampleSite/$$out; then \
+	    echo "a build with one language has hreflang, the language selector or the redirect" >&2; exit 1; fi; \
 	  node tools/check-seo.mjs exampleSite/$$out $$(test $$out = public-off && echo --off); \
 	done
 	@# The strings of each locale: the English of each build, and the Spanish with no English left (tools/check-strings.mjs).
@@ -52,6 +55,20 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@grep -qF "dell'autore" exampleSite/public-partial/index.html
 	@grep -qF "Cerca nell'indice" exampleSite/public-partial/index.html
 	@grep -qF 'Search the docs' exampleSite/public-partial/index.html
+	@# Two languages: Spanish under /es/ with its own <html lang>; the selector on each page, the same page in Spanish when
+	@# the page has it (else the Spanish home); hreflang with x-default (check-seo.mjs); the redirect script; the English
+	@# link of a page with no Spanish one (from es/index.html, the fallback of link-target.html); es/search.json is Spanish.
+	@grep -qE '<html lang="?es"?>' exampleSite/public-multilingual/es/index.html
+	@grep -qE '<html lang="?es"?>' exampleSite/public-multilingual/es/guide/code/index.html
+	@grep -qE 'hreflang="?x-default"?' exampleSite/public-multilingual/guide/code/index.html
+	@grep -qE 'data-lang-pick="?es"?' exampleSite/public-multilingual/guide/code/index.html
+	@grep -qE 'href="?/docs-theme/es/guide/code/"? hreflang="?es"?' exampleSite/public-multilingual/guide/code/index.html
+	@grep -qE 'href="?/docs-theme/es/"? hreflang="?es"?' exampleSite/public-multilingual/reference/index.html
+	@grep -qE 'href="?/docs-theme/reference/"? hreflang="?en"?' exampleSite/public-multilingual/es/index.html
+	@grep -q 'docs-lang' exampleSite/public-multilingual/guide/code/index.html
+	@grep -q 'og:locale:alternate' exampleSite/public-multilingual/guide/code/index.html
+	@if grep -qE '"(Code blocks|Reference|Guide)"' exampleSite/public-multilingual/es/search.json; then echo "es/search.json has English titles" >&2; exit 1; fi
+	@grep -qF '"Bloques de código"' exampleSite/public-multilingual/es/search.json
 	@# A file block (guide/code.md) is labeled in the Markdown of its page, in each language.
 	@grep -qF 'File `shapes.agc`:' exampleSite/public/llms-full.txt
 	@grep -qF 'Archivo `shapes.agc`:' exampleSite/public-spanish/llms-full.txt
@@ -151,4 +168,4 @@ check-seo:
 
 clean:
 	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off \
-	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/public-partial exampleSite/resources highlight/node_modules
+	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/public-partial exampleSite/public-multilingual exampleSite/resources highlight/node_modules

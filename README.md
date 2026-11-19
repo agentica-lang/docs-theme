@@ -141,6 +141,30 @@ no copy. Every page of every version loads them from `root`, with no hash, so
 a page built before a change gets the current selector. A page built without this theme can load the same two files from
 the root with a `<link>` and a `<script defer>` tag.
 
+## Languages
+
+A site in several languages sets them in `hugo.toml` (see
+`exampleSite/multilingual.toml`): the default language (English here) at the
+root, each other one under its code (`/es/`), with its content in its own
+`content.es/` folder and its strings in `i18n/es.toml`. With one language the
+site has none of the parts below.
+
+- The language selector (`DESIGN.md`, Language selector) lists every language.
+  Each link goes to the same page in that language when the page has it, else
+  to that language's home. It is in the header and, under 30rem, in the menu.
+- The redirect is an inline script at the top of `<head>`. An arrival from
+  outside the site (no referrer, or another origin) moves to the same page in
+  the reader's language when that page exists. A pick in the selector is stored
+  in `localStorage` as `docs-lang` and wins over the browser. With no pick, the
+  browser's first language the site has moves only a reader of the default
+  language. A click inside the site never redirects. Crawlers get each URL as
+  it is.
+- Each page with translations has `hreflang` for each of them, itself included,
+  and `x-default` to the default language's page, and `og:locale` and
+  `og:locale:alternate`. A page with no translation has none of them.
+- A link to a page the language does not have (Markdown links) goes to the
+  default language's page, with `hreflang="en"`.
+
 ## Search engines
 
 Every page gets, in its `<head>` (`_partials/seo.html`): the description, a
@@ -230,6 +254,10 @@ page layout) must call `{{ partial "breadcrumbs.html" . }}` at the top of its
 `<article>`, as the theme's do, or its pages lose the visible breadcrumbs that
 match their `BreadcrumbList`.
 
+`layouts/_partials/page-notice.html` is empty too: a site copies it to show a
+notice at the top of each single and list page (for example, that a translation
+is out of date).
+
 ## Translate the theme
 
 The words of the theme (buttons, labels, messages, the 404 page) are in
@@ -248,7 +276,8 @@ the English. A value may hold placeholders in braces, such as `{version}` or
 The keys, by part of the page:
 
 - Header and sidebar: `skip_content`, `skip_navigation`, `menu`, `home`,
-  `site_nav`, `section_pages`, `release_version`, `switch_dark`, `switch_light`.
+  `site_nav`, `section_pages`, `release_version`, `switch_dark`, `switch_light`,
+  `language_label` (the language selector).
 - Search: `search_label`, `search_placeholder`, `search_help`, `search_results`,
   `search_min`, `search_loading`, `search_error`, `search_none`,
   `search_count_one`, `search_count_other`.

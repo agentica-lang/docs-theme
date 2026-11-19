@@ -1,6 +1,6 @@
 {{- /* Previous and next page in the sidebar order (nav-order.html). The home page is not in the pager: it starts at its first child. A page outside the tree gets none. */ -}}
 {{- /* The order depends only on the site tree, not on the page, so it is built once. */ -}}
-{{- $order := partialCached "nav-order.html" site.Home -}}
+{{- $order := partialCached "nav-order.html" site.Home site.Language.Lang -}}
 {{- $prev := false -}}
 {{- $next := false -}}
 {{- range $i, $p := $order -}}

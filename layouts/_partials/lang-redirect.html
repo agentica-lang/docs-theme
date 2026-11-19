@@ -1,0 +1,41 @@
+{{- /* The language redirect and the stored pick (DESIGN.md, Language selector). An inline script, first in the head so
+that the reader never sees the first language. An arrival from outside (no referrer, or another origin) moves to this
+page in the reader's language when the page has that translation: the stored pick (localStorage "docs-lang") wins; with
+no pick, the first browser language the site has moves only a reader of the default language. A click on a language
+link stores the pick. A site with one language has none of it. */ -}}
+{{- if gt (len hugo.Sites) 1 }}
+{{- $targets := dict }}
+{{- range .AllTranslations }}{{ $targets = merge $targets (dict .Language.Locale .RelPermalink) }}{{ end }}
+{{- $locales := slice }}
+{{- range hugo.Sites }}{{ $locales = $locales | append .Language.Locale }}{{ end }}
+{{- $config := dict "lang" .Language.Locale "default" hugo.Sites.Default.Language.Locale "languages" $locales "targets" $targets }}
+<script>
+(function () {
+  var c = {{ $config | jsonify | safeJS }};
+  var inside = false;
+  try { inside = !!document.referrer && new URL(document.referrer).origin === location.origin; } catch (e) {}
+  if (!inside) {
+    var want = "";
+    try { want = localStorage.getItem("docs-lang") || ""; } catch (e) {}
+    if (c.languages.indexOf(want) < 0) want = "";
+    if (!want && c.lang === c.default) want = browserLocale();
+    if (want && want !== c.lang && c.targets[want]) location.replace(c.targets[want] + location.search + location.hash);
+  }
+  function browserLocale() {
+    var langs = navigator.languages || [navigator.language || ""];
+    for (var i = 0; i < langs.length; i++) {
+      var tag = String(langs[i]).split("-")[0].toLowerCase();
+      for (var j = 0; j < c.languages.length; j++) {
+        if (c.languages[j].split("-")[0].toLowerCase() === tag) return c.languages[j];
+      }
+    }
+    return "";
+  }
+  document.addEventListener("click", function (e) {
+    var link = e.target instanceof Element ? e.target.closest("[data-lang-pick]") : null;
+    if (!link) return;
+    try { localStorage.setItem("docs-lang", link.getAttribute("data-lang-pick")); } catch (err) {}
+  });
+})();
+</script>
+{{- end -}}

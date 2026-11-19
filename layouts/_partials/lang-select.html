@@ -1,0 +1,16 @@
+{{- /* The language selector (DESIGN.md, Language selector): a link to this page in each language of the site when the page
+has that translation, else to that language's home. `class` names the copy: the header's (from 30rem up) or the menu's
+(under 30rem, see _lang.scss). Nothing on a site with one language. The links work without JavaScript. */ -}}
+{{- if gt (len hugo.Sites) 1 }}
+{{- $page := .page }}
+<nav class="lang-select {{ .class }}" aria-label="{{ partial "t.html" "language_label" }}">
+  <ul>
+    {{- range hugo.Sites }}
+    {{- $locale := .Language.Locale }}
+    {{- $href := .Home.RelPermalink }}
+    {{- range $page.AllTranslations }}{{ if eq .Language.Locale $locale }}{{ $href = .RelPermalink }}{{ end }}{{ end }}
+    <li><a href="{{ $href }}" hreflang="{{ $locale }}" lang="{{ $locale }}" data-lang-pick="{{ $locale }}"{{ if eq $locale $page.Language.Locale }} aria-current="page"{{ end }}>{{ .Language.Label }}</a></li>
+    {{- end }}
+  </ul>
+</nav>
+{{- end -}}

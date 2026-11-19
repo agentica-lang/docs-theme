@@ -20,7 +20,7 @@ the landing site, bond, packages) pins a commit of it as a submodule.
 ## Rules
 
 - Read `DESIGN.md` before any visual change, and keep it true in the same PR.
-- `make example` must pass: it builds `exampleSite/` five ways, runs the
+- `make example` must pass: it builds `exampleSite/` nine ways, runs the
   highlighter and `tools/check-seo.mjs`, and greps the output. It needs Hugo
   0.167.0 or newer, Dart Sass (`DART_SASS=<its folder>`) and Node. It uses the
   checkout itself as the theme, whatever its folder is named

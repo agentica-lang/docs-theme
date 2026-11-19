@@ -1,0 +1,65 @@
+@use "tokens" as *;
+
+// The language selector (DESIGN.md, Language selector): in the header from 30rem up, in the menu under it.
+.lang-select {
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.9rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  a {
+    color: var(--muted);
+    text-decoration: none;
+
+    &:hover {
+      color: var(--fg);
+      text-decoration: underline;
+    }
+
+    &[aria-current="page"] {
+      color: var(--fg);
+      font-weight: 600;
+    }
+
+    &:focus-visible {
+      outline: var(--focus-ring);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.lang-select-header {
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.lang-select-menu {
+  display: none;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+
+  ul {
+    gap: 0 1rem;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target);
+  }
+}
+
+@media (max-width: 30rem) {
+  .lang-select-header {
+    display: none;
+  }
+
+  .lang-select-menu {
+    display: block;
+  }
+}

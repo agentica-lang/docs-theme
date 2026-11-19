@@ -22,6 +22,11 @@
     return page[key] || English[key];
   }
 
+  // The language of the reader: the pick of the language selector (localStorage "docs-lang"), else the page's own.
+  var stored = "";
+  try { stored = localStorage.getItem("docs-lang") || ""; } catch (e) {}
+  var pageLang = document.documentElement.lang || "";
+
   // selector.css is linked next to this script, so the page is styled when it runs.
   fetch(new URL("versions.json", root).href)
     .then(function (response) { return response.json(); })
@@ -46,33 +51,44 @@
     if (!versions.length || location.pathname.indexOf(root.pathname) !== 0) return;
     var latest = versions.filter(function (v) { return v.latest; })[0] || versions[0];
     var rest = location.pathname.slice(root.pathname.length);
+    // A page of another language sits under its code (`es/`); the version is found without it.
+    if (pageLang && rest.indexOf(pageLang + "/") === 0) rest = rest.slice(pageLang.length + 1);
     // The root is the latest release; a version's own folder starts with its path.
     var current = versions.filter(function (v) { return rest.indexOf(v.path) === 0; })[0];
     var page = current ? rest.slice(current.path.length) : rest;
     current = current || latest;
+    var want = stored || pageLang;
 
-    function home(v) {
-      return new URL(v.latest ? "" : v.path, root).href;
-    }
-
-    function url(v) {
-      return new URL((v.latest ? "" : v.path) + page, root).href + location.hash;
+    // Where a version's copy of this page is, most wanted first: the page in the reader's language (listed in the
+    // version's `languages`, which has no default language), then the English page, then the version's home.
+    function candidates(v) {
+      var base = v.latest ? "" : v.path;
+      var list = [];
+      if (want && (Array.isArray(v.languages) ? v.languages : []).indexOf(want) >= 0) {
+        list.push(new URL(base + want + "/" + page, root).href + location.hash);
+      }
+      list.push(new URL(base + page, root).href + location.hash);
+      list.push(new URL(base, root).href);
+      return list;
     }
 
     // The menu button, in every release (see menu() below).
     var header = document.querySelector(".site-header");
     var toggle = header && header.querySelector(".nav-toggle");
 
-    // The same page in another version when it exists there, else that version's home page. An open menu is closed
+    // The first candidate of a version that exists there, else that version's home page. An open menu is closed
     // first, with the button's own click, so that a page restored from the back-forward cache is not left with the
     // menu open and the page behind it inert.
     function go(v) {
       if (toggle && toggle.getAttribute("aria-expanded") === "true") toggle.click();
-      var target = url(v);
-      fetch(target.split("#")[0], { method: "HEAD" })
-        .then(function (response) { return response.ok ? target : home(v); })
-        .catch(function () { return home(v); })
-        .then(function (href) { location.assign(href); });
+      var list = candidates(v);
+      list.slice(0, -1).reduce(function (chain, href) {
+        return chain.then(function (found) {
+          return found || fetch(href.split("#")[0], { method: "HEAD" })
+            .then(function (response) { return response.ok ? href : ""; }, function () { return ""; });
+        });
+      }, Promise.resolve(""))
+        .then(function (found) { location.assign(found || list[list.length - 1]); });
     }
 
     var select = document.createElement("select");
@@ -97,7 +113,7 @@
     if (current !== latest) {
       var note = document.createElement("span");
       var link = document.createElement("a");
-      link.href = url(latest);
+      link.href = candidates(latest)[0];
       link.textContent = t("view_in_version").replace("{version}", latest.version);
       link.addEventListener("click", function (event) {
         event.preventDefault();
