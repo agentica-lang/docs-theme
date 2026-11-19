@@ -157,13 +157,14 @@ site has none of the parts below.
 - The redirect is an inline script at the top of `<head>`. An arrival from
   outside the site moves to the same page in the reader's language when that
   page exists. "Outside" means a referrer that does not start with the site's
-  root, so a sibling docs site on the same origin counts as outside. A pick in
-  the select is stored in `localStorage` as `docs-lang` and wins over the
-  browser. With no pick, the browser's first language the site has moves only a
-  reader of the default language. A change inside the site never redirects.
-  Crawlers get each URL as it is, but a crawler that sends `es` as a browser
-  language can be moved from an English URL to Spanish; `hreflang` covers the
-  indexing.
+  root (its origin and first folder, the same for every version of the site),
+  so a sibling docs site on the same origin counts as outside. A Back
+  navigation never redirects. A pick in the select is stored in `localStorage`
+  as `docs-lang` and wins over the browser. With no pick, the browser's first
+  language the site has moves only a reader of the default language. A change
+  inside the site never redirects. Crawlers get each URL as it is, but a
+  crawler that sends `es` as a browser language can be moved from an English
+  URL to Spanish; `hreflang` covers the indexing.
 - Each page with translations has `hreflang` for each of them, itself included,
   and `x-default` to the default language's page, and `og:locale` and
   `og:locale:alternate`. A page with no translation has none of them. The

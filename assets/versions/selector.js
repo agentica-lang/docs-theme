@@ -76,19 +76,22 @@
     var header = document.querySelector(".site-header");
     var toggle = header && header.querySelector(".nav-toggle");
 
-    // The first candidate of a version that exists there, else that version's home page. An open menu is closed
-    // first, with the button's own click, so that a page restored from the back-forward cache is not left with the
-    // menu open and the page behind it inert.
-    function go(v) {
-      if (toggle && toggle.getAttribute("aria-expanded") === "true") toggle.click();
-      var list = candidates(v);
-      list.slice(0, -1).reduce(function (chain, href) {
+    // The first candidate that exists (a HEAD request each); the last one is the version's home page, which is taken
+    // without a request.
+    function existing(list) {
+      return list.slice(0, -1).reduce(function (chain, href) {
         return chain.then(function (found) {
           return found || fetch(href.split("#")[0], { method: "HEAD" })
             .then(function (response) { return response.ok ? href : ""; }, function () { return ""; });
         });
-      }, Promise.resolve(""))
-        .then(function (found) { location.assign(found || list[list.length - 1]); });
+      }, Promise.resolve("")).then(function (found) { return found || list[list.length - 1]; });
+    }
+
+    // An open menu is closed first, with the button's own click, so that a page restored from the back-forward cache is
+    // not left with the menu open and the page behind it inert.
+    function go(v) {
+      if (toggle && toggle.getAttribute("aria-expanded") === "true") toggle.click();
+      existing(candidates(v)).then(function (href) { location.assign(href); });
     }
 
     var select = document.createElement("select");
@@ -113,7 +116,9 @@
     if (current !== latest) {
       var note = document.createElement("span");
       var link = document.createElement("a");
-      link.href = candidates(latest)[0];
+      // The home page until the check says which copy exists, so the link never points at a missing page.
+      link.href = candidates(latest).slice(-1)[0];
+      existing(candidates(latest)).then(function (href) { link.href = href; });
       link.textContent = t("view_in_version").replace("{version}", latest.version);
       link.addEventListener("click", function (event) {
         event.preventDefault();

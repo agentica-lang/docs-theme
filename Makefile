@@ -72,7 +72,10 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@grep -qE 'og:locale:alternate" content="en_US"' exampleSite/public-multilingual/es/guide/code/index.html
 	@# A nested page's `../reference.md` resolves to the English page with no Spanish one (link-target.html's fallback).
 	@grep -qE 'href="?/docs-theme/reference/"? hreflang="?en"?' exampleSite/public-multilingual/es/guide/links/index.html
-	@node tools/check-redirect.mjs exampleSite/public-multilingual
+	@# The same site built at its dev version's folder (baseURL `<root>/dev/`): its root is the site's, so a switch between
+	@# versions does not count as an arrival from outside (check-redirect.mjs).
+	@hugo --quiet --cleanDestinationDir --source exampleSite --config hugo.toml,multilingual.toml --baseURL https://agentica-lang.github.io/docs-theme/dev/ --destination public-multilingual-dev --panicOnWarning
+	@node tools/check-redirect.mjs exampleSite/public-multilingual exampleSite/public-multilingual-dev
 	@if grep -qE '"(Code blocks|Reference|Guide)"' exampleSite/public-multilingual/es/search.json; then echo "es/search.json has English titles" >&2; exit 1; fi
 	@grep -qF '"Bloques de código"' exampleSite/public-multilingual/es/search.json
 	@# A file block (guide/code.md) is labeled in the Markdown of its page, in each language.
@@ -174,4 +177,4 @@ check-seo:
 
 clean:
 	rm -rf exampleSite/public exampleSite/public-broken exampleSite/public-bare exampleSite/public-prefix exampleSite/public-off \
-	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/public-partial exampleSite/public-multilingual exampleSite/resources highlight/node_modules
+	  exampleSite/public-versions exampleSite/public-env exampleSite/public-spanish exampleSite/public-fallback exampleSite/public-partial exampleSite/public-multilingual exampleSite/public-multilingual-dev exampleSite/resources highlight/node_modules

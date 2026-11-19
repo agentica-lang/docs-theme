@@ -162,7 +162,8 @@ const locs = (xml) => xml.match(/<loc>(https?:\/\/[^<]+?)<\/loc>/g)?.map((l) => 
 function checkSitemap(name, xml) {
   const base = locs(xml);
   if (!base.length) fail(name, "no <loc>");
-  // The site's root is the root page's URL: a shorter URL of a language's home is not the root.
+  // The site's root is the root page's URL. Not the shortest URL: a language's own sitemap (es/sitemap.xml) has its home,
+  // `es/`, as its shortest one, and that is not the root.
   const root = homeCanonical || base.reduce((a, b) => (a.length <= b.length ? a : b), base[0] ?? "");
   for (const loc of base) {
     if (!loc.startsWith(root)) fail(name, `${loc} is not under ${root}`);

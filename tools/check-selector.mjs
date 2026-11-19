@@ -106,6 +106,10 @@ const check = (name, actual, wanted) => {
   const page = { pathname: "/docs-theme/dev/es/x/", lang: "es", exists: [`${origin}/docs-theme/es/x/`] };
   const selector = await run(page);
   check("the view-in-latest link of a Spanish dev page is the Spanish latest page", selector.latestLink, `${origin}/docs-theme/es/x/`);
+  check("the view-in-latest link falls back to the English page when there is no Spanish one",
+    (await run({ ...page, exists: [`${origin}/docs-theme/x/`] })).latestLink, `${origin}/docs-theme/x/`);
+  check("the view-in-latest link is the latest home when no copy of the page exists",
+    (await run({ ...page, exists: [] })).latestLink, `${origin}/docs-theme/`);
   check("a Spanish dev page to an English-only version goes to its English page",
     await (await run({ ...page, exists: [`${origin}/docs-theme/0.0.9/x/`] })).switchTo("0.0.9"), `${origin}/docs-theme/0.0.9/x/`);
   check("a Spanish dev page to an English-only version with no page goes to its home",
