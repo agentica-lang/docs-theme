@@ -264,8 +264,8 @@ page layout) must call `{{ partial "breadcrumbs.html" . }}` at the top of its
 match their `BreadcrumbList`.
 
 `layouts/_partials/page-notice.html` is empty too: a site copies it to show a
-notice at the top of each single and list page (for example, that a translation
-is out of date).
+notice at the top of each single, list and home page (for example, that a
+translation is out of date). The home layout calls it too.
 
 ## Translate the theme
 

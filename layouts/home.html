@@ -1,5 +1,5 @@
 {{ define "main" }}
-<article class="content">
+{{ partial "page-notice.html" . }}<article class="content">
   {{- /* As in single.html: a page whose text starts with an h1 (a README used as the home page) shows that heading. */ -}}
   {{- $actions := partial "page-actions.html" . }}
   {{- if partial "heading.html" . }}

@@ -66,6 +66,8 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@grep -qE 'href="?/docs-theme/es/guide/code/"? hreflang="?es"?' exampleSite/public-multilingual/guide/code/index.html
 	@grep -qE 'href="?/docs-theme/es/"? hreflang="?es"?' exampleSite/public-multilingual/reference/index.html
 	@grep -qE 'href="?/docs-theme/reference/"? hreflang="?en"?' exampleSite/public-multilingual/es/index.html
+	@# The notice hook on the home page (home.html calls page-notice.html; the example's copy marks each Spanish page).
+	@grep -qE 'data-notice="?home"?' exampleSite/public-multilingual/es/index.html
 	@grep -q 'docs-lang' exampleSite/public-multilingual/guide/code/index.html
 	@grep -q 'og:locale:alternate' exampleSite/public-multilingual/guide/code/index.html
 	@grep -qE 'og:locale" content="es_ES"' exampleSite/public-multilingual/es/guide/code/index.html

@@ -259,6 +259,10 @@ Source: `_partials/lang-select.html`, `lang-redirect.html`, `_lang.scss`,
   stored pick, else the page's language, and the version's `languages`); a
   version with no page in that language shows the English page, then the
   version's home.
+- Translation notice (`page-notice.html`, a site's copy): a
+  `.translation-notice` box above the content, with a `--border` line, `--muted`
+  text and `--radius`. It is as wide as the content and does not scroll
+  sideways.
 
 ### Pager
 

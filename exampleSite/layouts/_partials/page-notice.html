@@ -1,0 +1,4 @@
+{{- /* A stand-in for a site's notice, in the two-language example only: each Spanish page shows a note, marked with its kind. */ -}}
+{{- if and (gt (len hugo.Sites) 1) (eq .Language.Lang "es") }}
+<aside class="translation-notice" data-notice="{{ .Kind }}" data-translation="stale"><p>Esta página puede estar desactualizada: la página en inglés cambió después de esta traducción. <a href="/" hreflang="en" lang="en">Lee la página en inglés.</a></p></aside>
+{{- end -}}
