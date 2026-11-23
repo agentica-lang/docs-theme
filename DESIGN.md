@@ -77,7 +77,8 @@ Source: `_tokens.scss`, `_layout.scss`, `_header.scss`, `_content.scss`.
 - Widths: `--layout-width` (92rem) caps the grid. `--sidebar-width` (16rem) is
   the tree column. `--content-width` (60rem) caps the page column: code blocks,
   tables, headings and the pager. `--prose-width` (50rem, as before) caps
-  paragraphs, lists and quotes. `--header` (3.5rem) is the sticky bar. The drawer is `min(20rem, 85vw)` wide.
+  paragraphs, lists and quotes. `--header` (3.5rem) is the sticky bar. The
+  drawer is `min(20rem, 85vw)` wide.
 - Breakpoint: `$narrow` is 50rem, from `params.narrow` in `hugo.toml`. Sass and
   `nav.js` read it. A second one, 30rem, hides the header version and moves
   the version selector into the menu (see Version selector).
