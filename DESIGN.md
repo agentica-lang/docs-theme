@@ -74,9 +74,11 @@ Source: `_tokens.scss`, `_layout.scss`, `_header.scss`, `_content.scss`.
 - Spacing: `--gutter` (1rem) is the side gutter of the header, tree, footer and
   drawer. Other spacing is rem literals: the page body has 2rem 2.5rem 4rem
   padding wide, and 1.25rem `--gutter` 3rem at 50rem and below.
-- Widths: `--layout-width` (80rem) caps the grid. `--sidebar-width` (16rem) is
-  the tree column. `--content-width` (50rem) caps text and pager. `--header`
-  (3.5rem) is the sticky bar. The drawer is `min(20rem, 85vw)` wide.
+- Widths: `--layout-width` (92rem) caps the grid. `--sidebar-width` (16rem) is
+  the tree column. `--content-width` (60rem) caps the page column: code blocks,
+  tables, headings and the pager. `--prose-width` (40rem, about 85 characters a
+  line) caps paragraphs, lists and quotes. `--header` (3.5rem) is the sticky
+  bar. The drawer is `min(20rem, 85vw)` wide.
 - Breakpoint: `$narrow` is 50rem, from `params.narrow` in `hugo.toml`. Sass and
   `nav.js` read it. A second one, 30rem, hides the header version and moves
   the version selector into the menu (see Version selector).
