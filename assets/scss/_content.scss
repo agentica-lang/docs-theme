@@ -33,6 +33,33 @@
     margin: 1.5rem 0 0.5rem;
     font-size: 1.05rem;
   }
+
+  // The theme's own lists in the article (page list, breadcrumbs, share, page actions) keep their rules.
+  $theme-list: ":is(.pages, .breadcrumbs, .share, .page-actions-menu) li";
+
+  p {
+    margin-bottom: 1rem;
+  }
+
+  li + li:not(#{$theme-list}) {
+    margin-top: 0.55rem;
+  }
+
+  li:not(#{$theme-list}) {
+    > p {
+      margin: 0.4rem 0;
+    }
+
+    > pre,
+    > .code-block {
+      margin: 0.5rem 0;
+    }
+
+    > ul,
+    > ol {
+      margin-top: 0.4rem;
+    }
+  }
 }
 
 .anchor {
