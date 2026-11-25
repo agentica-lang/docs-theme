@@ -46,3 +46,11 @@ jobs:
           echo "$RUNNER_TEMP/hugo" >> "$GITHUB_PATH"
       # The Makefile puts DART_SASS on PATH.
       - run: make example DART_SASS="$RUNNER_TEMP/dart-sass"
+  site-versions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: make site-versions-test

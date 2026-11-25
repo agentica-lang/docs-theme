@@ -141,6 +141,37 @@ no copy. Every page of every version loads them from `root`, with no hash, so
 a page built before a change gets the current selector. A page built without this theme can load the same two files from
 the root with a `<link>` and a `<script defer>` tag.
 
+### Build every version
+
+`tools/site_versions.py` does that build for a repo whose releases are git
+tags (Python standard library only). From the root of the repo (or pass
+`--repo`: inside the theme's folder, git finds the theme's own repo), with the
+theme at `site/themes/docs-theme`:
+
+```sh
+python3 -I site/themes/docs-theme/tools/site_versions.py build \
+  --base-url https://host/docs/
+```
+
+It builds each release tag in its own git worktree with `make site
+HUGO_FLAGS="--baseURL ..."`, and `dev` from the working tree. It writes
+`build/site-versions/public` with the latest at the root, `VERSION/`, `dev/`,
+`versions.json` and `_versions/`, and gives the version and dev pages a
+canonical URL to the root or `noindex`. It takes Hugo and Dart Sass from the
+four pins of the repo's `.github/workflows/pages.yml` (`HUGO_VERSION`,
+`HUGO_SHA256`, `DART_SASS_VERSION`, `DART_SASS_SHA256`, the extended Hugo
+archive), and caches each tag by commit. The top of the script says how it
+treats a tag that fails or has no site.
+
+| Option | Default | What it does |
+|---|---|---|
+| `--tag-pattern` | `^(\d+\.\d+\.\d+)$` | A regex with one group, the version, for the release tags: `^tensor-(\d+\.\d+\.\d+)$` for the tag `tensor-0.4.0` |
+| `--dev` | `first` | `last` puts `dev` at the end of the selector |
+| `--repo` | the git checkout of the working directory | The repo to build |
+| `--out`, `--cache`, `--tools` | `build/site-versions/public`, `build/site-versions/cache`, `~/.cache/docs-theme-site-tools` | Where the site, the cache of built tags, and the downloaded Hugo and Dart Sass go |
+
+`make site-versions-test` runs its tests.
+
 ## Languages
 
 A site in several languages sets them in `hugo.toml` (see

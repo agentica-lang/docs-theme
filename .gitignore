@@ -14,3 +14,4 @@ exampleSite/resources/
 exampleSite/.themes/
 exampleSite/.hugo_build.lock
 highlight/node_modules/
+__pycache__/
