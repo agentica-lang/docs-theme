@@ -13,6 +13,8 @@ the landing site, bond, packages) pins a commit of it as a submodule.
 - `exampleSite/`: the site that `make example` builds and checks.
 - `tools/check-seo.mjs`: the check of the search tags.
 - `tools/check-strings.mjs`: the check of the interface strings of the Spanish and English builds.
+- `tools/site_versions.py`: builds every release of a site into one folder with the selector (README, Versions);
+  `make site-versions-test` runs `tools/test_site_versions.py`.
 - `i18n/`: the interface strings, `en.toml` and `es.toml`; README "Translate the theme".
 - `README.md`: how a site uses the theme and its params.
 - `DESIGN.md`: the design rules.
