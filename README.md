@@ -144,8 +144,9 @@ the root with a `<link>` and a `<script defer>` tag.
 ### Build every version
 
 `tools/site_versions.py` does that build for a repo whose releases are git
-tags (Python standard library only). From the repo, with the theme at
-`site/themes/docs-theme`:
+tags (Python standard library only). From the root of the repo (or pass
+`--repo`: inside the theme's folder, git finds the theme's own repo), with the
+theme at `site/themes/docs-theme`:
 
 ```sh
 python3 -I site/themes/docs-theme/tools/site_versions.py build \

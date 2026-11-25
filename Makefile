@@ -1,6 +1,6 @@
 # Builds the example site with the theme, as CI does: Hugo (a warning fails), then the highlighter.
 
-.PHONY: example example-serve check-seo clean
+.PHONY: example example-serve check-seo site-versions-test clean
 
 DART_SASS ?= $(HOME)/.local/opt/dart-sass
 export PATH := $(DART_SASS):$(PATH)
@@ -173,6 +173,10 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	@# A relative link written as a page (`x.md`, `../x/`) that reaches no page warns, so --panicOnWarning fails it.
 	@n=$$(hugo --source exampleSite --config hugo.toml,broken.toml --destination public-broken 2>&1 | grep -c 'no page for link'); \
 	  test "$$n" = 2 || { echo "expected 2 warnings for exampleSite/broken/links.md, got $$n" >&2; exit 1; }
+
+# The assembly of tools/site_versions.py on a small git repository (the standard library only).
+site-versions-test:
+	python3 -I tools/test_site_versions.py
 
 example-serve: exampleSite/.themes/docs-theme
 	hugo server --source exampleSite

@@ -141,10 +141,10 @@ class SiteVersionsTest(unittest.TestCase):
             self.addCleanup(patcher.stop)
 
     def build(self, *options):
-        """Run the CLI; returns its exit code, its output, the output folder and how many `make site` runs there were."""
+        """Run the CLI; returns its exit code, its output (errors too), the output folder and how many `make site` runs there were."""
         (self.tmp / "output").unlink(missing_ok=True)
         stdout = io.StringIO()
-        with contextlib.redirect_stdout(stdout):
+        with contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stdout):
             code = tool.main([
                 "build", "--out", str(self.tmp / "out"), "--cache", str(self.tmp / "cache"),
                 "--tools", str(self.tmp / "tools"), "--base-url", "https://example.org/docs", *options,
@@ -396,9 +396,41 @@ class SiteVersionsTest(unittest.TestCase):
         self.assertFalse((out / "tensor-0.12.0").exists())
 
     def test_a_tag_pattern_needs_one_group_of_dotted_numbers(self):
-        for pattern in (r"^\d+\.\d+\.\d+$", r"^(\d+)\.(\d+)$", "(", r"^(.+)$"):
+        cases = (
+            (r"^\d+\.\d+\.\d+$", "exactly one group"),
+            (r"^(\d+)\.(\d+)$", "exactly one group"),
+            ("(", "not a regex"),
+            (r"^(.+)$", "not dotted numbers"),
+        )
+        for pattern, message in cases:
             code, printed, _, _ = self.build("--tag-pattern", pattern)
             self.assertEqual(code, 1, pattern)
+            self.assertIn(message, printed)
+
+    def test_a_pattern_matches_the_whole_tag_and_two_tags_cannot_share_a_version(self):
+        for name in ("tensor-0.12.0", "tensor-0.12.0-beta.1", "nn-0.12.0"):
+            git(self.repo, "tag", name)
+        self.assertEqual(tool.release_tags(r"tensor-(\d+\.\d+\.\d+)"), {"0.12.0": "tensor-0.12.0"})
+        code, printed, _, _ = self.build("--tag-pattern", r"^(?:tensor|nn)-(\d+\.\d+\.\d+)$")
+        self.assertEqual(code, 1)
+        self.assertIn("both version 0.12.0", printed)
+
+    def test_the_repo_is_the_option_or_the_checkout_of_the_working_directory(self):
+        with mock.patch.object(tool, "ROOT", None):
+            code, _, out, _ = self.build("--repo", str(self.repo))
+            self.assertEqual(code, 0)
+            self.assertTrue((out / "versions.json").exists())
+            code, printed, _, _ = self.build("--repo", str(self.tmp))
+            self.assertEqual(code, 1)
+            self.assertIn("not a git checkout", printed)
+        with mock.patch.object(tool, "ROOT", None):
+            previous = os.getcwd()
+            os.chdir(self.repo / "site")
+            try:
+                code, _, _, _ = self.build()
+            finally:
+                os.chdir(previous)
+            self.assertEqual((code, tool.ROOT.resolve()), (0, self.repo.resolve()))
 
     def test_org_icons_match_the_theme_and_a_page_with_them_is_left_alone(self):
         partial = (THEME_ROOT / "layouts" / "_partials" / "favicon.html").read_text()

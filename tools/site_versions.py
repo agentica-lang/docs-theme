@@ -98,12 +98,15 @@ def release_tags(pattern: str) -> dict[str, str]:
     names = run(["git", "-C", str(ROOT), "tag", "--list"], capture_output=True).stdout.split()
     found = {}
     for name in names:
-        match = regex.search(name)
+        match = regex.fullmatch(name)
         if not match:
             continue
-        if not DOTTED.match(match.group(1) or ""):
-            raise BuildError("tag %s: the group of --tag-pattern is %r, not dotted numbers" % (name, match.group(1)))
-        found[match.group(1)] = name
+        version = match.group(1) or ""
+        if not DOTTED.match(version):
+            raise BuildError("tag %s: the group of --tag-pattern is %r, not dotted numbers" % (name, version))
+        if version in found:
+            raise BuildError("tags %s and %s are both version %s" % (found[version], name, version))
+        found[version] = name
     return dict(sorted(found.items(), key=lambda item: version_key(item[0]), reverse=True))
 
 
