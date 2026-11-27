@@ -8,6 +8,7 @@
   <title>{{ partial "title.html" . }}</title>
   {{- partial "seo.html" . }}
   {{- partial "favicon.html" . }}
+  <link rel="preload" href="{{ relURL "fonts/inter/Inter-400.latin.woff2" }}" as="font" type="font/woff2" crossorigin>
   {{- $sass := dict "transpiler" "dartsass" "outputStyle" "compressed" "targetPath" "css/main.css" "vars" (dict "narrow" site.Params.narrow) }}
   {{- with resources.Get "scss/main.scss" | css.Sass $sass | fingerprint }}
   <link rel="stylesheet" href="{{ .RelPermalink }}" integrity="{{ .Data.Integrity }}" crossorigin="anonymous">
