@@ -35,9 +35,10 @@ example: highlight/node_modules exampleSite/.themes/docs-theme
 	  echo "hugo --source exampleSite --config $${build#*:} --destination $$out"; \
 	  hugo --quiet --cleanDestinationDir --source exampleSite --config $${build#*:} --destination $$out --panicOnWarning; \
 	  node highlight/highlight.mjs --strict exampleSite/$$out; \
-	  for f in search.json llms.txt llms-full.txt index.md guide/code/index.md; do \
+	  for f in search.json llms.txt llms-full.txt index.md guide/code/index.md fonts/inter/Inter-400.latin.woff2 fonts/inter/OFL.txt fonts/jetbrains-mono/JetBrainsMono-400.latin.woff2 fonts/jetbrains-mono/OFL.txt; do \
 	    test -s exampleSite/$$out/$$f || { echo "exampleSite/$$out/$$f is missing" >&2; exit 1; }; \
 	  done; \
+	  grep -qE 'rel="?preload"?' exampleSite/$$out/index.html || { echo "exampleSite/$$out has no font preload" >&2; exit 1; }; \
 	  if grep -rlIE '%!|%25!|<nil>|%3cnil%3e' exampleSite/$$out; then echo "a template printed a format error" >&2; exit 1; fi; \
 	  if grep -rlF '&amp;#39;' exampleSite/$$out; then echo "an apostrophe is escaped twice" >&2; exit 1; fi; \
 	  if [ $$out != public-multilingual ] && grep -rlE 'hreflang|lang-select|docs-lang' --include=*.html exampleSite/$$out; then \

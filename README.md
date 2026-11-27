@@ -396,3 +396,8 @@ git commit -m "Update docs-theme"
 MIT, see [LICENSE](LICENSE). `highlight/agentica.tmLanguage.json` comes from
 agc-tmlanguage (Apache-2.0, `highlight/LICENSE`), and the icons in
 `assets/icons/lucide/` are Lucide's (ISC, see their LICENSE).
+
+The fonts in `static/fonts/` are Inter (`static/fonts/inter/OFL.txt`) and
+JetBrains Mono (`static/fonts/jetbrains-mono/OFL.txt`), both under the SIL Open
+Font License 1.1. They are Latin and Latin Extended subsets of the upstream
+woff2 files (rsms/inter 4.1, JetBrains/JetBrainsMono 2.304).

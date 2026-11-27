@@ -11,7 +11,8 @@ Source: `hugo.toml`, `layouts/`.
 
 - Purpose and voice: docs for the Agentica language and its tools. Simple words,
   short sentences, and examples with short comments do the work.
-- Look: plain and flat. One red accent. No web fonts.
+- Look: plain and flat. One red accent. Two web fonts, Inter and JetBrains Mono,
+  both self-hosted.
 - Icons: four Lucide icons in `assets/icons/lucide/`. Other icons are
   inline SVG.
 
@@ -55,9 +56,12 @@ the system prefers dark and the reader has not picked light.
 
 Source: `_tokens.scss`, `_base.scss`, `_content.scss`, `_code.scss`.
 
-- `--font` is the system UI stack (`system-ui`, `-apple-system`, `Segoe UI`,
-  Roboto, Arial). `--mono` is the system monospace stack (`ui-monospace`,
-  Menlo, Consolas).
+- `--font` is Inter, then the system UI stack (`system-ui`, `-apple-system`,
+  `Segoe UI`, Roboto, Arial). `--mono` is JetBrains Mono, then the system
+  monospace stack (`ui-monospace`, Menlo, Consolas). The faces are in
+  `_fonts.scss`; the files are in `static/fonts/` (OFL 1.1). Inter has 400 and
+  600, JetBrains Mono has 400 and its italic (code comments). `baseof.html`
+  preloads Inter 400 (Latin).
 - Body text is 1rem with a line height of 1.65. Headings have a line height of
   1.25.
 - Headings: h1 2.1rem, h2 1.5rem with a rule under it, h3 1.2rem, h4 1.05rem.
@@ -364,10 +368,11 @@ Source: `_partials/footer.html`, `_footer.scss`.
   the light and dark `--bg`, so it must change with them. The chevron mask in
   `_layout.scss` uses black, which sets only the shape.
 - No runtime dependency. Hugo, Dart Sass and the Node highlighter run at build
-  time (`Makefile`). The browser loads only the built CSS and JS. No CDN, web
-  font or outside script. The one exception is the favicon:
-  `_partials/favicon.html` links the org icons of www.agentica-lang.com by
-  absolute URL, so every project site shows the same icon.
+  time (`Makefile`). The browser loads only the built CSS, JS and the theme's
+  fonts. No CDN, font service or outside script. The one exception is the
+  favicon: `_partials/favicon.html` links the org icons of
+  www.agentica-lang.com by absolute URL, so every project site shows the same
+  icon.
 - Vanilla JS: one small file per feature in `assets/js/`, bundled by Hugo's
   `js.Build`, loaded with `defer` and an `integrity` hash. No framework and no
   library. The one exception is the version selector (`assets/versions/`),
